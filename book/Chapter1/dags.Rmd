@@ -1,0 +1,9 @@
+
+# All about DAGs
+
+
+```{r}
+x <- 3
+```
+
+![Cachexia](trastuzumab.png){width=50% fig-align="center"}
