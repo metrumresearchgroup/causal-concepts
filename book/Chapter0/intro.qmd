@@ -1,0 +1,9 @@
+# Introduction
+
+Background of this initiative and goals of this book
+
+Causal inference as a conceptual framework to aid in elicitation and interpretation. 
+
+![The quantitative science journey](fig/img1-qsvoyage.png){width=80% fig-align="center"}
+
+![Fighting for a close second place](fig/img2-goldmedal.png){width=80% fig-align="center"}

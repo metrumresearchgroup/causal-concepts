@@ -7,8 +7,9 @@ book:
   date: "2/26/2026"
   chapters:
     - index.qmd
-    - intro.qmd
-    - Chapter1/dags.Rmd
+    - Chapter0/intro.qmd
+    - Chapter1/dags.qmd
+    - Chapter2/estimands.qmd
     - references.qmd
 
 
@@ -19,8 +20,8 @@ format:
     theme:
       - cosmo
       - brand
-  pdf:
-    documentclass: scrreprt
+#  pdf:
+#    documentclass: scrreprt
 
 
 
