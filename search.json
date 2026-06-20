@@ -1,0 +1,52 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Causal Concepts for Pharmacometricians",
+    "section": "",
+    "text": "Preface\nThis is a Quarto book.\nTo learn more about Quarto books visit https://quarto.org/docs/books.\nSee Knuth (1984) for additional discussion of literate programming.\n\n\n\n\nKnuth, Donald E. 1984. “Literate Programming.” Comput. J. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97.",
+    "crumbs": [
+      "Preface"
+    ]
+  },
+  {
+    "objectID": "Chapter0/intro.html",
+    "href": "Chapter0/intro.html",
+    "title": "1  Introduction",
+    "section": "",
+    "text": "Background of this initiative and goals of this book\nCausal inference as a conceptual framework to aid in elicitation and interpretation.\n\n\n\nThe quantitative science journey\n\n\n\n\n\nFighting for a close second place",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "Chapter1/dags.html",
+    "href": "Chapter1/dags.html",
+    "title": "2  Causal Directed Acyclic Graphs",
+    "section": "",
+    "text": "Counfounding DAG\n\n\n\n    \\begin{tikzpicture}[-&gt;,&gt;=Stealth]\n    \\node[] (D) at (0,0) {$\\underline{D}$};\n    \\node[] (L) at (2.5,1) {$L$};\n    \\node[] (R) at (5,0) {$\\overline{R}$};\n    \n      \\path \n        (D)  edge  [very thick, color=blue]  (R)  \n        (L)  edge  [very thick, color=red, dashed]  (D)         \n        (L)  edge  [very thick, color=red, dashed]  (R)         \n        ;\n    \\end{tikzpicture}\n\n\n\n\n\n\n\n\n\n    \\begin{tikzpicture}[-&gt;,&gt;=Stealth]\n    \\node[] (D) at (0,0) {$D$};\n    \\node[draw] (L) at (2.5,1) {$L$};\n    \\node[] (R) at (5,0) {$R$};\n    \n      \\path \n        (D)  edge  [very thick, color=blue]  (R)  \n        (L)  edge  [very thick, dashed]  (D)            \n        (L)  edge  [very thick, dashed]  (R)            \n        ;\n    \\end{tikzpicture}",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Causal Directed Acyclic Graphs</span>"
+    ]
+  },
+  {
+    "objectID": "Chapter2/estimands.html",
+    "href": "Chapter2/estimands.html",
+    "title": "3  Estimands",
+    "section": "",
+    "text": "Now let’s think about intercurrent events.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Estimands</span>"
+    ]
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "References",
+    "section": "",
+    "text": "Knuth, Donald E. 1984. “Literate Programming.” Comput.\nJ. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97.",
+    "crumbs": [
+      "References"
+    ]
+  }
+]
