@@ -1,8 +1,16 @@
 # Preface {.unnumbered}
 
-This is a Quarto book.
+Introduction to causal inference concepts for pharmacometricians.
 
-To learn more about Quarto books visit <https://quarto.org/docs/books>.
+This material has been jointly developed by MetrumRG and Genentech / Roche.
 
-See @knuth84 for additional discussion of literate programming.
+## License
+This repository is licensed under the Creative Commons Attribution–NonCommercial 4.0 International (CC BY-NC 4.0) license.
+
+All commercial rights are reserved to Metrum Research Group, Inc.
+
+
+<!-- To learn more about Quarto books visit <https://quarto.org/docs/books>. -->
+
+<!-- See @knuth84 for additional discussion of literate programming. -->
 

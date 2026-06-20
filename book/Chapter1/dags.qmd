@@ -1,4 +1,4 @@
-
+# Causal Directed Acyclic Graphs
 
 ```{r setup, include=FALSE}
 # Pass the vector directly. Knitr will re-read this vector freshly for EVERY chunk.
@@ -7,8 +7,6 @@ knitr::opts_chunk$set(engine.opts = list(
   convert = "dvisvgm" # Keeps your math italics beautiful!
 ))
 ```
-
-# Causal Directed Acyclic Graphs
 
 
 ![Counfounding DAG](fig/img1-confounding.png){width=80% fig-align="center"}

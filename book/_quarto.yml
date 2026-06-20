@@ -3,8 +3,10 @@ project:
 
 book:
   title: "Causal Concepts for Pharmacometricians"
-  author: "Francois Mercier and Jim Rogers"
-  date: "2/26/2026"
+  author: 
+    - Francois Mercier 
+    - Jim Rogers
+  date: "6/20/2026"
   chapters:
     - index.qmd
     - Chapter0/intro.qmd
