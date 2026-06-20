@@ -4,7 +4,17 @@
     "href": "index.html",
     "title": "Causal Concepts for Pharmacometricians",
     "section": "",
-    "text": "Preface\nThis is a Quarto book.\nTo learn more about Quarto books visit https://quarto.org/docs/books.\nSee Knuth (1984) for additional discussion of literate programming.\n\n\n\n\nKnuth, Donald E. 1984. “Literate Programming.” Comput. J. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97.",
+    "text": "Preface\nIntroduction to causal inference concepts for pharmacometricians.\nThis material has been jointly developed by MetrumRG and Genentech / Roche.",
+    "crumbs": [
+      "Preface"
+    ]
+  },
+  {
+    "objectID": "index.html#license",
+    "href": "index.html#license",
+    "title": "Causal Concepts for Pharmacometricians",
+    "section": "License",
+    "text": "License\nThis repository is licensed under the Creative Commons Attribution–NonCommercial 4.0 International (CC BY-NC 4.0) license.\nAll commercial rights are reserved to Metrum Research Group, Inc.",
     "crumbs": [
       "Preface"
     ]
@@ -37,16 +47,6 @@
     "text": "Now let’s think about intercurrent events.",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Estimands</span>"
-    ]
-  },
-  {
-    "objectID": "references.html",
-    "href": "references.html",
-    "title": "References",
-    "section": "",
-    "text": "Knuth, Donald E. 1984. “Literate Programming.” Comput.\nJ. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97.",
-    "crumbs": [
-      "References"
     ]
   }
 ]
