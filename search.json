@@ -64,9 +64,9 @@
     "href": "Chapter1/dags.html",
     "title": "2  Causal Directed Acyclic Graphs",
     "section": "",
-    "text": "2.1 What is a Causal DAG?\nFirst, a distinction: the Directed Acyclic Graphs (DAGs) discussed here will be specifically causal DAGs which, as the name suggests, convey causal information. In principle, DAGs can also be used to convey non-causal information (e.g. they are sometimes used to specify hierarchical models, which may or may not have causal interpretability), but in the context of this book, a “DAG” can always be understood to have causal semantics attached to it.\nIn the context of causal inference, DAGs consist of nodes, which represent variables, and “directed edges” (a.k.a. arrows), which represent causal dependencies between the variables. A proper DAG will contain only unidirectional arrows and will not contain directed loops (“acyclic”), corresponding to the notion that there can be no instantaneous causal feedback (feedback in general can be represented, but it must proceed in a temporal sequence). You will (very soon) see DAGs that seemingly violate this requirement of directedness by including bi-directional arrows. However, as will soon be explained, bi-directional arrows are only to be understood as a notational shortcut, not as a representation of instantaneous feedback.",
+    "text": "2.1 What is a Causal DAG?\nFirst, a distinction: the Directed Acyclic Graphs (DAGs) discussed here will be specifically causal DAGs which, as the name suggests, convey causal information. In principle, DAGs can also be used to convey non-causal information (e.g. they are sometimes used to specify hierarchical models, which may or may not have causal interpretability), but in the context of this book, a “DAG” can always be understood to have causal semantics attached to it.\nIn the context of causal inference, DAGs consist of nodes, representing variables, and “directed edges” (a.k.a. arrows), representing causal dependencies between the variables. A proper DAG will contain only unidirectional arrows and will not contain directed loops (“acyclic”), corresponding to the notion that there can be no instantaneous causal feedback (feedback in general can be represented, but it must proceed in a temporal sequence). You will (very soon) see DAGs that seemingly violate this requirement of directedness by including bi-directional arrows. However, as will soon be explained, bi-directional arrows are only to be understood as a notational shortcut, not as a representation of instantaneous feedback.",
     "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Pass the vector directly. Knitr will re-read this vector freshly for EVERY chunk.</span>"
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Causal Directed Acyclic Graphs</span>"
     ]
   },
   {
@@ -76,7 +76,7 @@
     "section": "2.2 DAG conventions in this book",
     "text": "2.2 DAG conventions in this book\nOur graphical conventions in this book are intended to be similar to those used in the popular “dagitty” web application (Textor et al. (2016)), but with some modifications to better support readers who are red-green colorblind. The conventions we will use are:\n\nTreatment variables will be underlined (like \\(\\underline{D}\\)) and outcome variables will be overlined (like \\(\\overline{R}\\)).\nThe pathway(s) of causal dependence that we wish to quantify will be shown in blue (whereas in dagitty they show in green).\nBiasing pathways (or unblocked “backdoor paths” to use the technical term that we will discuss later) will be shown in red.\nAdjusted variables (variables that we control for in our analyses) will be depicted with rectangle-shaped nodes.\nCausal dependencies that are neither biasing nor of direct interest will be depicted in gray (or “grey”, if you prefer).\nDashed lines to represent potential causal dependencies of a more speculative nature.\n\nWe illustrate these conventions in comparison to dagitty conventions in the following figures:\n\n\n\nCounfounding DAG\n\n\n\n\n\n\n\n\n\n\n\nIf we then wish to depict the same relationships, but with adjustment for \\(L\\), we will use:",
     "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Pass the vector directly. Knitr will re-read this vector freshly for EVERY chunk.</span>"
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Causal Directed Acyclic Graphs</span>"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "section": "2.3 Examples of DAGs in Drug Development",
     "text": "2.3 Examples of DAGs in Drug Development\n\n2.3.1 Trastuzumab in Gastric Cancer: Conounding due to Cachexia\n\n\n\n\n\n\n\n\n\n\n\n\n\nTextor, Johannes, Benito van der Zander, Mark S Gilthorpe, Maciej Liskiewicz, and George Th Ellison. 2016. “Robust Causal Inference Using Directed Acyclic Graphs: The R Package ’Dagitty’.” Int. J. Epidemiol. 45 (6): 1887–94.",
     "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Pass the vector directly. Knitr will re-read this vector freshly for EVERY chunk.</span>"
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Causal Directed Acyclic Graphs</span>"
     ]
   },
   {

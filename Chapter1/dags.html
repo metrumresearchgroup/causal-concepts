@@ -131,7 +131,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Chapter1/dags.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Pass the vector directly. Knitr will re-read this vector freshly for EVERY chunk.</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Chapter1/dags.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Causal Directed Acyclic Graphs</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -171,7 +171,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapter1/dags.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Pass the vector directly. Knitr will re-read this vector freshly for EVERY chunk.</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Causal Directed Acyclic Graphs</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -199,7 +199,7 @@ window.Quarto = {
   <li><a href="#what-is-a-causal-dag" id="toc-what-is-a-causal-dag" class="nav-link active" data-scroll-target="#what-is-a-causal-dag"><span class="header-section-number">2.1</span> What is a Causal DAG?</a></li>
   <li><a href="#dag-conventions-in-this-book" id="toc-dag-conventions-in-this-book" class="nav-link" data-scroll-target="#dag-conventions-in-this-book"><span class="header-section-number">2.2</span> DAG conventions in this book</a></li>
   <li><a href="#examples-of-dags-in-drug-development" id="toc-examples-of-dags-in-drug-development" class="nav-link" data-scroll-target="#examples-of-dags-in-drug-development"><span class="header-section-number">2.3</span> Examples of DAGs in Drug Development</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#trastuzumab-in-gastric-cancer-conounding-due-to-cachexia" id="toc-trastuzumab-in-gastric-cancer-conounding-due-to-cachexia" class="nav-link" data-scroll-target="#trastuzumab-in-gastric-cancer-conounding-due-to-cachexia"><span class="header-section-number">2.3.1</span> Trastuzumab in Gastric Cancer: Conounding due to Cachexia</a></li>
   </ul></li>
   </ul>
@@ -230,7 +230,7 @@ window.Quarto = {
 <section id="what-is-a-causal-dag" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="what-is-a-causal-dag"><span class="header-section-number">2.1</span> What is a Causal DAG?</h2>
 <p>First, a distinction: the Directed Acyclic Graphs (DAGs) discussed here will be specifically <em>causal</em> DAGs which, as the name suggests, convey causal information. In principle, DAGs can also be used to convey non-causal information (e.g.&nbsp;they are sometimes used to specify hierarchical models, which may or may not have causal interpretability), but in the context of this book, a “DAG” can always be understood to have causal semantics attached to it.</p>
-<p>In the context of causal inference, DAGs consist of nodes, which represent variables, and “directed edges” (a.k.a. arrows), which represent causal dependencies between the variables. A proper DAG will contain only unidirectional arrows and will not contain directed loops (“acyclic”), corresponding to the notion that there can be no instantaneous causal feedback (feedback in general can be represented, but it must proceed in a temporal sequence). You will (very soon) see DAGs that seemingly violate this requirement of directedness by including bi-directional arrows. However, as will soon be explained, bi-directional arrows are only to be understood as a notational shortcut, not as a representation of instantaneous feedback.</p>
+<p>In the context of causal inference, DAGs consist of nodes, representing variables, and “directed edges” (a.k.a. arrows), representing causal dependencies between the variables. A proper DAG will contain only unidirectional arrows and will not contain directed loops (“acyclic”), corresponding to the notion that there can be no instantaneous causal feedback (feedback in general can be represented, but it must proceed in a temporal sequence). You will (very soon) see DAGs that seemingly violate this requirement of directedness by including bi-directional arrows. However, as will soon be explained, bi-directional arrows are only to be understood as a notational shortcut, not as a representation of instantaneous feedback.</p>
 </section>
 <section id="dag-conventions-in-this-book" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="dag-conventions-in-this-book"><span class="header-section-number">2.2</span> DAG conventions in this book</h2>
