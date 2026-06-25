@@ -14,16 +14,19 @@ book:
     - Chapter2/estimands.qmd
     - references.qmd
 
-
-bibliography: references.bib
-
 format:
   html:
+    toc: true
+    toc-depth: 4
     theme:
       - cosmo
       - brand
 #  pdf:
 #    documentclass: scrreprt
+
+bibliography: references.bib
+
+
 
 
 
