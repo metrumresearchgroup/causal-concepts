@@ -20,7 +20,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -122,7 +142,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapter1/dags.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Causal Directed Acyclic Graphs</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Pass the vector directly. Knitr will re-read this vector freshly for EVERY chunk.</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -142,8 +162,16 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#why-causal-inference" id="toc-why-causal-inference" class="nav-link active" data-scroll-target="#why-causal-inference"><span class="header-section-number">1.1</span> Why Causal Inference?</a></li>
+  <li><a href="#motivating-example-the-toga-and-heloise-trials" id="toc-motivating-example-the-toga-and-heloise-trials" class="nav-link" data-scroll-target="#motivating-example-the-toga-and-heloise-trials"><span class="header-section-number">1.2</span> Motivating Example: The TOGA and HELOISE Trials</a></li>
+  <li><a href="#what-causal-inference-doesnt-do" id="toc-what-causal-inference-doesnt-do" class="nav-link" data-scroll-target="#what-causal-inference-doesnt-do"><span class="header-section-number">1.3</span> What Causal Inference Doesn’t Do</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -167,22 +195,36 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Background of this initiative and goals of this book</p>
-<p>Causal inference as a conceptual framework to aid in elicitation and interpretation.</p>
+<section id="why-causal-inference" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="why-causal-inference"><span class="header-section-number">1.1</span> Why Causal Inference?</h2>
+<p>Sound causal reasoning is essential to pharmacometrics (<span class="citation" data-cites="Rogers2023-kh">Rogers, Maas, and Pitarch (<a href="../references.html#ref-Rogers2023-kh" role="doc-biblioref">2023</a>)</span>). A motivating premise of this book is that pharmacometricians will be better able to engage in causal reasoning with stochastic data if they are able to avail themselves of the formal vocabulary, notation, and concepts of formal causal inference. While this book may introduce the reader to some new analytic techniques, our emphasis will be on causal concepts as an aid to elicitation and interpretation, as suggested in the figure below.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="fig/img1-qsvoyage.png" class="img-fluid figure-img" style="width:80.0%"></p>
 <figcaption>The quantitative science journey</figcaption>
 </figure>
 </div>
+<p>Our perspective is that causal reasoning is especially important in pharmacometrics because it is often the case that pharmacometric questions must be addressed without the benefit of a dedicated randomized trial. As such, our goal is often not to provide the gold standard evidence that would result from a randomized trial, but rather to foster high-quality decision making with whatever data is available at the time the decision needs to be made, as suggested in the following figure.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="fig/img2-goldmedal.png" class="img-fluid figure-img" style="width:80.0%"></p>
 <figcaption>Fighting for a close second place</figcaption>
 </figure>
 </div>
+</section>
+<section id="motivating-example-the-toga-and-heloise-trials" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="motivating-example-the-toga-and-heloise-trials"><span class="header-section-number">1.2</span> Motivating Example: The TOGA and HELOISE Trials</h2>
+</section>
+<section id="what-causal-inference-doesnt-do" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="what-causal-inference-doesnt-do"><span class="header-section-number">1.3</span> What Causal Inference Doesn’t Do</h2>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-Rogers2023-kh" class="csl-entry" role="listitem">
+Rogers, James A, Hugo Maas, and Alejandro Pérez Pitarch. 2023. <span>“An Introduction to Causal Inference for Pharmacometricians.”</span> <em>CPT Pharmacometrics Syst Pharmacol</em> 12 (1): 27–40.
+</div>
+</div>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -591,8 +633,8 @@ ul.task-list li input[type="checkbox"] {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../Chapter1/dags.html" class="pagination-link" aria-label="Causal Directed Acyclic Graphs">
-        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Causal Directed Acyclic Graphs</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../Chapter1/dags.html" class="pagination-link" aria-label="Pass the vector directly. Knitr will re-read this vector freshly for EVERY chunk.">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Pass the vector directly. Knitr will re-read this vector freshly for EVERY chunk.</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

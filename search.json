@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Causal Concepts for Pharmacometricians",
     "section": "",
-    "text": "Preface\nIntroduction to causal inference concepts for pharmacometricians.\nThis material has been jointly developed by MetrumRG and Genentech / Roche.",
+    "text": "Preface\nThis material has been jointly developed by MetrumRG and Genentech / Roche.",
     "crumbs": [
       "Preface"
     ]
@@ -24,7 +24,37 @@
     "href": "Chapter0/intro.html",
     "title": "1  Introduction",
     "section": "",
-    "text": "Background of this initiative and goals of this book\nCausal inference as a conceptual framework to aid in elicitation and interpretation.\n\n\n\nThe quantitative science journey\n\n\n\n\n\nFighting for a close second place",
+    "text": "1.1 Why Causal Inference?\nSound causal reasoning is essential to pharmacometrics (Rogers, Maas, and Pitarch (2023)). A motivating premise of this book is that pharmacometricians will be better able to engage in causal reasoning with stochastic data if they are able to avail themselves of the formal vocabulary, notation, and concepts of formal causal inference. While this book may introduce the reader to some new analytic techniques, our emphasis will be on causal concepts as an aid to elicitation and interpretation, as suggested in the figure below.\nOur perspective is that causal reasoning is especially important in pharmacometrics because it is often the case that pharmacometric questions must be addressed without the benefit of a dedicated randomized trial. As such, our goal is often not to provide the gold standard evidence that would result from a randomized trial, but rather to foster high-quality decision making with whatever data is available at the time the decision needs to be made, as suggested in the following figure.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "Chapter0/intro.html#why-causal-inference",
+    "href": "Chapter0/intro.html#why-causal-inference",
+    "title": "1  Introduction",
+    "section": "",
+    "text": "The quantitative science journey\n\n\n\n\n\n\nFighting for a close second place",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "Chapter0/intro.html#motivating-example-the-toga-and-heloise-trials",
+    "href": "Chapter0/intro.html#motivating-example-the-toga-and-heloise-trials",
+    "title": "1  Introduction",
+    "section": "1.2 Motivating Example: The TOGA and HELOISE Trials",
+    "text": "1.2 Motivating Example: The TOGA and HELOISE Trials",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "Chapter0/intro.html#what-causal-inference-doesnt-do",
+    "href": "Chapter0/intro.html#what-causal-inference-doesnt-do",
+    "title": "1  Introduction",
+    "section": "1.3 What Causal Inference Doesn’t Do",
+    "text": "1.3 What Causal Inference Doesn’t Do\n\n\n\n\nRogers, James A, Hugo Maas, and Alejandro Pérez Pitarch. 2023. “An Introduction to Causal Inference for Pharmacometricians.” CPT Pharmacometrics Syst Pharmacol 12 (1): 27–40.",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
     ]
@@ -34,9 +64,29 @@
     "href": "Chapter1/dags.html",
     "title": "2  Causal Directed Acyclic Graphs",
     "section": "",
-    "text": "Counfounding DAG\n\n\n\n    \\begin{tikzpicture}[-&gt;,&gt;=Stealth]\n    \\node[] (D) at (0,0) {$\\underline{D}$};\n    \\node[] (L) at (2.5,1) {$L$};\n    \\node[] (R) at (5,0) {$\\overline{R}$};\n    \n      \\path \n        (D)  edge  [very thick, color=blue]  (R)  \n        (L)  edge  [very thick, color=red, dashed]  (D)         \n        (L)  edge  [very thick, color=red, dashed]  (R)         \n        ;\n    \\end{tikzpicture}\n\n\n\n\n\n\n\n\n\n    \\begin{tikzpicture}[-&gt;,&gt;=Stealth]\n    \\node[] (D) at (0,0) {$D$};\n    \\node[draw] (L) at (2.5,1) {$L$};\n    \\node[] (R) at (5,0) {$R$};\n    \n      \\path \n        (D)  edge  [very thick, color=blue]  (R)  \n        (L)  edge  [very thick, dashed]  (D)            \n        (L)  edge  [very thick, dashed]  (R)            \n        ;\n    \\end{tikzpicture}",
+    "text": "2.1 What is a Causal DAG?\nFirst, a distinction: the Directed Acyclic Graphs (DAGs) discussed here will be specifically causal DAGs which, as the name suggests, convey causal information. In principle, DAGs can also be used to convey non-causal information (e.g. they are sometimes used to specify hierarchical models, which may or may not have causal interpretability), but in the context of this book, a “DAG” can always be understood to have causal semantics attached to it.\nIn the context of causal inference, DAGs consist of nodes, which represent variables, and “directed edges” (a.k.a. arrows), which represent causal dependencies between the variables. A proper DAG will contain only unidirectional arrows and will not contain directed loops (“acyclic”), corresponding to the notion that there can be no instantaneous causal feedback (feedback in general can be represented, but it must proceed in a temporal sequence). You will (very soon) see DAGs that seemingly violate this requirement of directedness by including bi-directional arrows. However, as will soon be explained, bi-directional arrows are only to be understood as a notational shortcut, not as a representation of instantaneous feedback.",
     "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Causal Directed Acyclic Graphs</span>"
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Pass the vector directly. Knitr will re-read this vector freshly for EVERY chunk.</span>"
+    ]
+  },
+  {
+    "objectID": "Chapter1/dags.html#dag-conventions-in-this-book",
+    "href": "Chapter1/dags.html#dag-conventions-in-this-book",
+    "title": "2  Causal Directed Acyclic Graphs",
+    "section": "2.2 DAG conventions in this book",
+    "text": "2.2 DAG conventions in this book\nOur graphical conventions in this book are intended to be similar to those used in the popular “dagitty” web application (Textor et al. (2016)), but with some modifications to better support readers who are red-green colorblind. The conventions we will use are:\n\nTreatment variables will be underlined (like \\(\\underline{D}\\)) and outcome variables will be overlined (like \\(\\overline{R}\\)).\nThe pathway(s) of causal dependence that we wish to quantify will be shown in blue (whereas in dagitty they show in green).\nBiasing pathways (or unblocked “backdoor paths” to use the technical term that we will discuss later) will be shown in red.\nAdjusted variables (variables that we control for in our analyses) will be depicted with rectangle-shaped nodes.\nCausal dependencies that are neither biasing nor of direct interest will be depicted in gray (or “grey”, if you prefer).\nDashed lines to represent potential causal dependencies of a more speculative nature.\n\nWe illustrate these conventions in comparison to dagitty conventions in the following figures:\n\n\n\nCounfounding DAG\n\n\n\n\n\n\n\n\n\n\n\nIf we then wish to depict the same relationships, but with adjustment for \\(L\\), we will use:",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Pass the vector directly. Knitr will re-read this vector freshly for EVERY chunk.</span>"
+    ]
+  },
+  {
+    "objectID": "Chapter1/dags.html#examples-of-dags-in-drug-development",
+    "href": "Chapter1/dags.html#examples-of-dags-in-drug-development",
+    "title": "2  Causal Directed Acyclic Graphs",
+    "section": "2.3 Examples of DAGs in Drug Development",
+    "text": "2.3 Examples of DAGs in Drug Development\n\n2.3.1 Trastuzumab in Gastric Cancer: Conounding due to Cachexia\n\n\n\n\n\n\n\n\n\n\n\n\n\nTextor, Johannes, Benito van der Zander, Mark S Gilthorpe, Maciej Liskiewicz, and George Th Ellison. 2016. “Robust Causal Inference Using Directed Acyclic Graphs: The R Package ’Dagitty’.” Int. J. Epidemiol. 45 (6): 1887–94.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Pass the vector directly. Knitr will re-read this vector freshly for EVERY chunk.</span>"
     ]
   },
   {
@@ -47,6 +97,16 @@
     "text": "Now let’s think about intercurrent events.",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Estimands</span>"
+    ]
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "References",
+    "section": "",
+    "text": "Rogers, James A, Hugo Maas, and Alejandro Pérez Pitarch. 2023. “An\nIntroduction to Causal Inference for Pharmacometricians.” CPT\nPharmacometrics Syst Pharmacol 12 (1): 27–40.\n\n\nTextor, Johannes, Benito van der Zander, Mark S Gilthorpe, Maciej\nLiskiewicz, and George Th Ellison. 2016. “Robust Causal Inference\nUsing Directed Acyclic Graphs: The R Package\n’Dagitty’.” Int. J. Epidemiol. 45 (6): 1887–94.",
+    "crumbs": [
+      "References"
     ]
   }
 ]

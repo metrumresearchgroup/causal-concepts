@@ -20,42 +20,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
 }
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
 }
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
 }
-</style>
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -105,6 +90,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -117,7 +131,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Chapter1/dags.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Causal Directed Acyclic Graphs</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Chapter1/dags.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Pass the vector directly. Knitr will re-read this vector freshly for EVERY chunk.</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -157,7 +171,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapter1/dags.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Causal Directed Acyclic Graphs</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Pass the vector directly. Knitr will re-read this vector freshly for EVERY chunk.</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -177,8 +191,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#what-is-a-causal-dag" id="toc-what-is-a-causal-dag" class="nav-link active" data-scroll-target="#what-is-a-causal-dag"><span class="header-section-number">2.1</span> What is a Causal DAG?</a></li>
+  <li><a href="#dag-conventions-in-this-book" id="toc-dag-conventions-in-this-book" class="nav-link" data-scroll-target="#dag-conventions-in-this-book"><span class="header-section-number">2.2</span> DAG conventions in this book</a></li>
+  <li><a href="#examples-of-dags-in-drug-development" id="toc-examples-of-dags-in-drug-development" class="nav-link" data-scroll-target="#examples-of-dags-in-drug-development"><span class="header-section-number">2.3</span> Examples of DAGs in Drug Development</a>
+  <ul class="collapse">
+  <li><a href="#trastuzumab-in-gastric-cancer-conounding-due-to-cachexia" id="toc-trastuzumab-in-gastric-cancer-conounding-due-to-cachexia" class="nav-link" data-scroll-target="#trastuzumab-in-gastric-cancer-conounding-due-to-cachexia"><span class="header-section-number">2.3.1</span> Trastuzumab in Gastric Cancer: Conounding due to Cachexia</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -202,6 +227,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<section id="what-is-a-causal-dag" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="what-is-a-causal-dag"><span class="header-section-number">2.1</span> What is a Causal DAG?</h2>
+<p>First, a distinction: the Directed Acyclic Graphs (DAGs) discussed here will be specifically <em>causal</em> DAGs which, as the name suggests, convey causal information. In principle, DAGs can also be used to convey non-causal information (e.g.&nbsp;they are sometimes used to specify hierarchical models, which may or may not have causal interpretability), but in the context of this book, a “DAG” can always be understood to have causal semantics attached to it.</p>
+<p>In the context of causal inference, DAGs consist of nodes, which represent variables, and “directed edges” (a.k.a. arrows), which represent causal dependencies between the variables. A proper DAG will contain only unidirectional arrows and will not contain directed loops (“acyclic”), corresponding to the notion that there can be no instantaneous causal feedback (feedback in general can be represented, but it must proceed in a temporal sequence). You will (very soon) see DAGs that seemingly violate this requirement of directedness by including bi-directional arrows. However, as will soon be explained, bi-directional arrows are only to be understood as a notational shortcut, not as a representation of instantaneous feedback.</p>
+</section>
+<section id="dag-conventions-in-this-book" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="dag-conventions-in-this-book"><span class="header-section-number">2.2</span> DAG conventions in this book</h2>
+<p>Our graphical conventions in this book are intended to be similar to those used in the popular “dagitty” web application (<span class="citation" data-cites="Textor2016-sb">Textor et al. (<a href="../references.html#ref-Textor2016-sb" role="doc-biblioref">2016</a>)</span>), but with some modifications to better support readers who are red-green colorblind. The conventions we will use are:</p>
+<ul>
+<li>Treatment variables will be underlined (like <span class="math inline">\(\underline{D}\)</span>) and outcome variables will be overlined (like <span class="math inline">\(\overline{R}\)</span>).</li>
+<li>The pathway(s) of causal dependence that we wish to quantify will be shown in blue (whereas in dagitty they show in green).</li>
+<li>Biasing pathways (or unblocked “backdoor paths” to use the technical term that we will discuss later) will be shown in red.</li>
+<li>Adjusted variables (variables that we control for in our analyses) will be depicted with rectangle-shaped nodes.</li>
+<li>Causal dependencies that are neither biasing nor of direct interest will be depicted in gray (or “grey”, if you prefer).</li>
+<li>Dashed lines to represent potential causal dependencies of a more speculative nature.</li>
+</ul>
+<p>We illustrate these conventions in comparison to dagitty conventions in the following figures:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="fig/img1-confounding.png" class="img-fluid figure-img" style="width:80.0%"></p>
@@ -209,17 +251,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode tex code-with-copy"><code class="sourceCode latex"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>    <span class="kw">\begin</span>{<span class="ex">tikzpicture</span>}[-&gt;,&gt;=Stealth]</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">\node</span>[] (D) at (0,0) {<span class="ss">$</span><span class="sc">\underline</span><span class="ss">{D}$</span>};</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">\node</span>[] (L) at (2.5,1) {<span class="ss">$L$</span>};</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">\node</span>[] (R) at (5,0) {<span class="ss">$</span><span class="sc">\overline</span><span class="ss">{R}$</span>};</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">\path</span> </span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        (D)  edge  [very thick, color=blue]  (R)  </span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        (L)  edge  [very thick, color=red, dashed]  (D)         </span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        (L)  edge  [very thick, color=red, dashed]  (R)         </span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        ;</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">\end</span>{<span class="ex">tikzpicture</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -228,18 +259,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<p>If we then wish to depict the same relationships, but with adjustment for <span class="math inline">\(L\)</span>, we will use:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode tex code-with-copy"><code class="sourceCode latex"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>    <span class="kw">\begin</span>{<span class="ex">tikzpicture</span>}[-&gt;,&gt;=Stealth]</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">\node</span>[] (D) at (0,0) {<span class="ss">$D$</span>};</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">\node</span>[draw] (L) at (2.5,1) {<span class="ss">$L$</span>};</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">\node</span>[] (R) at (5,0) {<span class="ss">$R$</span>};</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">\path</span> </span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        (D)  edge  [very thick, color=blue]  (R)  </span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        (L)  edge  [very thick, dashed]  (D)            </span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        (L)  edge  [very thick, dashed]  (R)            </span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        ;</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">\end</span>{<span class="ex">tikzpicture</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -248,8 +269,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+</section>
+<section id="examples-of-dags-in-drug-development" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="examples-of-dags-in-drug-development"><span class="header-section-number">2.3</span> Examples of DAGs in Drug Development</h2>
+<section id="trastuzumab-in-gastric-cancer-conounding-due-to-cachexia" class="level3" data-number="2.3.1">
+<h3 data-number="2.3.1" class="anchored" data-anchor-id="trastuzumab-in-gastric-cancer-conounding-due-to-cachexia"><span class="header-section-number">2.3.1</span> Trastuzumab in Gastric Cancer: Conounding due to Cachexia</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="dags_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-Textor2016-sb" class="csl-entry" role="listitem">
+Textor, Johannes, Benito van der Zander, Mark S Gilthorpe, Maciej Liskiewicz, and George Th Ellison. 2016. <span>“Robust Causal Inference Using Directed Acyclic Graphs: The <span>R</span> Package ’Dagitty’.”</span> <em>Int. J. Epidemiol.</em> 45 (6): 1887–94.
+</div>
+</div>
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
