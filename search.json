@@ -4,7 +4,17 @@
     "href": "index.html",
     "title": "Causal Concepts for Pharmacometricians",
     "section": "",
-    "text": "Preface\nThis material has been jointly developed by MetrumRG and Genentech / Roche.",
+    "text": "Preface\nThis material is been jointly developed by MetrumRG and Genentech / Roche.",
+    "crumbs": [
+      "Preface"
+    ]
+  },
+  {
+    "objectID": "index.html#this-is-work-in-progress",
+    "href": "index.html#this-is-work-in-progress",
+    "title": "Causal Concepts for Pharmacometricians",
+    "section": "THIS IS WORK IN PROGRESS",
+    "text": "THIS IS WORK IN PROGRESS",
     "crumbs": [
       "Preface"
     ]
@@ -24,7 +34,7 @@
     "href": "Chapter0/intro.html",
     "title": "1  Introduction",
     "section": "",
-    "text": "1.1 Why Causal Inference?\nSound causal reasoning is essential to pharmacometrics (Rogers, Maas, and Pitarch (2023)). A motivating premise of this book is that pharmacometricians will be better able to engage in causal reasoning with stochastic data if they are able to avail themselves of the formal vocabulary, notation, and concepts of formal causal inference. While this book may introduce the reader to some new analytic techniques, our emphasis will be on causal concepts as an aid to elicitation and interpretation, as suggested in the figure below.\nOur perspective is that causal reasoning is especially important in pharmacometrics because it is often the case that pharmacometric questions must be addressed without the benefit of a dedicated randomized trial. As such, our goal is often not to provide the gold standard evidence that would result from a randomized trial, but rather to foster high-quality decision making with whatever data is available at the time the decision needs to be made, as suggested in the following figure.",
+    "text": "1.1 Why Causal Inference?\nSound causal reasoning is essential to pharmacometrics (Rogers, Maas, and Pitarch (2023)). A motivating premise of this book is that pharmacometricians will be better able to engage in causal reasoning with stochastic data if they are able to avail themselves of the formal vocabulary, notation, and concepts of formal causal inference. While this book may introduce the reader to some new analytic techniques, our emphasis will be on causal concepts as an aid to elicitation and interpretation, as suggested in the figure below.\nOur perspective is that causal reasoning is especially important in pharmacometrics because it is often the case that pharmacometric questions must be addressed without the benefit of a dedicated randomized trial. As such, our goal is often not to provide the gold standard evidence that would result from a randomized trial, but rather to foster high-quality decision making when the ideal data is not available at the time the decision needs to be made, as suggested in the following figure.",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
     ]
@@ -94,7 +104,17 @@
     "href": "Chapter2/estimands.html",
     "title": "3  Estimands",
     "section": "",
-    "text": "Now let’s think about intercurrent events.",
+    "text": "3.1 Estimand Concepts from ICH E9 (R1)",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Estimands</span>"
+    ]
+  },
+  {
+    "objectID": "Chapter2/estimands.html#mathematical-representation-of-estimands",
+    "href": "Chapter2/estimands.html#mathematical-representation-of-estimands",
+    "title": "3  Estimands",
+    "section": "3.2 Mathematical Representation of Estimands",
+    "text": "3.2 Mathematical Representation of Estimands\nIn order to express estimands mathematically, we need a notational system that distinguishes between what will happen if we let nature take its course, and what would happen if we were to intervene. For the second set of concepts, we will use potential outcome notation. The following exploration in R, adapted from the supplemental material of Rogers, Maas, and Pitarch (2023), is intended to develop intuitions about the differences between conditional distributions of observable quantities on the one hand, and potential outcome distributions on the other.\nThe fundamental problem of causal inference is that, when it comes to intervening on a single subject or experimental unit, we can only try one thing at a time. This constraint is summarized poetically in the words that Plato attributes to Heraclitus: “… all things move and nothing remains still … you cannot step twice into the same stream.” We can of course return to the same subject, or the same experimental unit, to evaluate a different intervention, but the experimental conditions will never quite be the same. For this reason, the potential outcome distributions associated with any real-world process will only ever be partially observable. In the R-based exploration that follows, we are able to free ourselves from this constraint by working with simulated data. In simulation world, we know all the “what-ifs” that we can’t directly observe in the real world.\nFor simplicity at the outset, we will consider a scenario with just two levels of treatment, referred to as “control” and “active” and indexed by 0 and 1, and two possible outcomes, corresponding to failure and success, also denoted with 0 and 1. We will simulate 4000 subjects. This number is sufficiently large to make the statistical imprecision in our estimates negligible in comparison to the treatment effect, so that – for didactic purposes – we can focus exclusively on issues of bias. For each simulated subject, we will set the value of the potential outcome \\(Y^0\\) (represented in our simulated dataset as Y0 ), corresponding to the outcome that would occur if the given subject receives the control treatment, and the potential outcome \\(Y^1\\) (represented in our simulated dataset as Y1), corresponding to the outcome that would occur if the given subject receives the active treatment.\n\npotential_outcomes &lt;- tibble(\nSUBJID = 1:4000,\nY0 = c(rep(1, 1000), rep(0, 1000), rep(1, 500), rep(0, 1500)),\nY1 = c(rep(1, 1000), rep(0, 1000), rep(0, 500), rep(1, 1500))\n)\npotential_outcomes %&gt;%\ngroup_by(Y0, Y1) %&gt;%\nsummarise(NSUBJ = n(), .groups = \"drop\")\n\n# A tibble: 4 × 3\n     Y0    Y1 NSUBJ\n  &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;\n1     0     0  1000\n2     0     1  1500\n3     1     0   500\n4     1     1  1000\n\n\n\npotential_outcomes &lt;- potential_outcomes %&gt;%\nmutate(p_ecog_1 = case_when(Y0 + Y1 == 0 ~ 0.75,\nY0 + Y1 == 1 ~ 0.5,\nY0 + Y1 == 2 ~ 0.25),\nECOG = rbinom(n(), 1, p_ecog_1),\nNEUTROPHILS = exp(rnorm(n(), 0, 0.5))\n) %&gt;%\nselect(-p_ecog_1)\n\n\nobs_study &lt;- potential_outcomes %&gt;%\nmutate(\np_novel = case_when(ECOG == 0 ~ 0.2,\nECOG == 1 ~ 0.8),\nA_NAT = rbinom(n(), 1, p_novel),\nTRT = A_NAT,\nYOBS = if_else(TRT == 0, Y0, Y1)\n) %&gt;%\nselect(-p_novel)\nobs_study %&gt;% slice_sample(n=10)\n\n# A tibble: 10 × 8\n   SUBJID    Y0    Y1  ECOG NEUTROPHILS A_NAT   TRT  YOBS\n    &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;       &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt;\n 1   1295     0     0     1       0.786     1     1     0\n 2    747     1     1     0       1.69      1     1     1\n 3   3328     0     1     1       1.25      0     0     0\n 4   2110     1     0     0       1.18      0     0     1\n 5    294     1     1     0       0.695     0     0     1\n 6   3761     0     1     1       0.799     1     1     1\n 7   1037     0     0     1       0.930     0     0     0\n 8   3185     0     1     0       0.921     0     0     0\n 9   1159     0     0     1       1.01      1     1     0\n10    722     1     1     0       0.595     1     1     1\n\n\nNow that we have a treatment variable and an observed outcome variable, we can investigate the differences between conditional distributions of observed values and potential outcome distributions. This is the mean of \\(Y^0\\), a.k.a. \\(P(Y^{a=0}=1)\\):\n\nobs_study %&gt;% pull(Y0) %&gt;% mean()\n\n[1] 0.375\n\n\nAnd this is the mean of \\(Y | A = 0\\), a.k.a. \\(P(Y = 1 | A = 0)\\):\n\nobs_study %&gt;% filter(A_NAT == 0) %&gt;% pull(YOBS) %&gt;% mean()\n\n[1] 0.4561919\n\n\nCorrespondingly, we can also consider the true (causal) average treatment effect, the “ATE”:\n\nobs_study %&gt;% mutate(TE = Y1 - Y0) %&gt;% pull(TE) %&gt;% mean()\n\n[1] 0.25\n\n\nAnd we can compare that to the difference in the observed means:\n\nobs_study %&gt;% mutate(TE = Y1 - Y0) %&gt;% pull(TE) %&gt;% mean()\n\n[1] 0.25\n\n\n\nobs_study %&gt;% \n  group_by(A_NAT) %&gt;% \n  summarise(Ybar = mean(YOBS), .groups = \"drop\") %&gt;% \n  pull(Ybar) %&gt;% \n  diff()\n\n[1] 0.09056336\n\n\nWe can see that in this case, a naïve analysis would result in a substantial underestimate of the treatment effect. Right?\n\n\n\n\nRogers, James A, Hugo Maas, and Alejandro Pérez Pitarch. 2023. “An Introduction to Causal Inference for Pharmacometricians.” CPT Pharmacometrics Syst Pharmacol 12 (1): 27–40.",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Estimands</span>"
     ]
