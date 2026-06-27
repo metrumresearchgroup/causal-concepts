@@ -84,7 +84,7 @@
     "href": "Chapter1/dags.html#examples-of-dags-in-drug-development",
     "title": "2  Causal Directed Acyclic Graphs",
     "section": "2.3 Examples of DAGs in Drug Development",
-    "text": "2.3 Examples of DAGs in Drug Development\n\n2.3.1 Trastuzumab in Gastric Cancer: Conounding due to Cachexia\n\n\n\n\n\n\n\n\n\n\n\n\n\nTextor, Johannes, Benito van der Zander, Mark S Gilthorpe, Maciej Liskiewicz, and George Th Ellison. 2016. “Robust Causal Inference Using Directed Acyclic Graphs: The R Package ’Dagitty’.” Int. J. Epidemiol. 45 (6): 1887–94.",
+    "text": "2.3 Examples of DAGs in Drug Development\n\n2.3.1 Trastuzumab in Gastric Cancer: Conounding due to Cachexia\n\n\n\n\n\n\n\n\n\ntest\n\n\n\n\nTextor, Johannes, Benito van der Zander, Mark S Gilthorpe, Maciej Liskiewicz, and George Th Ellison. 2016. “Robust Causal Inference Using Directed Acyclic Graphs: The R Package ’Dagitty’.” Int. J. Epidemiol. 45 (6): 1887–94.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Causal Directed Acyclic Graphs</span>"
     ]
