@@ -310,16 +310,16 @@ window.Quarto = {
 <pre><code># A tibble: 10 × 8
    SUBJID    Y0    Y1  ECOG NEUTROPHILS A_NAT   TRT  YOBS
     &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;       &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
- 1   1295     0     0     1       0.786     1     1     0
- 2    747     1     1     0       1.69      1     1     1
- 3   3328     0     1     1       1.25      0     0     0
- 4   2110     1     0     0       1.18      0     0     1
- 5    294     1     1     0       0.695     0     0     1
- 6   3761     0     1     1       0.799     1     1     1
- 7   1037     0     0     1       0.930     0     0     0
- 8   3185     0     1     0       0.921     0     0     0
- 9   1159     0     0     1       1.01      1     1     0
-10    722     1     1     0       0.595     1     1     1</code></pre>
+ 1    293     1     1     0       0.694     1     1     1
+ 2    263     1     1     1       2.08      1     1     1
+ 3   2784     0     1     1       1.35      1     1     1
+ 4   3194     0     1     1       0.804     1     1     1
+ 5   2152     1     0     0       1.01      0     0     1
+ 6   2343     1     0     1       0.420     1     1     0
+ 7   3477     0     1     1       0.763     1     1     1
+ 8   1717     0     0     0       3.26      0     0     0
+ 9   3271     0     1     0       0.663     0     0     0
+10   3338     0     1     0       0.686     0     0     0</code></pre>
 </div>
 </div>
 <p>Now that we have a treatment variable and an observed outcome variable, we can investigate the differences between conditional distributions of observed values and potential outcome distributions. This is the mean of <span class="math inline">\(Y^0\)</span>, a.k.a. <span class="math inline">\(P(Y^{a=0}=1)\)</span>:</p>
@@ -333,7 +333,7 @@ window.Quarto = {
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>obs_study <span class="sc">%&gt;%</span> <span class="fu">filter</span>(A_NAT <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(YOBS) <span class="sc">%&gt;%</span> <span class="fu">mean</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.4561919</code></pre>
+<pre><code>[1] 0.4416094</code></pre>
 </div>
 </div>
 <p>Correspondingly, we can also consider the true (causal) average treatment effect, the “ATE”:</p>
@@ -357,7 +357,7 @@ window.Quarto = {
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(Ybar) <span class="sc">%&gt;%</span> </span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">diff</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.09056336</code></pre>
+<pre><code>[1] 0.1180236</code></pre>
 </div>
 </div>
 <p>We can see that in this case, a naïve analysis would result in a substantial underestimate of the treatment effect. Right?</p>
