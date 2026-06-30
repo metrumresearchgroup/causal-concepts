@@ -233,6 +233,7 @@ window.Quarto = {
   <ul>
   <li><a href="#estimand-concepts-from-ich-e9-r1" id="toc-estimand-concepts-from-ich-e9-r1" class="nav-link active" data-scroll-target="#estimand-concepts-from-ich-e9-r1"><span class="header-section-number">3.1</span> Estimand Concepts from ICH E9 (R1)</a></li>
   <li><a href="#mathematical-representation-of-estimands" id="toc-mathematical-representation-of-estimands" class="nav-link" data-scroll-target="#mathematical-representation-of-estimands"><span class="header-section-number">3.2</span> Mathematical Representation of Estimands</a></li>
+  <li><a href="#dose-exposure-response-estimands" id="toc-dose-exposure-response-estimands" class="nav-link" data-scroll-target="#dose-exposure-response-estimands"><span class="header-section-number">3.3</span> Dose-exposure-response Estimands</a></li>
   </ul>
 </nav>
     </div>
@@ -368,7 +369,8 @@ window.Quarto = {
 </div>
 <p>We can see that in this case, a naïve analysis would result in a substantial underestimate of the treatment effect. This is because the expected value of our estimate is not equal to the causal quantity of interest:</p>
 <p><span class="math display">\[  E[ Y(A=1) - Y(A=0) ] \neq E[Y | A= 1] - E[Y | A = 0] \]</span></p>
-<p>We can also consider several <em>conditional</em> average treatment effects or “CATEs”. For example, here are the CATEs, conditional on baseline ECOG:</p>
+<p>We can also consider several <em>conditional</em> average treatment effects or “CATEs”. For example, the CATEs conditional on baseline ECOG can be expressed mathematically as:</p>
+<p><span class="math display">\[ E[ Y(A=1) - Y(A=0) \,|\, \mathit{ECOG}=0] \,\, \mbox{ and } \,\,E[ Y(A=1) - Y(A=0) \,|\, \mathit{ECOG}=1] \]</span> <span class="math display">\[ E[ Y(\mathit{Dose}=1) - Y(\mathit{Dose=0}) \,|\, \mathit{ECOG}=0] \,\, \mbox{ and } \,\,E[ Y(A=1) - Y(A=0) \,|\, \mathit{ECOG}=1] \]</span></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>obs_study <span class="sc">%&gt;%</span> </span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ITE =</span> Y1 <span class="sc">-</span> Y0) <span class="sc">%&gt;%</span> </span>
@@ -398,9 +400,31 @@ window.Quarto = {
 </div>
 </div>
 <p>A number of the other variants of causal effects are simply special cases of conditional average treatment effects. For example, the average treatment effect in the treated (“ATT”) is simply the CATE that results from conditioning on being treated.</p>
+</section>
+<section id="dose-exposure-response-estimands" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="dose-exposure-response-estimands"><span class="header-section-number">3.3</span> Dose-exposure-response Estimands</h2>
+<p>A typical development program proceeds by selecting doses primarily based on Phase 2 data, and then confirming the efficacy and safety at the given dose(s) in Phase 3. Whereas hypothetical questions may appropriately play a greater role in earlier stages of development, the late development context gives increasing consideration to directly pragmatic questions about use, “in the wild”. (For example, in early development, the question, “What would have been the efficacy if adherence to the prescribed dosing regimen had been better?” will be relevant if it is possible to achieve better adherence with, e.g., changes in formulation or route of administration or dosing frequency; such hypotheticals become less relevant in later development when the goal confirm that a particular posology achieves acceptable benefit risk. <span class="citation" data-cites="Bartels2025-jq">Bartels et al. (<a href="../references.html#ref-Bartels2025-jq" role="doc-biblioref">2025</a>)</span> examines a hypothetical estimand of this nature.) Late development is therefore a context where treatment policy estimands have special relevance <span class="citation" data-cites="Fleming2025-gm">Fleming et al. (<a href="../references.html#ref-Fleming2025-gm" role="doc-biblioref">2025</a>)</span>. Several examples of such estimands for the purpose of dose selection and dose justification in the late development context were considered in <span class="citation" data-cites="Bartels2026-eh">Bartels et al. (<a href="../references.html#ref-Bartels2026-eh" role="doc-biblioref">2026</a>)</span>. We now review these scenarios.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="estimands_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-Bartels2025-jq" class="csl-entry" role="listitem">
+Bartels, Christian, Martina Scauda, Neva Coello, Thomas Dumortier, Björn Bornkamp, and Giusi Moffa. 2025. <span>“Nonlinear Mixed-Effects Modeling as a Method for Causal Inference to Predict Exposures Under Desired Within-Subject Dose Titration Schemes.”</span> <em>CPT Pharmacometrics Syst. Pharmacol.</em> 14 (1): 68–81.
+</div>
+<div id="ref-Bartels2026-eh" class="csl-entry" role="listitem">
+Bartels, Christian, Yuchen Wang, Jonathan French, and James Rogers. 2026. <span>“Some Common Dose-Exposure-Response Estimands and Conditions for Their Causal Identifiability.”</span> <em>CPT Pharmacometrics Syst. Pharmacol.</em> 15 (2): e70202.
+</div>
+<div id="ref-Fleming2025-gm" class="csl-entry" role="listitem">
+Fleming, Thomas R, Kevin J Carroll, Janet T Wittes, Scott S Emerson, Mark D Rothmann, Sylva Collins, and Gregory Levin. 2025. <span>“A Perspective on the Appropriate Implementation of <span>ICH</span> <span>E9</span>(<span>R1</span>) Addendum Strategies for Handling Intercurrent Events.”</span> <em>Stat. Med.</em> 44 (10-12): e70104.
+</div>
 <div id="ref-Rogers2023-kh" class="csl-entry" role="listitem">
 Rogers, James A, Hugo Maas, and Alejandro Pérez Pitarch. 2023. <span>“An Introduction to Causal Inference for Pharmacometricians.”</span> <em>CPT Pharmacometrics Syst Pharmacol</em> 12 (1): 27–40.
 </div>
