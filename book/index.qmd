@@ -1,6 +1,8 @@
 # Preface {.unnumbered}
 
-This material has been jointly developed by MetrumRG and Genentech / Roche.
+This material is been jointly developed by MetrumRG and Genentech / Roche.
+
+## THIS IS WORK IN PROGRESS
 
 ## License
 This repository is licensed under the Creative Commons Attribution–NonCommercial 4.0 International (CC BY-NC 4.0) license.

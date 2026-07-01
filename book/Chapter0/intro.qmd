@@ -6,7 +6,7 @@ Sound causal reasoning is essential to pharmacometrics (@Rogers2023-kh). A motiv
 
 ![The quantitative science journey](fig/img1-qsvoyage.png){width=80% fig-align="center"}
 
-Our perspective is that causal reasoning is especially important in pharmacometrics because it is often the case that pharmacometric questions must be addressed without the benefit of a dedicated randomized trial. As such, our goal is often not to provide the gold standard evidence that would result from a randomized trial, but rather to foster high-quality decision making with whatever data is available at the time the decision needs to be made, as suggested in the following figure. 
+Our perspective is that causal reasoning is especially important in pharmacometrics because it is often the case that pharmacometric questions must be addressed without the benefit of a dedicated randomized trial. As such, our goal is often not to provide the gold standard evidence that would result from a randomized trial, but rather to foster high-quality decision making when the ideal data is not available at the time the decision needs to be made, as suggested in the following figure.  
 
 ![Fighting for a close second place](fig/img2-goldmedal.png){width=80% fig-align="center"}
 
