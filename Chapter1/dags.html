@@ -236,8 +236,8 @@ window.Quarto = {
 <h2 data-number="2.2" class="anchored" data-anchor-id="dag-conventions-in-this-book"><span class="header-section-number">2.2</span> DAG conventions in this book</h2>
 <p>Our graphical conventions in this book are intended to be similar to those used in the popular “dagitty” web application (<span class="citation" data-cites="Textor2016-sb">Textor et al. (<a href="../references.html#ref-Textor2016-sb" role="doc-biblioref">2016</a>)</span>), but with some modifications to better support readers who are red-green colorblind. The conventions we will use are:</p>
 <ul>
-<li>Treatment variables will be underlined (like <span class="math inline">\(\underline{D}\)</span>) and outcome variables will be overlined (like <span class="math inline">\(\overline{R}\)</span>).</li>
 <li>The pathway(s) of causal dependence that we wish to quantify will be shown in blue (whereas in dagitty they show in green).</li>
+<li>We won’t graphically distinguish between treatment nodes, outcome nodes, and other nodes. However, the previous convention makes it clear how to identify the treatment and outcome nodes, but determining where the blue arrows originate and terminate.</li>
 <li>Biasing pathways (or unblocked “backdoor paths” to use the technical term that we will discuss later) will be shown in red.</li>
 <li>Adjusted variables (variables that we control for in our analyses) will be depicted with rectangle-shaped nodes.</li>
 <li>Causal dependencies that are neither biasing nor of direct interest will be depicted in gray (or “grey”, if you prefer).</li>

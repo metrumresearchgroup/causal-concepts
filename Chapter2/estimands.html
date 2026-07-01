@@ -233,7 +233,12 @@ window.Quarto = {
   <ul>
   <li><a href="#estimand-concepts-from-ich-e9-r1" id="toc-estimand-concepts-from-ich-e9-r1" class="nav-link active" data-scroll-target="#estimand-concepts-from-ich-e9-r1"><span class="header-section-number">3.1</span> Estimand Concepts from ICH E9 (R1)</a></li>
   <li><a href="#mathematical-representation-of-estimands" id="toc-mathematical-representation-of-estimands" class="nav-link" data-scroll-target="#mathematical-representation-of-estimands"><span class="header-section-number">3.2</span> Mathematical Representation of Estimands</a></li>
-  <li><a href="#dose-exposure-response-estimands" id="toc-dose-exposure-response-estimands" class="nav-link" data-scroll-target="#dose-exposure-response-estimands"><span class="header-section-number">3.3</span> Dose-exposure-response Estimands</a></li>
+  <li><a href="#dose-exposure-response-estimands" id="toc-dose-exposure-response-estimands" class="nav-link" data-scroll-target="#dose-exposure-response-estimands"><span class="header-section-number">3.3</span> Dose-exposure-response Estimands</a>
+  <ul>
+  <li><a href="#scenario-1-no-difference-between-treatment-policy-and-hypothetical-estimands" id="toc-scenario-1-no-difference-between-treatment-policy-and-hypothetical-estimands" class="nav-link" data-scroll-target="#scenario-1-no-difference-between-treatment-policy-and-hypothetical-estimands"><span class="header-section-number">3.3.1</span> Scenario 1: No difference between treatment policy and hypothetical estimands</a></li>
+  <li><a href="#scenario-2-forced-to-choose-treatment-policy-or-hypothetical-estimand" id="toc-scenario-2-forced-to-choose-treatment-policy-or-hypothetical-estimand" class="nav-link" data-scroll-target="#scenario-2-forced-to-choose-treatment-policy-or-hypothetical-estimand"><span class="header-section-number">3.3.2</span> Scenario 2: Forced to choose treatment policy or hypothetical estimand</a></li>
+  <li><a href="#scenario-3-special-target-population" id="toc-scenario-3-special-target-population" class="nav-link" data-scroll-target="#scenario-3-special-target-population"><span class="header-section-number">3.3.3</span> Scenario 3: Special Target Population</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -403,7 +408,8 @@ window.Quarto = {
 </section>
 <section id="dose-exposure-response-estimands" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="dose-exposure-response-estimands"><span class="header-section-number">3.3</span> Dose-exposure-response Estimands</h2>
-<p>A typical development program proceeds by selecting doses primarily based on Phase 2 data, and then confirming the efficacy and safety at the given dose(s) in Phase 3. Whereas hypothetical questions may appropriately play a greater role in earlier stages of development, the late development context gives increasing consideration to directly pragmatic questions about use, “in the wild”. (For example, in early development, the question, “What would have been the efficacy if adherence to the prescribed dosing regimen had been better?” will be relevant if it is possible to achieve better adherence with, e.g., changes in formulation or route of administration or dosing frequency; such hypotheticals become less relevant in later development when the goal confirm that a particular posology achieves acceptable benefit risk. <span class="citation" data-cites="Bartels2025-jq">Bartels et al. (<a href="../references.html#ref-Bartels2025-jq" role="doc-biblioref">2025</a>)</span> examines a hypothetical estimand of this nature.) Late development is therefore a context where treatment policy estimands have special relevance <span class="citation" data-cites="Fleming2025-gm">Fleming et al. (<a href="../references.html#ref-Fleming2025-gm" role="doc-biblioref">2025</a>)</span>. Several examples of such estimands for the purpose of dose selection and dose justification in the late development context were considered in <span class="citation" data-cites="Bartels2026-eh">Bartels et al. (<a href="../references.html#ref-Bartels2026-eh" role="doc-biblioref">2026</a>)</span>. We now review these scenarios.</p>
+<p>A typical development program proceeds by selecting doses primarily based on Phase 2 data, and then confirming the efficacy and safety at the given dose(s) in Phase 3. Whereas hypothetical questions may appropriately play a greater role in earlier stages of development, the late development context gives increasing consideration to directly pragmatic questions about use, “in the wild”. (For example, in early development, the question, “What would have been the efficacy if adherence to the prescribed dosing regimen had been better?” will be relevant if it is possible to achieve better adherence with, e.g., changes in formulation or route of administration or dosing frequency; such hypotheticals become less relevant in later development when the goal confirm that a particular posology achieves acceptable benefit risk. <span class="citation" data-cites="Bartels2025-jq">Bartels et al. (<a href="../references.html#ref-Bartels2025-jq" role="doc-biblioref">2025</a>)</span> examines a hypothetical estimand of this nature.) Late development is therefore a context where treatment policy estimands have special relevance <span class="citation" data-cites="Fleming2025-gm">Fleming et al. (<a href="../references.html#ref-Fleming2025-gm" role="doc-biblioref">2025</a>)</span>. Several examples of such estimands for the purpose of dose selection and dose justification in the late development context were considered in <span class="citation" data-cites="Bartels2026-eh">Bartels et al. (<a href="../references.html#ref-Bartels2026-eh" role="doc-biblioref">2026</a>)</span>.</p>
+<p>The presumed causal structure in <span class="citation" data-cites="Bartels2026-eh">Bartels et al. (<a href="../references.html#ref-Bartels2026-eh" role="doc-biblioref">2026</a>)</span> is summarized in the following DAG. Note that we appear to have broken our own rules, since the graph includes undirected edges (with no arrowheads) between the covariate (“L”) variables. This is just our way of signaling that the variables represented in these three nodes have a joint distribution with a statistical dependence structure that we acknowledge without bothering to explain the causal dependencies that give rise to the statistical dependencies (it turns out that we don’t need to specify that level of detail for the relevant derivations to work).</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -413,6 +419,43 @@ window.Quarto = {
 </div>
 </div>
 </div>
+<p>We now review these scenarios.</p>
+<section id="scenario-1-no-difference-between-treatment-policy-and-hypothetical-estimands" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="scenario-1-no-difference-between-treatment-policy-and-hypothetical-estimands"><span class="header-section-number">3.3.1</span> Scenario 1: No difference between treatment policy and hypothetical estimands</h3>
+<p>In the first scenario, we treat dose reduction itself as the endpoint of interest (the idea being that, in this context, a dose reduction signifies a starting dose that was too high), and we proceed as if there are no intercurrent events between the initial dose assignment and dose reductions. Given that assumption, there is no distinction between the treatment policy estimand and the hypothetical estimand (because we can’t even entertain intervening on the intercurrent events if there are no intercurrent events!)</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="estimands_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The DAG expresses our assumptions, and our estimand may be expressed as:</p>
+<p><span class="math display">\[ E\left[R(D=d) \,\,| \,\, \mathit{ATLL}\right] \]</span> For now we defer the question of how best to estimate this quantity. We will come to that in later chapters in our discussion of adjustment methods such as <span class="math inline">\(g\)</span>-estimation.</p>
+</section>
+<section id="scenario-2-forced-to-choose-treatment-policy-or-hypothetical-estimand" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="scenario-2-forced-to-choose-treatment-policy-or-hypothetical-estimand"><span class="header-section-number">3.3.2</span> Scenario 2: Forced to choose treatment policy or hypothetical estimand</h3>
+<p>We now consider a different endpoint, taking platelets at study end as the primary endpoint of interest. In this framing, dose reduction must be considered as an intercurrent event, because such events may occur at times after dose assignment and before measurement of the outcome. We assume the same causal connections as above:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="estimands_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Our treatment policy estimand has the same form as in the previous scenario, but with <span class="math inline">\(Y\)</span> rather than <span class="math inline">\(R\)</span> as our outcome:</p>
+<p><span class="math display">\[ E\left[Y(D=d) \,\,| \,\, \mathit{ATLL}\right] \]</span></p>
+<p>If our interest were in the hypothetical scenario where dose reductions do not occur, there would be no easy way to represent this on the DAG; instead, a more complex graphical representation, known as a single-world intervention graph (SWIG) could be used. For the time being, we maintain on our focus on the treatment policy estimand, and we can defer the introduction of SWIG notation. We can, however, represent hypothetical estimands mathematically, but expanding our potential outcome notation to signal two interventions: the primary intervention on dose <em>and</em> a hypothetical intervention in which we prevent dose reductions:</p>
+<p><span class="math display">\[ E\left[Y(D=d, R=0) \,\,| \,\, \mathit{ATLL}\right] \]</span></p>
+</section>
+<section id="scenario-3-special-target-population" class="level3" data-number="3.3.3">
+<h3 data-number="3.3.3" class="anchored" data-anchor-id="scenario-3-special-target-population"><span class="header-section-number">3.3.3</span> Scenario 3: Special Target Population</h3>
+<p>In the third scenario, we maintain a focus on platelets as our outcome of interest, but with an eye toward labeling recommendations for special populations, we adjust our target population to be the renally impaired (as an operational definition, we will define this as the subset of the overall ATLL population with creatinine clearance &lt; 60 mL/min). Here our DAG would remain as above, but we now take our estimands to be:</p>
+<p><span class="math display">\[ E[Y(D=d) \,\,| ATLL, CRCL &lt; 60] \]</span></p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
@@ -429,6 +472,7 @@ Fleming, Thomas R, Kevin J Carroll, Janet T Wittes, Scott S Emerson, Mark D Roth
 Rogers, James A, Hugo Maas, and Alejandro Pérez Pitarch. 2023. <span>“An Introduction to Causal Inference for Pharmacometricians.”</span> <em>CPT Pharmacometrics Syst Pharmacol</em> 12 (1): 27–40.
 </div>
 </div>
+</section>
 </section>
 
 </main> <!-- /main -->
