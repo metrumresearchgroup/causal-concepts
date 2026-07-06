@@ -206,7 +206,9 @@ window.Quarto = {
   <li><a href="#randomized-controlled-trial" id="toc-randomized-controlled-trial" class="nav-link" data-scroll-target="#randomized-controlled-trial"><span class="header-section-number">2.3.1</span> Randomized Controlled Trial</a></li>
   <li><a href="#common-d-e-r-dags" id="toc-common-d-e-r-dags" class="nav-link" data-scroll-target="#common-d-e-r-dags"><span class="header-section-number">2.3.2</span> Common D-E-R DAGs</a></li>
   <li><a href="#when-to-condition-on-a-covariate-l" id="toc-when-to-condition-on-a-covariate-l" class="nav-link" data-scroll-target="#when-to-condition-on-a-covariate-l"><span class="header-section-number">2.3.3</span> When to Condition on a Covariate <span class="math inline">\(L\)</span>?</a></li>
-  <li><a href="#trastuzumab-in-gastric-cancer-conounding-due-to-cachexia" id="toc-trastuzumab-in-gastric-cancer-conounding-due-to-cachexia" class="nav-link" data-scroll-target="#trastuzumab-in-gastric-cancer-conounding-due-to-cachexia"><span class="header-section-number">2.3.4</span> Trastuzumab in Gastric Cancer: Conounding due to Cachexia</a></li>
+  <li><a href="#confounding-by-study-and-ancestry" id="toc-confounding-by-study-and-ancestry" class="nav-link" data-scroll-target="#confounding-by-study-and-ancestry"><span class="header-section-number">2.3.4</span> Confounding by Study and Ancestry</a></li>
+  <li><a href="#trastuzumab-in-gastric-cancer-conounding-due-to-cachexia" id="toc-trastuzumab-in-gastric-cancer-conounding-due-to-cachexia" class="nav-link" data-scroll-target="#trastuzumab-in-gastric-cancer-conounding-due-to-cachexia"><span class="header-section-number">2.3.5</span> Trastuzumab in Gastric Cancer: Conounding due to Cachexia</a></li>
+  <li><a href="#immortal-time-bias" id="toc-immortal-time-bias" class="nav-link" data-scroll-target="#immortal-time-bias"><span class="header-section-number">2.3.6</span> Immortal Time Bias</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -370,8 +372,10 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="trastuzumab-in-gastric-cancer-conounding-due-to-cachexia" class="level3" data-number="2.3.4">
-<h3 data-number="2.3.4" class="anchored" data-anchor-id="trastuzumab-in-gastric-cancer-conounding-due-to-cachexia"><span class="header-section-number">2.3.4</span> Trastuzumab in Gastric Cancer: Conounding due to Cachexia</h3>
+<section id="confounding-by-study-and-ancestry" class="level3" data-number="2.3.4">
+<h3 data-number="2.3.4" class="anchored" data-anchor-id="confounding-by-study-and-ancestry"><span class="header-section-number">2.3.4</span> Confounding by Study and Ancestry</h3>
+<p>A common practice in pharmacometric analyses is to pool data across multiple clinical trials. Within each individual study, randomization ensures that treatment assignment <span class="math inline">\(D\)</span> is independent of patient covariates. However, when studies are pooled, the variable <span class="math inline">\(\mathit{Study}\)</span> becomes predictive of <span class="math inline">\(D\)</span> — because different trials employed different dosing schemes — thereby breaking the exchangeability that randomization had provided within each study.</p>
+<p>If patients of Asian ancestry are disproportionately enrolled in certain studies and ancestry independently affects the outcome <span class="math inline">\(Y\)</span> (whether exposure or response), then the backdoor path <span class="math display">\[D \leftarrow \mathit{Study} \rightarrow \mathit{Asian} \rightarrow Y\]</span> is open and the estimate of <span class="math inline">\(D \to Y\)</span> is confounded. Conditioning on <span class="math inline">\(\mathit{Asian}\)</span> closes this path and restores exchangeability. Body weight (<span class="math inline">\(\mathit{WT}\)</span>) and sex (<span class="math inline">\(\mathit{Sex}\)</span>) play no active causal role in this simplified picture.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -381,6 +385,79 @@ window.Quarto = {
 </div>
 </div>
 </div>
+<p>After conditioning on <span class="math inline">\(\mathit{Asian}\)</span>, the backdoor path is blocked and all edges along it are no longer biasing.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="dags_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In practice, the picture is more complex. Body weight (<span class="math inline">\(\mathit{WT}\)</span>) and sex (<span class="math inline">\(\mathit{Sex}\)</span>) are also distributed differently across studies and ancestries: Asian patients tend to have lower body weight, and males and females differ systematically in weight. Both <span class="math inline">\(\mathit{Sex}\)</span> and <span class="math inline">\(\mathit{Asian}\)</span> independently affect <span class="math inline">\(Y\)</span> through their influence on pharmacokinetics and pharmacodynamics. The resulting causal structure is shown below.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="dags_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Four open backdoor paths now exist: <span class="math display">\[D \leftarrow \mathit{Study} \rightarrow \mathit{Asian} \rightarrow Y, \qquad
+  D \leftarrow \mathit{Study} \rightarrow \mathit{Asian} \rightarrow \mathit{WT} \rightarrow Y,\]</span> <span class="math display">\[D \leftarrow \mathit{Study} \rightarrow \mathit{Sex} \rightarrow Y, \qquad
+  D \leftarrow \mathit{Study} \rightarrow \mathit{Sex} \rightarrow \mathit{WT} \rightarrow Y.\]</span></p>
+<p>Conditioning on <span class="math inline">\(\mathit{Asian}\)</span> blocks the first two; conditioning on <span class="math inline">\(\mathit{Sex}\)</span> blocks the second two. The pair <span class="math inline">\(\{\mathit{Asian},\, \mathit{Sex}\}\)</span> is therefore a sufficient adjustment set.</p>
+<p><span class="math inline">\(\mathit{WT}\)</span> might seem a natural covariate to include — it is clinically meaningful, correlated with outcome, and commonly measured. However, <span class="math inline">\(\mathit{WT}\)</span> is a <strong>collider</strong> on two otherwise- closed paths: <span class="math display">\[D \leftarrow \mathit{Study} \rightarrow \mathit{Asian} \rightarrow \mathit{WT} \leftarrow \mathit{Sex} \rightarrow Y,\]</span> <span class="math display">\[D \leftarrow \mathit{Study} \rightarrow \mathit{Sex} \rightarrow \mathit{WT} \leftarrow \mathit{Asian} \rightarrow Y.\]</span> Both arrows point <em>into</em> <span class="math inline">\(\mathit{WT}\)</span> from different causal directions, so both paths are blocked by default. Conditioning on <span class="math inline">\(\mathit{WT}\)</span> would open them and introduce a spurious association between <span class="math inline">\(\mathit{Asian}\)</span> and <span class="math inline">\(\mathit{Sex}\)</span> — a new source of bias. <span class="math inline">\(\mathit{WT}\)</span> should therefore not be included in the adjustment set.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="dags_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="trastuzumab-in-gastric-cancer-conounding-due-to-cachexia" class="level3" data-number="2.3.5">
+<h3 data-number="2.3.5" class="anchored" data-anchor-id="trastuzumab-in-gastric-cancer-conounding-due-to-cachexia"><span class="header-section-number">2.3.5</span> Trastuzumab in Gastric Cancer: Conounding due to Cachexia</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="dags_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="immortal-time-bias" class="level3" data-number="2.3.6">
+<h3 data-number="2.3.6" class="anchored" data-anchor-id="immortal-time-bias"><span class="header-section-number">2.3.6</span> Immortal Time Bias</h3>
+<p>Immortal time bias is a form of selection bias that arises when patients are classified into a group only if they survived long enough to satisfy the group-membership criterion. The period between study entry and the moment of classification is <em>immortal time</em> for the members of that group — they cannot, by definition, have died during it. Crediting that person-time to one group but not the other distorts the Kaplan-Meier curves and inflates the apparent survival advantage.</p>
+<p>Consider a retrospective analysis of ovarian cancer patients receiving first-line chemotherapy. CA125, a glycoprotein shed by tumor cells, is routinely measured at several cycles during treatment. A common analysis classifies patients as “low CA125” or “high CA125” based on whether their nadir CA125 value falls below a threshold at any point during the observation window. A naïve Kaplan-Meier analysis comparing overall survival between the two groups produces the following figure — a striking but <strong>biased</strong> result whose origin the DAG below will expose.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="dags_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The striking separation between the curves is an artifact of a biased analysis — one that implicitly conditions on a collider. The causal structure is made precise in the following DAG, where <span class="math inline">\(D\)</span> is the treatment, <span class="math inline">\(M\)</span> the CA125 level measured at Week 9, <span class="math inline">\(S_0\)</span> survival to Week 9, <span class="math inline">\(S_1\)</span> overall survival at end of study, and <span class="math inline">\(U_F\)</span> unmeasured patient frailty.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="dags_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><span class="math inline">\(S_0\)</span> is a <strong>collider</strong>: both treatment (<span class="math inline">\(D \to S_0\)</span>) and unmeasured frailty (<span class="math inline">\(U_F \to S_0\)</span>) influence whether a patient survives to Week 9. On the path <span class="math inline">\(D \to S_0 \leftarrow U_F\)</span>, the collider <span class="math inline">\(S_0\)</span> blocks all information flow by default — no bias arises from this fork as long as <span class="math inline">\(S_0\)</span> is left unadjusted.</p>
+<p><span class="math inline">\(M\)</span>, however, can only be observed in patients who survived to Week 9, so any analysis of <span class="math inline">\(M\)</span> implicitly <strong>conditions on <span class="math inline">\(S_0 = 1\)</span></strong>. This is precisely what the Kaplan-Meier analysis above does: by restricting to patients with a measured CA125, it conditions on the collider <span class="math inline">\(S_0\)</span>, opening the otherwise-closed path and inducing a spurious association between <span class="math inline">\(M\)</span> and <span class="math inline">\(S_1\)</span>. More frail patients (<span class="math inline">\(U_F\)</span> high) are less likely to reach Week 9; among those who do, the frailty distribution is selectively depleted. Since frailty independently predicts poor long-term survival (<span class="math inline">\(U_F \to S_1\)</span>), the “low CA125” group — enriched with lower-frailty survivors — appears to have better overall survival regardless of its CA125 value. <strong>The KM plot above should therefore not be produced or interpreted as a genuine survival comparison.</strong></p>
+<p>This is a general problem in pharmacometric and clinical analyses whenever a subgroup is defined on the basis of post-baseline measurements. Patients classified as “PK-evaluable,” “ADA-positive,” or “biomarker-responders” must by definition have survived long enough — and remained on study long enough — to provide the post-baseline sample. The resulting evaluable population implicitly conditions on an intermediate survival node (<span class="math inline">\(S_0\)</span>), opening the collider and introducing selection bias into any analysis of overall survival or long-term outcomes.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">

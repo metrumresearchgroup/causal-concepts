@@ -272,6 +272,150 @@ Conditioning on $L$ neither removes nor introduces bias.
 ```
 
 
+### Confounding by Study and Ancestry
+
+A common practice in pharmacometric analyses is to pool data across multiple clinical trials.
+Within each individual study, randomization ensures that treatment assignment $D$ is independent
+of patient covariates.
+However, when studies are pooled, the variable $\mathit{Study}$ becomes predictive of $D$ —
+because different trials employed different dosing schemes — thereby breaking the
+exchangeability that randomization had provided within each study.
+
+If patients of Asian ancestry are disproportionately enrolled in certain studies and ancestry
+independently affects the outcome $Y$ (whether exposure or response), then the backdoor path
+$$D \leftarrow \mathit{Study} \rightarrow \mathit{Asian} \rightarrow Y$$
+is open and the estimate of $D \to Y$ is confounded.
+Conditioning on $\mathit{Asian}$ closes this path and restores exchangeability.
+Body weight ($\mathit{WT}$) and sex ($\mathit{Sex}$) play no active causal role in this simplified picture.
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+    \node[] (D) at (0,0) {$D$};
+    \node[] (Y) at (5,0) {$Y$};
+    \node[] (Study) at (0,3) {$\mathit{Study}$};
+    \node[] (Asian) at (2.5,1.5) {$\mathit{Asian}$};
+    \node[color=gray] (WT) at (4,3) {$\mathit{WT}$};
+    \node[color=gray] (Sex) at (5.5,3) {$\mathit{Sex}$};
+
+      \path
+        (D) edge [very thick, color=blue] (Y)
+        (Study) edge [very thick, color=red] (D)
+        (Study) edge [very thick, color=red] (Asian)
+        (Asian) edge [very thick, color=red] (Y)
+        ;
+    \end{tikzpicture}
+```
+
+After conditioning on $\mathit{Asian}$, the backdoor path is blocked and all edges along it are no longer biasing.
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+    \node[] (D) at (0,0) {$D$};
+    \node[] (Y) at (5,0) {$Y$};
+    \node[] (Study) at (0,3) {$\mathit{Study}$};
+    \node[draw] (Asian) at (2.5,1.5) {$\mathit{Asian}$};
+    \node[color=gray] (WT) at (4,3) {$\mathit{WT}$};
+    \node[color=gray] (Sex) at (5.5,3) {$\mathit{Sex}$};
+
+      \path
+        (D) edge [very thick, color=blue] (Y)
+        (Study) edge [very thick, color=gray] (D)
+        (Study) edge [very thick, color=gray] (Asian)
+        (Asian) edge [very thick, color=gray] (Y)
+        ;
+    \end{tikzpicture}
+```
+
+In practice, the picture is more complex.
+Body weight ($\mathit{WT}$) and sex ($\mathit{Sex}$) are also distributed differently across
+studies and ancestries: Asian patients tend to have lower body weight, and males and females
+differ systematically in weight.
+Both $\mathit{Sex}$ and $\mathit{Asian}$ independently affect $Y$ through their influence on
+pharmacokinetics and pharmacodynamics.
+The resulting causal structure is shown below.
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+    \node[] (D) at (0,0) {$D$};
+    \node[] (Y) at (5,0) {$Y$};
+    \node[] (Study) at (0,3) {$\mathit{Study}$};
+    \node[] (Asian) at (1.5,1.5) {$\mathit{Asian}$};
+    \node[] (WT) at (3,2) {$\mathit{WT}$};
+    \node[] (Sex) at (5,3) {$\mathit{Sex}$};
+
+      \path
+        (D) edge [very thick, color=blue] (Y)
+        (Study) edge [very thick, color=red] (D)
+        (Study) edge [very thick, color=red] (Asian)
+        (Study) edge [very thick, color=red] (Sex)
+        (Asian) edge [very thick, color=red] (Y)
+        (Asian) edge [very thick, color=red] (WT)
+        (Sex) edge [very thick, color=red] (Y)
+        (Sex) edge [very thick, color=red] (WT)
+        (WT) edge [very thick, color=red] (Y)
+        ;
+    \end{tikzpicture}
+```
+
+Four open backdoor paths now exist:
+$$D \leftarrow \mathit{Study} \rightarrow \mathit{Asian} \rightarrow Y, \qquad
+  D \leftarrow \mathit{Study} \rightarrow \mathit{Asian} \rightarrow \mathit{WT} \rightarrow Y,$$
+$$D \leftarrow \mathit{Study} \rightarrow \mathit{Sex} \rightarrow Y, \qquad
+  D \leftarrow \mathit{Study} \rightarrow \mathit{Sex} \rightarrow \mathit{WT} \rightarrow Y.$$
+
+Conditioning on $\mathit{Asian}$ blocks the first two; conditioning on $\mathit{Sex}$ blocks the
+second two. The pair $\{\mathit{Asian},\, \mathit{Sex}\}$ is therefore a sufficient adjustment set.
+
+$\mathit{WT}$ might seem a natural covariate to include — it is clinically meaningful, correlated
+with outcome, and commonly measured. However, $\mathit{WT}$ is a **collider** on two otherwise-
+closed paths:
+$$D \leftarrow \mathit{Study} \rightarrow \mathit{Asian} \rightarrow \mathit{WT} \leftarrow \mathit{Sex} \rightarrow Y,$$
+$$D \leftarrow \mathit{Study} \rightarrow \mathit{Sex} \rightarrow \mathit{WT} \leftarrow \mathit{Asian} \rightarrow Y.$$
+Both arrows point *into* $\mathit{WT}$ from different causal directions, so both paths are
+blocked by default.
+Conditioning on $\mathit{WT}$ would open them and introduce a spurious association between
+$\mathit{Asian}$ and $\mathit{Sex}$ — a new source of bias.
+$\mathit{WT}$ should therefore not be included in the adjustment set.
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+    \node[] (D) at (0,0) {$D$};
+    \node[] (Y) at (5,0) {$Y$};
+    \node[] (Study) at (0,3) {$\mathit{Study}$};
+    \node[draw] (Asian) at (1.5,1.5) {$\mathit{Asian}$};
+    \node[] (WT) at (3,2) {$\mathit{WT}$};
+    \node[draw] (Sex) at (5,3) {$\mathit{Sex}$};
+
+      \path
+        (D) edge [very thick, color=blue] (Y)
+        (Study) edge [very thick, color=gray] (D)
+        (Study) edge [very thick, color=gray] (Asian)
+        (Study) edge [very thick, color=gray] (Sex)
+        (Asian) edge [very thick, color=gray] (Y)
+        (Asian) edge [very thick, color=gray] (WT)
+        (Sex) edge [very thick, color=gray] (Y)
+        (Sex) edge [very thick, color=gray] (WT)
+        (WT) edge [very thick, color=gray] (Y)
+        ;
+    \end{tikzpicture}
+```
+
 ### Trastuzumab in Gastric Cancer: Conounding due to Cachexia
 
 ```{r, echo=FALSE}
@@ -293,9 +437,9 @@ Conditioning on $L$ neither removes nor introduces bias.
     \node[] (D) at (3,0) {$D$};
     \node[] (Lr) at (6,0) {$L_R$};
 
-      \path 
-    	(Lcl)  edge  [very thick, color=gray]  (CL)  
-    	(Lshared)  edge  [very thick, color=red]  (CL)			
+      \path
+    	(Lcl)  edge  [very thick, color=gray]  (CL)
+    	(Lshared)  edge  [very thick, color=red]  (CL)
     	(CL)  edge  [very thick, color=red]  (E)
       (E) edge  [very thick, color=blue]  (R)
       (Lshared) edge  [very thick, color=red]  (R)
@@ -304,3 +448,125 @@ Conditioning on $L$ neither removes nor introduces bias.
     	;
     \end{tikzpicture}
 ```
+
+### Immortal Time Bias
+
+Immortal time bias is a form of selection bias that arises when patients are classified into a group only if they survived long enough to satisfy the group-membership criterion.
+The period between study entry and the moment of classification is *immortal time* for the members of that group — they cannot, by definition, have died during it.
+Crediting that person-time to one group but not the other distorts the Kaplan-Meier curves and inflates the apparent survival advantage.
+
+Consider a retrospective analysis of ovarian cancer patients receiving first-line chemotherapy.
+CA125, a glycoprotein shed by tumor cells, is routinely measured at several cycles during treatment.
+A common analysis classifies patients as "low CA125" or "high CA125" based on whether their nadir CA125 value falls below a threshold at any point during the observation window.
+A naïve Kaplan-Meier analysis comparing overall survival between the two groups produces the following figure — a striking but **biased** result whose origin the DAG below will expose.
+
+```{r, echo=FALSE}
+#| fig-width: 6
+#| fig-height: 4.2
+#| fig-align: center
+
+library(survival)
+library(ggplot2)
+
+set.seed(42)
+n      <- 100
+h_low  <- log(2) / 30     # median ~30 months for Low CA125
+h_high <- h_low * 2.15    # true HR = 2.15
+cens   <- 48              # administrative censoring at 48 months
+
+t_low  <- rexp(n, h_low)
+t_high <- rexp(n, h_high)
+
+df <- data.frame(
+  time  = c(pmin(t_low, cens), pmin(t_high, cens)),
+  event = c(as.integer(t_low  <= cens), as.integer(t_high <= cens)),
+  group = factor(
+    rep(c("Low CA125", "High CA125"), each = n),
+    levels = c("Low CA125", "High CA125")
+  )
+)
+
+fit <- survfit(Surv(time, event) ~ group, data = df)
+
+# Tidy KM data for ggplot
+strats <- sub("group=", "", names(fit$strata))
+km_df  <- data.frame(
+  time  = fit$time,
+  surv  = fit$surv,
+  group = factor(rep(strats, fit$strata),
+                 levels = c("Low CA125", "High CA125"))
+)
+km_df <- rbind(
+  data.frame(
+    time  = c(0, 0),
+    surv  = c(1, 1),
+    group = factor(c("Low CA125", "High CA125"),
+                   levels = c("Low CA125", "High CA125"))
+  ),
+  km_df
+)
+
+ggplot(km_df, aes(x = time, y = surv, color = group)) +
+  geom_step(linewidth = 0.9) +
+  scale_color_manual(
+    values = c("Low CA125" = "#2166ac", "High CA125" = "#b2182b"),
+    name   = NULL
+  ) +
+  scale_y_continuous(
+    limits = c(0, 1),
+    labels = function(x) paste0(x * 100, "%")
+  ) +
+  scale_x_continuous(
+    limits = c(0, 49),
+    breaks = seq(0, 48, by = 12)
+  ) +
+  labs(x = "Time (months)", y = "Overall Survival") +
+  annotate("text", x = 22, y = 0.18,
+           label = "HR = 2.15 (High vs. Low CA125)",
+           hjust = 0, size = 3.5, color = "gray20") +
+  theme_bw(base_size = 12) +
+  theme(
+    legend.position   = c(0.80, 0.90),
+    legend.background = element_rect(fill = "white", color = "gray80"),
+    panel.grid.minor  = element_blank()
+  )
+```
+
+The striking separation between the curves is an artifact of a biased analysis — one that implicitly conditions on a collider.
+The causal structure is made precise in the following DAG, where $D$ is the treatment, $M$ the CA125 level measured at Week 9, $S_0$ survival to Week 9, $S_1$ overall survival at end of study, and $U_F$ unmeasured patient frailty.
+
+```{r, echo = FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+    \node[] (D)  at (0,0)   {$D$};
+    \node[] (S0) at (3,0)   {$S_0$};
+    \node[] (S1) at (6,0)   {$S_1$};
+    \node[] (UF) at (3,2.5) {$U_F$};
+    \node[] (M)  at (3,-2)  {$M$};
+
+      \path
+        (D)  edge [very thick, color=red]  (S0)
+        (UF) edge [very thick, color=red]  (S0)
+        (UF) edge [very thick, color=red]  (S1)
+        (S0) edge [very thick, color=gray] (S1)
+        (S0) edge [very thick, color=gray] (M)
+        (M)  edge [very thick, color=red]  (S1)
+        ;
+    \end{tikzpicture}
+```
+
+$S_0$ is a **collider**: both treatment ($D \to S_0$) and unmeasured frailty ($U_F \to S_0$) influence whether a patient survives to Week 9.
+On the path $D \to S_0 \leftarrow U_F$, the collider $S_0$ blocks all information flow by default — no bias arises from this fork as long as $S_0$ is left unadjusted.
+
+$M$, however, can only be observed in patients who survived to Week 9, so any analysis of $M$ implicitly **conditions on $S_0 = 1$**.
+This is precisely what the Kaplan-Meier analysis above does: by restricting to patients with a measured CA125, it conditions on the collider $S_0$, opening the otherwise-closed path and inducing a spurious association between $M$ and $S_1$.
+More frail patients ($U_F$ high) are less likely to reach Week 9; among those who do, the frailty distribution is selectively depleted.
+Since frailty independently predicts poor long-term survival ($U_F \to S_1$), the "low CA125" group — enriched with lower-frailty survivors — appears to have better overall survival regardless of its CA125 value.
+**The KM plot above should therefore not be produced or interpreted as a genuine survival comparison.**
+
+This is a general problem in pharmacometric and clinical analyses whenever a subgroup is defined on the basis of post-baseline measurements.
+Patients classified as "PK-evaluable," "ADA-positive," or "biomarker-responders" must by definition have survived long enough — and remained on study long enough — to provide the post-baseline sample.
+The resulting evaluable population implicitly conditions on an intermediate survival node ($S_0$), opening the collider and introducing selection bias into any analysis of overall survival or long-term outcomes.
