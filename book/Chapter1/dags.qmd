@@ -96,6 +96,180 @@ Examples of intervention are: dose, rescue medication; counter-example: race.
 ```
 
 
+In this 2nd DAG, we see the data generation model corresponding to an RCT with precision
+covariate L. For instance, L can be a stratification factor. If L is expected to have
+a clear effect on R, it is sometimes referred to as a *precision* covariate.
+Please note the absence of arrow between L and D. Absence of arrow is synonym for 
+absence of causal relationship.
+
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+    \node[] (D) at (0,0) {$D$};
+    \node[] (L) at (2,2) {$L$};
+    \node[] (R) at (3,0) {$R$};
+
+      \path
+        (D) edge [very thick, color=blue]  (R)
+        (L) edge [very thick, color=gray]  (R)
+        ;
+    \end{tikzpicture}
+```
+
+### Common D-E-R DAGs
+
+In pharmacometrics, a common causal structure links dose $D$ to an exposure metric $E$
+(e.g. AUC or $C_\text{max}$) and then to a response $R$.
+The following DAGs illustrate three important variants of this structure.
+
+In the simplest case, the effect of $D$ on $R$ is fully mediated by $E$.
+A mediator is a node on the pathway between intervention and outcome.
+Full mediation is a strong assumption.
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+    \node[] (D) at (0,0) {$D$};
+    \node[] (E) at (2,2) {$E$};
+    \node[] (R) at (4,0) {$R$};
+
+      \path
+        (D) edge [very thick, color=blue] (E)
+        (E) edge [very thick, color=blue] (R)
+        ;
+    \end{tikzpicture}
+```
+
+A direct path from $D$ to $R$ (bypassing $E$) can be added to capture effects not mediated
+through the measured exposure.
+The total causal effect of $D$ on $R$ then decomposes as:
+$$\text{Total effect} = \text{Direct effect } (D \to R) + \text{Indirect effect } (D \to E \to R).$$
+This distinction matters in practice: when the measured exposure (e.g. plasma AUC) is a poor
+proxy for exposure at the site of action — such as the brain or lungs — the D-to-E-to-R path
+alone may not capture the full effect of dose on response.
+In such settings, estimating the total effect of $D$ on $R$ directly is a more robust target.
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+    \node[] (D) at (0,0) {$D$};
+    \node[] (E) at (2,2) {$E$};
+    \node[] (R) at (4,0) {$R$};
+
+      \path
+        (D) edge [very thick, color=blue] (E)
+        (E) edge [very thick, color=blue] (R)
+        (D) edge [very thick, color=blue] (R)
+        ;
+    \end{tikzpicture}
+```
+
+When a covariate $L$ affects both $E$ and $R$, it confounds the exposure-response
+relationship, opening a biasing backdoor path $E \leftarrow L \rightarrow R$.
+A concrete example: in an obesity indication, body weight ($L$) influences drug exposure ($E$)
+through its effect on pharmacokinetics, while also independently increasing the risk of
+cardiovascular events ($R$).
+A naïve exposure-response analysis would therefore conflate the drug effect with the
+background cardiovascular risk driven by body weight.
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+    \node[] (D) at (0,0) {$D$};
+    \node[] (E) at (2,2) {$E$};
+    \node[] (R) at (4,0) {$R$};
+    \node[] (L) at (2,-1.5) {$L$};
+
+      \path
+        (D) edge [very thick, color=blue] (E)
+        (E) edge [very thick, color=blue] (R)
+        (L) edge [very thick, color=red]  (E)
+        (L) edge [very thick, color=red]  (R)
+        ;
+    \end{tikzpicture}
+```
+
+### When to Condition on a Covariate $L$?
+
+Whether conditioning on a covariate $L$ helps, hurts, or is irrelevant depends entirely on
+its causal role relative to $D$ and $R$.
+Three canonical cases are illustrated below.
+
+**Confounder** ($L$ causes both $D$ and $R$): the backdoor path $D \leftarrow L \rightarrow R$
+is open and induces bias. Conditioning on $L$ blocks this path and is necessary for
+unbiased estimation of the $D \to R$ effect.
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+    \node[] (D) at (0,0) {$D$};
+    \node[] (L) at (2.5,2) {$L$};
+    \node[] (R) at (5,0) {$R$};
+
+      \path
+        (D) edge [very thick, color=blue] (R)
+        (L) edge [very thick, color=red]  (D)
+        (L) edge [very thick, color=red]  (R)
+        ;
+    \end{tikzpicture}
+```
+
+**Collider** ($D$ and $R$ both cause $L$): the path $D \to L \leftarrow R$ is blocked by
+default. Conditioning on $L$ opens this path and *introduces* bias where none existed.
+This is a common pitfall — conditioning on a variable that seems relevant can make things worse.
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+    \node[] (D) at (0,0) {$D$};
+    \node[draw] (L) at (2.5,2) {$L$};
+    \node[] (R) at (5,0) {$R$};
+
+      \path
+        (D) edge [very thick, color=red] (L)
+        (R) edge [very thick, color=red] (L)
+        ;
+    \end{tikzpicture}
+```
+
+**Irrelevant covariate** ($L$ has no causal connection to $D$ or $R$): the path between
+$D$ and $R$ is unaffected whether or not we condition on $L$.
+Conditioning on $L$ neither removes nor introduces bias.
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+    \node[] (D) at (0,0) {$D$};
+    \node[color=gray] (L) at (2.5,2) {$L$};
+    \node[] (R) at (5,0) {$R$};
+
+      \path
+        (D) edge [very thick, color=blue] (R)
+        ;
+    \end{tikzpicture}
+```
 
 
 ### Trastuzumab in Gastric Cancer: Conounding due to Cachexia
