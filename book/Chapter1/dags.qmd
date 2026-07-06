@@ -71,6 +71,33 @@ If we then wish to depict the same relationships, but with adjustment for $L$, w
 
 ## Examples of DAGs in Drug Development
 
+### Randomized Controlled Trial
+
+This is probably the simplest and most common DAG describing the effect of an intervention, 
+here the treatment $D$, on an outcome or response $R$.
+An *intervention* is a factor that can be actively manipulated to elicit a change
+in the outcome.
+
+Examples of intervention are: dose, rescue medication; counter-example: race.
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+    \node[] (D) at (0,0) {$D$};
+    \node[] (R) at (3,0) {$R$};
+
+      \path
+        (D) edge [very thick, color=blue] (R)
+        ;
+    \end{tikzpicture}
+```
+
+
+
+
 ### Trastuzumab in Gastric Cancer: Conounding due to Cachexia
 
 ```{r, echo=FALSE}
