@@ -1,5 +1,305 @@
-
 # Estimands
 
+```{r setup, include=FALSE}
+# Pass the vector directly. Knitr will re-read this vector freshly for EVERY chunk.
+knitr::opts_chunk$set(engine.opts = list(
+  template = "../tikz_template.tex",
+  convert = "dvisvgm" # Keeps your math italics beautiful!
+))
+```
 
-Now let's think about intercurrent events. 
+## Estimand Concepts from ICH E9 (R1)
+
+## Mathematical Representation of Estimands
+
+In order to express estimands mathematically, we need a notational system that distinguishes between what _will_ happen if we let nature take its course, and what _would_ happen if we were to intervene. For the second set of concepts, we will use potential outcome notation. The following exploration in R, adapted from the supplemental material of @Rogers2023-kh, is intended to develop intuitions about the differences between conditional distributions of observable quantities on the one hand, and potential outcome distributions on the other. 
+
+The fundamental problem of causal inference is that, when it comes to intervening on a single subject or experimental unit, we can only try one thing at a time. This constraint is summarized poetically in the words that Plato attributes to Heraclitus: "... all things move and nothing remains still ... you cannot step twice into the same stream." We can of course return to the same subject, or the same experimental unit, to evaluate a different intervention, but the experimental conditions will never quite be the same. For this reason, the potential outcome distributions associated with any real-world process will only ever be partially observable. In the R-based exploration that follows, we are able to free ourselves from this constraint by working with simulated data. In simulation world, we know all the "what-ifs" that we can't directly observe in the real world. 
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(dplyr)
+library(forcats)
+library(ggplot2)
+```
+
+For simplicity at the outset, we will consider a scenario with just two levels of treatment, referred to as "control" and "active" and indexed by 0 and 1, and two possible outcomes, corresponding to failure and success, also denoted with 0 and 1. We will simulate 4000 subjects. This number is  sufficiently large to make the statistical imprecision in our estimates small in comparison to the treatment effect, so that -- for didactic purposes -- we can mostly ignore the usual distinction between population and sample, and we can focus exclusively on issues of bias. 
+For each simulated subject, we will set the value of the potential outcome $Y^0$ (represented in our simulated dataset as `Y0` ), corresponding to the outcome that _would_ occur _if_ the given subject receives the control treatment, and the potential outcome $Y^1$ (represented in our simulated dataset as `Y1`), corresponding to the outcome that _would_ occur _if_ the given subject receives the active treatment. 
+
+```{r}
+set.seed(1)
+potential_outcomes <- tibble(
+SUBJID = 1:4000,
+Y0 = c(rep(1, 1000), rep(0, 1000), rep(1, 500), rep(0, 1500)),
+Y1 = c(rep(1, 1000), rep(0, 1000), rep(0, 500), rep(1, 1500))
+)
+potential_outcomes %>%
+group_by(Y0, Y1) %>%
+summarise(NSUBJ = n(), .groups = "drop")
+```
+
+
+
+```{r}
+potential_outcomes <- potential_outcomes %>%
+  mutate(p_ecog_1 = case_when(Y0 + Y1 == 0 ~ 0.75,
+                              Y0 + Y1 == 1 ~ 0.5,
+                              Y0 + Y1 == 2 ~ 0.25),
+         ECOG = rbinom(n(), 1, p_ecog_1),
+         NEUTROPHILS = exp(rnorm(n(), 0, 0.5))
+         ) %>%
+  select(-p_ecog_1)
+```
+
+
+```{r}
+obs_study <- potential_outcomes %>%
+  mutate(
+    p_novel = case_when(ECOG == 0 ~ 0.2,
+                        ECOG == 1 ~ 0.8),
+    A_NAT = rbinom(n(), 1, p_novel),
+    TRT = A_NAT,
+    YOBS = if_else(TRT == 0, Y0, Y1)
+  ) %>%
+  select(-p_novel)
+obs_study %>% slice_sample(n=10)
+```
+
+Now that we have a treatment variable and an observed outcome variable, we can investigate the differences between conditional distributions of observed values and potential outcome distributions. This expected value $E[Y(A=0)]$, a.k.a. $P(Y(A=0)=1)$ corresponds to this quantity in our code:  
+
+```{r}
+obs_study %>% pull(Y0) %>% mean()
+```
+
+Contrast that with the expected value $E[Y | A = 0]$, a.k.a. $P(Y = 1 | A = 0)$: 
+
+```{r}
+obs_study %>% filter(A_NAT == 0) %>% pull(YOBS) %>% mean()
+```
+
+Comparing the last two quantities tips us off to the following inequality:
+
+$$ E[Y(A=0)] \neq E[Y | A=0] $$ 
+
+This difference in our unadjusted summaries generally also show up when we look at comparative statistics, such as mean treatment differences. The true (causal) average treatment effect, the "ATE" can be expressed mathematically as 
+
+$$ E[ Y(A=1) - Y(A=0) ]. $$
+The corresponding operation in our code is: 
+
+```{r}
+obs_study %>% 
+  mutate(ITE = Y1 - Y0) %>% 
+  summarise(ATE = mean(ITE)) 
+```
+
+Compare that to the difference in the observed treatment means. The expected value for this latter quantity can be expressed as: 
+
+$$ E[Y | A= 1] - E[Y | A = 0] $$
+
+
+```{r}
+obs_study %>% 
+  group_by(A_NAT) %>% 
+  summarise(Ybar = mean(YOBS), .groups = "drop") %>% 
+  summarise(UnadjustedEstimateTE = diff(Ybar))
+```
+
+We can see that in this case, a naïve analysis would result in a substantial underestimate of the treatment effect. This is because the expected value of our estimate is not equal to the causal quantity of interest: 
+
+$$  E[ Y(A=1) - Y(A=0) ] \neq E[Y | A= 1] - E[Y | A = 0] $$ 
+
+We can also consider several _conditional_ average treatment effects or "CATEs". For example, the CATEs conditional on baseline ECOG can be expressed mathematically as: 
+
+$$ E[ Y(A=1) - Y(A=0) \,|\, \mathit{ECOG}=0] \,\, \mbox{ and } \,\,E[ Y(A=1) - Y(A=0) \,|\, \mathit{ECOG}=1] $$ 
+$$ E[ Y(\mathit{Dose}=1) - Y(\mathit{Dose=0}) \,|\, \mathit{ECOG}=0] \,\, \mbox{ and } \,\,E[ Y(A=1) - Y(A=0) \,|\, \mathit{ECOG}=1] $$ 
+
+
+```{r}
+obs_study %>% 
+  mutate(ITE = Y1 - Y0) %>% 
+  group_by(ECOG) %>% 
+  summarise(CATE = mean(ITE))
+```
+
+We can see that these are actually well-approximated by the corresponding conditional distributions in the observable data: 
+
+
+```{r}
+obs_study %>% 
+  group_by(A_NAT, ECOG) %>% 
+  summarise(Ybar = mean(YOBS), .groups = "drop") %>% 
+  group_by(ECOG) %>% 
+  summarise(ConditionalEstimateTE = diff(Ybar))
+```
+
+A number of the other variants of causal effects are simply special cases of conditional average treatment effects. For example, the average treatment effect in the treated ("ATT") is simply the CATE that results from conditioning on being treated. 
+
+## Dose-exposure-response Estimands
+
+A typical development program proceeds by selecting doses primarily based on Phase 2 data, and then confirming the efficacy and safety at the given dose(s) in Phase 3. Whereas hypothetical questions may appropriately play a greater role in earlier stages of development, the late development context  gives increasing consideration to directly pragmatic questions about use, "in the wild". (For example, in early development, the question, "What would have been the efficacy if adherence to the prescribed dosing regimen had been better?" will be relevant if it is possible to achieve better adherence with, e.g., changes in formulation or route of administration or dosing frequency; such hypotheticals become less relevant in later development when the goal confirm that a particular posology achieves acceptable benefit risk. @Bartels2025-jq examines a hypothetical estimand of this nature.) Late development is therefore a context where treatment policy estimands have special relevance @Fleming2025-gm. Several examples of such estimands for the purpose of dose selection and dose justification in the late development context were considered in @Bartels2026-eh. 
+
+The presumed causal structure in @Bartels2026-eh is summarized in the following DAG. Note that we appear to have broken our own rules, since the graph includes undirected edges (with no arrowheads) between the covariate ("L") variables. This is just our way of signaling that the variables represented in these three nodes have a joint distribution with a statistical dependence structure that we acknowledge without bothering to explain the causal dependencies that give rise to the statistical dependencies (it turns out that we don't need to specify that level of detail for the relevant derivations to work). 
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+
+    \node[] (D) at (0,0) {$D$};
+    \node[] (D-long) at (0,-0.5) {\footnotesize Dose};
+    \node[align=center] (E) at (3,0) {$E$};
+    \node[align=center] (E-long) at (3,-0.5) {\footnotesize Early Exposure};
+    \node[align=center] (R) at (6,0) {$R$};
+    \node[align=center] (R-long) at (6,-0.5) {\footnotesize Dose Reduction};
+    \node[] (Y) at (9,0) {$Y$};
+    \node[] (Y-long) at (9,-0.5) {\footnotesize Platelets};
+
+    \node[] (S) at (0,2) {$S$};
+    \node[] (S-long) at (-0.75,2) {\footnotesize Study};
+
+    \node[] (Lpop) at (0,5) {$L_\mathrm{Pop}$};
+    \node[] (Lpop-long) at (0,5.5) {\footnotesize ATLL(Y/N)};
+    \node[draw] (Lpk) at (3,5) {$L_\mathrm{PK}$};
+    \node[] (Lpk-long) at (3,5.5) {\footnotesize PK Covariates};
+    \node[draw] (Lpd) at (6,5) {$L_\mathrm{PD}$};
+    \node[] (Lpd-long) at (6,5.5) {\footnotesize PD Covariates};
+    
+    \draw[-, very thick, color=gray] (Lpop)  -- (Lpk);
+    \draw[-, very thick, color=gray] (Lpk)  --  (Lpd);
+
+    \path 
+    	(D)  edge  [very thick, color=blue]  (E)  
+    	(E)  edge  [very thick, color=blue]  (R)			
+    	(R)  edge  [very thick, color=blue]  (Y)	
+
+    	(S)  edge  [very thick, color=gray]  (D)  
+    	(Lpop)  edge  [very thick, color=gray]  (S)			
+    	(Lpk)  edge  [very thick, color=gray]  (S)	
+    	(Lpd)  edge  [very thick, color=gray]  (S)	
+
+    	(E)  edge  [very thick, color=blue, bend left]  (Y)
+    	(Lpk)  edge  [very thick, color=gray]  (Y)
+      (Lpk)  edge  [very thick, color=gray]  (E)
+    	(Lpd)  edge  [very thick, color=gray]  (R)
+    	(Lpd)  edge  [very thick, color=gray]  (Y)
+      ;
+    \end{tikzpicture}
+```
+
+
+
+We now review these scenarios. 
+
+### Scenario 1: No difference between treatment policy and hypothetical estimands
+
+In the first scenario, we treat dose reduction itself as the endpoint of interest (the idea being that, in this context, a dose reduction signifies a starting dose that was too high), and we proceed as if there are no intercurrent events between the initial dose assignment and dose reductions. Given that assumption, there is no distinction between the treatment policy estimand and the hypothetical estimand (because we can't even entertain intervening on the intercurrent events if there are no intercurrent events!)
+
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+
+    \node[] (D) at (0,0) {$D$};
+    \node[align=center] (E) at (3,0) {$E$};
+    \node[align=center] (R) at (6,0) {$R$};
+    \node[] (Y) at (9,0) {$Y$};
+
+    \node[] (S) at (0,2) {$S$};
+
+    \node[] (Lpop) at (0,5) {$L_\mathrm{Pop}$};
+    \node[draw] (Lpk) at (3,5) {$L_\mathrm{PK}$};
+    \node[draw] (Lpd) at (6,5) {$L_\mathrm{PD}$};
+    
+    \draw[-, very thick, color=gray] (Lpop)  -- (Lpk);
+    \draw[-, very thick, color=gray] (Lpk)  --  (Lpd);
+
+    \path 
+    	(D)  edge  [very thick, color=blue]  (E)  
+    	(E)  edge  [very thick, color=blue]  (R)			
+    	(R)  edge  [very thick, color=gray]  (Y)	
+
+    	(S)  edge  [very thick, color=gray]  (D)  
+    	(Lpop)  edge  [very thick, color=gray]  (S)			
+    	(Lpk)  edge  [very thick, color=gray]  (S)	
+    	(Lpd)  edge  [very thick, color=gray]  (S)	
+
+    	(E)  edge  [very thick, color=gray, bend right]  (Y)
+    	(Lpk)  edge  [very thick, color=gray]  (Y)
+      (Lpk)  edge  [very thick, color=gray]  (E)
+    	(Lpd)  edge  [very thick, color=gray]  (R)
+    	(Lpd)  edge  [very thick, color=gray]  (Y)
+      ;
+    \end{tikzpicture}
+```
+
+The DAG expresses our assumptions, and our estimand may be expressed as:
+
+$$ E\left[R(D=d) \,\,| \,\, \mathit{ATLL}\right] $$ 
+For now we defer the question of how best to estimate this quantity. We will come to that in later chapters in our discussion of adjustment methods such as $g$-estimation. 
+
+
+### Scenario 2: Forced to choose treatment policy or hypothetical estimand
+
+We now consider a different endpoint, taking platelets at study end as the primary endpoint of interest. In this framing, dose reduction must be considered as an intercurrent event, because such events may occur at times after dose assignment and before measurement of the outcome. We assume the same causal connections as above: 
+
+
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+
+    \node[] (D) at (0,0) {$D$};
+    \node[align=center] (E) at (3,0) {$E$};
+    \node[align=center] (R) at (6,0) {$R$};
+    \node[] (Y) at (9,0) {$Y$};
+
+    \node[] (S) at (0,2) {$S$};
+
+    \node[] (Lpop) at (0,5) {$L_\mathrm{Pop}$};
+    \node[draw] (Lpk) at (3,5) {$L_\mathrm{PK}$};
+    \node[draw] (Lpd) at (6,5) {$L_\mathrm{PD}$};
+    
+    \draw[-, very thick, color=gray] (Lpop)  -- (Lpk);
+    \draw[-, very thick, color=gray] (Lpk)  --  (Lpd);
+
+    \path 
+    	(D)  edge  [very thick, color=blue]  (E)  
+    	(E)  edge  [very thick, color=blue]  (R)			
+    	(R)  edge  [very thick, color=blue]  (Y)	
+
+    	(S)  edge  [very thick, color=gray]  (D)  
+    	(Lpop)  edge  [very thick, color=gray]  (S)			
+    	(Lpk)  edge  [very thick, color=gray]  (S)	
+    	(Lpd)  edge  [very thick, color=gray]  (S)	
+
+    	(E)  edge  [very thick, color=blue, bend right]  (Y)
+    	(Lpk)  edge  [very thick, color=gray]  (Y)
+      (Lpk)  edge  [very thick, color=gray]  (E)
+    	(Lpd)  edge  [very thick, color=gray]  (R)
+    	(Lpd)  edge  [very thick, color=gray]  (Y)
+      ;
+    \end{tikzpicture}
+```
+
+Our treatment policy estimand has the same form as in the previous scenario, but with $Y$ rather than $R$ as our outcome: 
+
+$$ E\left[Y(D=d) \,\,| \,\, \mathit{ATLL}\right] $$ 
+
+If our interest were in the hypothetical scenario where dose reductions do not occur, there would be no easy way to represent this on the DAG; instead, a more complex graphical representation, known as a single-world intervention graph (SWIG) could be used. For the time being, we maintain on our focus on the treatment policy estimand, and we can defer the introduction of SWIG notation. We can, however, represent hypothetical estimands mathematically, but expanding our potential outcome notation to signal two interventions: the primary intervention on dose _and_ a hypothetical intervention in which we prevent dose reductions: 
+
+$$ E\left[Y(D=d, R=0) \,\,| \,\, \mathit{ATLL}\right] $$ 
+
+### Scenario 3: Special Target Population
+
+In the third scenario, we maintain a focus on platelets as our outcome of interest, but with an eye toward labeling recommendations for special populations, we adjust our target population to be the renally impaired (as an operational definition, we will define this as the subset of the overall ATLL population with creatinine clearance < 60 mL/min). Here our DAG would remain as above, but we now take our estimands to be: 
+
+$$ E[Y(D=d) \,\,| ATLL, CRCL < 60] $$ 
+

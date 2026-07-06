@@ -19,8 +19,8 @@ In the context of causal inference, DAGs consist of nodes, representing variable
 
 Our graphical conventions in this book are intended to be similar to those used in the popular "dagitty" web application (@Textor2016-sb), but with some modifications to better support readers who are red-green colorblind. The conventions we will use are: 
 
-* Treatment variables will be underlined (like $\underline{D}$) and outcome variables will be overlined (like $\overline{R}$). 
 * The pathway(s) of causal dependence that we wish to quantify will be shown in blue (whereas in dagitty they show in green). 
+* We won't graphically distinguish between treatment nodes, outcome nodes, and other nodes. However, the previous convention makes it clear how to identify the treatment and outcome nodes, but determining where the blue arrows originate and terminate. 
 * Biasing pathways (or unblocked "backdoor paths" to use the technical term that we will discuss later) will be shown in red. 
 * Adjusted variables (variables that we control for in our analyses) will be depicted with rectangle-shaped nodes. 
 * Causal dependencies that are neither biasing nor of direct interest will be depicted in gray (or "grey", if you prefer).
@@ -86,8 +86,8 @@ If we then wish to depict the same relationships, but with adjustment for $L$, w
     \node[] (CL) at (3,6) {$\mathit{CL}$};
     \node[] (Lshared) at (6,6) {$L_{\mathrm{shared}}$};
     
-    \node[] (E) at (3,3) {$\underline{E}$};
-    \node[] (R) at (6,3) {$\overline{R}$};
+    \node[] (E) at (3,3) {$E$};
+    \node[] (R) at (6,3) {$R$};
     
     \node[] (D) at (3,0) {$D$};
     \node[] (Lr) at (6,0) {$L_R$};
