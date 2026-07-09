@@ -65,4 +65,12 @@ The `.gitignore` excludes `/.quarto/` (build cache) and `/book/` (rendered HTML 
 
 ### R Package Management
 
-Uses `renv` (lockfile at `renv/renv.lock` in the repo root). Key packages: `knitr`, `quarto`, `dplyr`, `ggplot2`, `dagitty`. R version: 4.5.1.
+Uses `renv` (lockfile at `renv/renv.lock` in the repo root). Key packages: `knitr`, `quarto`, `dplyr`, `ggplot2`, `dagitty`, `survival`. R version: 4.5.1.
+
+### Mixed Chunk Types in Chapter 1
+
+`Chapter1/dags.qmd` contains two kinds of code chunks:
+- **`tikz` chunks** (with `#| engine: tikz`): render causal DAGs via LaTeX/TikZ.
+- **Plain R chunks** (no engine override): produce ggplot2 figures such as Kaplan–Meier survival plots.
+
+Do not add `engine: tikz` to plain R chunks, and do not add ggplot2 calls inside tikz chunks.
