@@ -47,3 +47,14 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# latex / tikz log files from DAG creation
+tikz*.log
+
+# Compiled _book is maintained at gh-pages branch 
+book/_book/
+*_files/
+
+
+
+
