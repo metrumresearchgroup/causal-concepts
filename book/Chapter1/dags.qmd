@@ -13,7 +13,12 @@ knitr::opts_chunk$set(engine.opts = list(
 
 First, a distinction: the Directed Acyclic Graphs (DAGs) discussed here will be specifically *causal* DAGs which, as the name suggests, convey causal information. In principle, DAGs can also be used to convey non-causal information (e.g. they are sometimes used to specify hierarchical models, which may or may not have causal interpretability), but in the context of this book, a "DAG" can always be understood to have causal semantics attached to it. 
 
-In the context of causal inference, DAGs consist of nodes, representing variables, and "directed edges" (a.k.a. arrows), representing causal dependencies between the variables. A proper DAG will contain only unidirectional arrows and will not contain directed loops ("acyclic"), corresponding to the notion that there can be no instantaneous causal feedback (feedback in general can be represented, but it must proceed in a temporal sequence). You will (very soon) see DAGs that seemingly violate this requirement of directedness by including bi-directional arrows. However, as will soon be explained, bi-directional arrows are only to be understood as a notational shortcut, not as a representation of instantaneous feedback.  
+In the context of causal inference, DAGs consist of nodes, representing variables, and "directed edges" (a.k.a. arrows), representing causal dependencies between the variables. A proper DAG will contain only unidirectional arrows and will not contain directed loops ("acyclic"), corresponding to the notion that there can be no instantaneous causal feedback (feedback in general can be represented, but it must proceed in a temporal sequence). 
+
+
+![An example of a DAG constructed in the dagitty web app](fig/img1-confounding.png){width=80% fig-align="center"}
+
+<!-- You will (very soon) see DAGs that seemingly violate this requirement of directedness by including bi-directional arrows. However, as will soon be explained, bi-directional arrows are only to be understood as a notational shortcut, not as a representation of instantaneous feedback.   -->
 
 ## DAG conventions in this book
 
@@ -26,15 +31,14 @@ Our graphical conventions in this book are intended to be similar to those used 
 * Causal dependencies that are neither biasing nor of direct interest will be depicted in gray (or "grey", if you prefer).
 * Dashed lines to represent potential causal dependencies of a more speculative nature. 
 
-We illustrate these conventions in comparison to dagitty conventions in the following figures: 
 
-
-![Counfounding DAG](fig/img1-confounding.png){width=80% fig-align="center"}
 
 ```{r, echo = FALSE}
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
+#| label: fig-conventions
+#| fig-cap: "Illustrating book conventions: the underline for D signifies it is the treatment variable, the overline on R signifies it is the response variable, and the red arrows indicate a biasing path due to confounder L."
 
     \begin{tikzpicture}[->,>=Stealth]
     \node[] (D) at (0,0) {$\underline{D}$};
@@ -49,12 +53,14 @@ We illustrate these conventions in comparison to dagitty conventions in the foll
     \end{tikzpicture}
 ```
 
-If we then wish to depict the same relationships, but with adjustment for $L$, we will use:
+
 
 ```{r, echo=FALSE}
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
+#| label: fig-conventions-adjusted
+#| fig-cap: "Here, the box around L indicates that we have adjusted for that confounder in our analysis. Consequently, the path through L is no longer depicted in red, signifying that it is no longer a biasing path."
 
     \begin{tikzpicture}[->,>=Stealth]
     \node[] (D) at (0,0) {$D$};
@@ -69,7 +75,7 @@ If we then wish to depict the same relationships, but with adjustment for $L$, w
     \end{tikzpicture}
 ```
 
-## Examples of DAGs in Drug Development
+## Examples of DAGs in Pharmacometrics
 
 ### Randomized Controlled Trial
 
@@ -99,8 +105,7 @@ Examples of intervention are: dose, rescue medication; counter-example: race.
 In this 2nd DAG, we see the data generation model corresponding to an RCT with precision
 covariate L. For instance, L can be a stratification factor. If L is expected to have
 a clear effect on R, it is sometimes referred to as a *precision* covariate.
-Please note the absence of arrow between L and D. Absence of arrow is synonym for 
-absence of causal relationship.
+Note the absence of arrow between L and D: randomization ensures that the randomized treatment D doesn't have any causal antecedents. 
 
 
 ```{r, echo=FALSE}
