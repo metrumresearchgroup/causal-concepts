@@ -1,0 +1,1129 @@
+# G-formula and G-computation
+
+```{r setup, include=FALSE}
+# Pass the vector directly. Knitr will re-read this vector freshly for EVERY chunk.
+knitr::opts_chunk$set(engine.opts = list(
+  template = "../tikz_template.tex",
+  convert = "dvisvgm" # Keeps your math italics beautiful!
+))
+```
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(dplyr)
+library(forcats)
+library(ggplot2)
+library(tidyr)
+library(rlang)
+```
+
+
+### Terminology
+
+Some authors make a distinction between g-formula and g-computation, but it is a subtle distinction and it usually isn't carefully maintained. In the material that follows, we will use the two terms interchangeably. 
+
+### Why use G-formula?
+
+If your work already involves the use of modeling and simulation to answer causal questions, the answer is simple: g-formula is just refers to using correct simulation logic. Conversely, if you have ever used simulation to correctly answer a causal question, you may have used g-formula without even knowing it! 
+
+## G-formula for point exposures with baseline confounding
+
+We will use the term "point exposure" to refer to any measure of exposure that doesn't vary as a function of time. This includes exposures that are assessed at a specific point in time, e.g. plasma concentration of drug at 8 hours, as well as exposure metrics that are obtained by integrating out time, e.g. $AUC$ after the first 24 hours of dosing (one could argue that the latter is not a true "point" exposure, but we will be a bit flexible with the meaning in order to avoid a more cumbersome term like "non-time-varying exposure").
+
+When we are interested in the effects of a point exposure on a response, and when that response occurs after the exposure timepoint (or after the exposure period), we will specifically be concerned with _baseline_ confounding (as opposed to time-varying confounding, which we will get to soon). Baseline confounding has a very intuitive remedy, which is sometimes referred to as "standardization". Standardization is a special case of g-formula.
+
+### Example: dose and AUC in a single ascending dose study
+
+Consider a first-in-human single ascending dose (SAD) study. Four dose levels
+are tested in escalation cohorts that enroll **men only**. The highest dose is then
+studied in an expansion cohort that enrolls **50% men and 50% women**. Such a design may be motivated for ethical reasons, but it confounds the relationship between dose and exposure.
+
+In this case, the "exposure" (the point intervention) is $\text{Dose}$, and $AUC$ is the
+outcome. Let's suppose we want to know how $AUC$ changes as a function of dose _in a target population composed of 50% men and 50% women_. 
+
+To keep the example transparent, the PK is linear, and body weight is the only
+PK covariate. It acts on clearance through allometric scaling:
+
+$$
+CL_i = CL_{pop} \left(\frac{WT_i}{70}\right)^{0.75} e^{\eta_i},
+\qquad AUC_i = \frac{\text{Dose}_i}{CL_i}
+$$
+
+By construction, sex affects $AUC$ *only* through body size. Sex also determines which
+doses a subject can receive, because women only enter the study only in the
+expansion cohort. The DAG is shown below, with $A$ = dose, $Y$ = $AUC$,
+$S$ = sex, and $W$ = body weight.
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+    \node[] (A) at (0,0) {$A$};
+    \node[] (A-long) at (0,-0.5) {\footnotesize Dose};
+    \node[] (Y) at (5,0) {$Y$};
+    \node[] (Y-long) at (5,-0.5) {\footnotesize AUC};
+    \node[] (S) at (0,2.5) {$S$};
+    \node[] (S-long) at (-0.8,2.5) {\footnotesize Sex};
+    \node[draw] (W) at (2.5,2.5) {$W$};
+    \node[] (W-long) at (2.5,3.1) {\footnotesize Body weight};
+
+      \path
+        (A) edge [very thick, color=blue] (Y)
+        (S) edge [very thick, color=red]  (A)
+        (S) edge [very thick, color=red]  (W)
+        (W) edge [very thick, color=red]  (Y)
+        ;
+    \end{tikzpicture}
+```
+
+In the absence of any adjustments for weight, the backdoor path $A \leftarrow S \rightarrow W \rightarrow Y$ (red) is open, indicating that the (unadjusted) association between $\text{Dose}$ and $AUC$ is biased relative to the true causal effect. A naive comparison of $AUC$ across doses therefore compares different populations as well as different doses.
+Either $S$ or $W$ blocks the path. We adjust for $W$ (drawn as a rectangle) for
+a reason we explain below.
+
+#### Simulating the study
+
+The simulation below uses doses of 10, 30, 100 and 300 mg, with six men in each
+escalation cohort and 40 subjects (20 men, 20 women) in the expansion cohort at
+300 mg. Body weight is log-normal, with a median of 85 kg in men and 65 kg in women.
+
+```{r}
+sad_param <- list(
+  doses   = c(10, 30, 100, 300),     # mg
+  n_esc   = 6,                       # men per escalation cohort
+  n_exp   = 40,                      # expansion cohort, 50% women
+  exp_dose = 300,                    # expansion cohort dose (mg)
+  wt_med  = c(Male = 85, Female = 65),  # kg
+  wt_lsd  = 0.15,
+  cl_pop  = 5,                       # L/h for a 70 kg subject
+  cl_exp  = 0.75,                    # allometric exponent
+  omega   = 0.25                     # SD of eta on CL
+)
+
+# Draw body weight, clearance and AUC for a set of subjects with given sex and dose
+sad_pk <- function(dat, p = sad_param) {
+  dat |>
+    mutate(
+      WT  = exp(rnorm(n(), log(p$wt_med[SEX]), p$wt_lsd)),
+      CL  = p$cl_pop * (WT / 70)^p$cl_exp * exp(rnorm(n(), 0, p$omega)),
+      AUC = DOSE / CL
+    )
+}
+
+sad_simulate_trial <- function(p = sad_param) {
+  escalation <- tibble(
+    COHORT = "Escalation",
+    DOSE   = rep(p$doses, each = p$n_esc),
+    SEX    = "Male"
+  )
+  expansion <- tibble(
+    COHORT = "Expansion",
+    DOSE   = p$exp_dose,
+    SEX    = rep(c("Male", "Female"), each = p$n_exp / 2)
+  )
+  bind_rows(escalation, expansion) |>
+    mutate(ID = row_number(), .before = 1) |>
+    sad_pk(p)
+}
+
+set.seed(20261109)
+sad_dat <- sad_simulate_trial()
+```
+
+The figure shows dose-normalized $AUC$ for each subject. If the PK is linear,
+$AUC/\text{Dose}$ does not depend on dose, so any trend in this plot is not
+caused by dose. Women (who are only present at 300 mg) sit higher.
+
+```{r, fig.width=7, fig.height=4}
+#| fig-cap: "Dose-normalized AUC by dose and sex in the simulated SAD study. Women are enrolled only at the 300 mg dose."
+sad_dat |>
+  mutate(SEX = factor(SEX, levels = c("Male", "Female"))) |>
+  ggplot(aes(factor(DOSE), AUC / DOSE, colour = SEX)) +
+  geom_point(position = position_jitterdodge(jitter.width = 0.15, dodge.width = 0.5,
+                                             seed = 1),
+             size = 2.5, alpha = 0.8) +
+  scale_colour_manual(values = c(Male = "#2a78d6", Female = "#eb6834"), name = NULL) +
+  labs(x = "Dose (mg)", y = "AUC / Dose (h/L)") +
+  theme_minimal(base_size = 13) +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = "top")
+```
+
+#### Estimand and ground truth
+
+Let $Y(a)$ be the potential $AUC$ for a subject if they received dose $a$. Our
+target is the mean potential $AUC$ at each dose in a **50/50 population of men and
+women**. This is the population the drug will be used in.
+
+$$ E[Y(a)], \quad a \in \{10, 30, 100, 300\} $$
+
+Since we wrote the data-generating process, we can compute the truth by
+simulation: give *every* member of a large 50/50 population each dose in turn
+and average the resulting $AUC$s. This is the "correct simulation logic" from
+the start of the chapter. Dose is set by intervention, not by the cohort
+someone happened to be enrolled in.
+
+```{r}
+set.seed(1)
+sad_truth <- tibble(SEX = rep(c("Male", "Female"), each = 5e5)) |>
+  cross_join(tibble(DOSE = sad_param$doses)) |>
+  sad_pk() |>
+  group_by(DOSE) |>
+  summarise(Truth = mean(AUC))
+```
+
+Note that `sad_pk()` draws a new weight and $\eta$ for each subject–dose row.
+That is harmless here because the truth is a population mean, not an
+individual-level contrast.
+
+#### Naive analysis
+
+The naive estimate of $E[Y(a)]$ is the observed mean $AUC$ among subjects who got dose $a$:
+
+$$ \hat{E}[Y \mid A = a] $$
+
+This is the right answer only if the subjects at each dose are exchangeable with
+the target population. Here they are not: the escalation doses include men
+only.
+
+```{r}
+sad_naive <- sad_dat |>
+  group_by(DOSE) |>
+  summarise(Naive = mean(AUC))
+```
+
+#### Standardization (the g-formula for a point exposure)
+
+Because $W$ blocks the backdoor path, conditional exchangeability holds given
+$W$, and the g-formula for a point exposure is
+
+$$
+E[Y(a)] = \int E[Y \mid A = a, W = w] \, dF_W(w),
+$$
+
+where $F_W$ is the distribution of body weight in the *target* population.
+There are two ingredients:
+
+1. **An outcome model** for $E[Y \mid A, W]$. We use a log-linear regression, which
+   matches the structure of the PK model:
+   $\log AUC = \beta_0 + \beta_1 \log \text{Dose} + \beta_2 \log WT + \varepsilon$.
+2. **A sample from $F_W$**. The expansion cohort is a 50/50 sample of the target
+   population, so its observed weights can stand in for $F_W$.
+
+The integral then becomes a simulation. For each dose $a$, set *every* target
+subject's dose to $a$, predict their mean $AUC$ from the model, and average:
+
+```{r}
+sad_fit <- lm(log(AUC) ~ log(DOSE) + log(WT), data = sad_dat)
+
+sad_target <- sad_dat |>
+  filter(COHORT == "Expansion") |>
+  select(ID, SEX, WT)
+
+sad_std <- sad_target |>
+  cross_join(tibble(DOSE = sad_param$doses)) |>
+  mutate(
+    # back-transform: the mean of a log-normal is exp(mu + sigma^2 / 2)
+    PRED = exp(predict(sad_fit, newdata = pick(everything())) + sigma(sad_fit)^2 / 2)
+  ) |>
+  group_by(DOSE) |>
+  summarise(Standardized = mean(PRED))
+```
+
+Note the *subjects* are fixed and only the *dose* changes across rows. Each
+target subject therefore appears once at every dose level. This is the
+counterfactual intervention "give everyone dose $a$" applied to the model. 
+
+#### Comparing the estimates
+
+```{r}
+sad_naive |>
+  left_join(sad_std, by = "DOSE") |>
+  left_join(sad_truth, by = "DOSE") |>
+  mutate(across(c(Naive, Standardized), list(bias = ~ 100 * (.x / Truth - 1)),
+                .names = "{.col} bias (%)")) |>
+  knitr::kable(digits = 1, col.names = c("Dose (mg)", "Naive", "Standardized",
+                                         "Truth", "Naive bias (%)",
+                                         "Standardized bias (%)"))
+```
+
+
+That's it! We have applied g-formula! Hopefully you find yourself saying, "Of course that works! That's what I would have done in any case, even if I had never heard of standardization or g-formula!" If so, great, but don't get too high on your horse yet: it will get more complicated when we get to time-varying confounding.  
+
+
+## G-formula for time-varying exposure with longitudinal confounding
+
+### Example illustrating plug-in G-formula
+
+In the preceding example, the key confounding variable, weight, was continuously valued. Similarly, in many the applications of interest to us, both the confounding variable(s) and the intervention variable(s) will be continuous, and we will model their effects (as we did in the preceding example), using parametric regression. When we implement g-formula using parametric regression models, we are using _parametric_ g-formula, and that variant of g-formula will be our primary focus in this book.
+
+For didactic purposes however, it will be helpful to strip away the distraction of regression models as we begin our exploration of time-varying confounding. To do this, the following example implements the _plug-in_ g-formula, which is a version of g-formula that can be computed using only the observed  conditional means. The plug-in g-formula can only be used when all confounding variables and intervention variables are categorically valued. The following example is constructed to conform (somewhat artificially) to this requirement. The data are adapted from Table 21.1 in @Hernan2024-whatif.  
+
+In @Hernan2024-whatif , the data are presented in the form of a summary table. The essential structure of that table is preserved below, albeit using variable names that correspond more closely to a standard pharmacometric problem in oncology. Note that we have preserved the exorbitant sample sizes of the original example because we want to focus on issues of bias in estimation (without the distraction of precision issues, which become relevant at lower sample sizes.) 
+
+```{r}
+summ_dat <- tibble(
+  DOSE = rep(1, 8),
+  AUC1 = rep(c("high", "low"), each = 4), 
+  LOWNEUT = rep(rep(0:1, each = 2), 2), 
+  AUC2 = rep(c("high", "low"), 4),
+  N = 100 * c(24, 16, 24, 96, 48, 32, 16, 64), 
+  ORR = 0.01 * rep(c(84, 52, 76, 44), each = 2)
+)
+```
+
+In order to more easily analyze this data, we expand the summary table to one subject per row:
+
+```{r}
+set.seed(2026)
+subj_dat <- summ_dat |>
+  mutate(N_RESP = round(N * ORR)) |>
+  slice(rep(row_number(), N)) |>
+  group_by(AUC1, LOWNEUT, AUC2) |>
+  mutate(RESP = as.integer(row_number() <= N_RESP)) |>
+  ungroup() |>
+  slice_sample(prop = 1) |>
+  mutate(ID = row_number()) |>
+  select(ID, DOSE, AUC1, LOWNEUT, AUC2, RESP)
+```
+
+
+The subject-level data `subj_dat` describe a two-period study. Map the
+variables to the usual notation as follows:
+
+| Symbol | Variable | Meaning |
+|--------|----------|---------|
+| $A_0$ | `AUC1` | Exposure in period 1 (`high` or `low`) |
+| $L_1$ | `LOWNEUT` | Low neutrophil count after period 1 (0/1) |
+| $A_1$ | `AUC2` | Exposure in period 2 (`high` or `low`) |
+| $Y$ | `RESP` | Objective response (0/1) |
+
+The DAG below, adapted from Figure 20.3 of @Hernan2024-whatif, shows the assumed
+causal structure. $U$ is an unmeasured common cause of $L_1$ and $Y$ (for
+example, underlying disease severity).
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+    \node[] (A0) at (0,0) {$A_0$};
+    \node[] (A0-long) at (-0.9,0) {\footnotesize AUC1};
+    \node[] (L1) at (2.5,0) {$L_1$};
+    \node[] (L1-long) at (2.5,-0.5) {\footnotesize Low Neutrophils};
+    \node[] (A1) at (5,0) {$A_1$};
+    \node[] (A1-long) at (5,-0.5) {\footnotesize AUC2};
+    \node[] (Y) at (7.5,0) {$Y$};
+    \node[] (Y-long) at (8.6,0) {\footnotesize Response};
+    \node[] (U) at (5,2) {$U$};
+    \node[] (U-long) at (5,2.5) {\footnotesize Unmeasured};
+
+      \path
+        (A0) edge [very thick, color=blue, bend right=35] (Y)
+        (A1) edge [very thick, color=blue]  (Y)
+        (A0) edge [very thick, color=gray]  (L1)
+        (L1) edge [very thick, color=red]   (A1)
+        (U)  edge [very thick, color=red]   (L1)
+        (U)  edge [very thick, color=red]   (Y)
+        ;
+    \end{tikzpicture}
+```
+
+$L_1$ plays two roles:
+
+- It is a **confounder** of $A_1$: the backdoor path
+  $A_1 \leftarrow L_1 \leftarrow U \rightarrow Y$ (red) is open unless we
+  condition on $L_1$.
+- It is a **collider** on the path $A_0 \rightarrow L_1 \leftarrow U \rightarrow Y$.
+  This path is closed as long as we do *not* condition on $L_1$.
+
+Because $A_0$ affects $L_1$, which in turn affects $A_1$, this structure is
+called *treatment–confounder feedback*. Adjusting for $L_1$ is needed to
+handle the first path but opens the second, so no single conditional analysis
+(adjusting or not adjusting for $L_1$) gives an unbiased estimate of the
+joint effect of $A_0$ and $A_1$.
+
+In the data of Table 21.1, exposure has no effect on response, so the true
+arrows $A_0 \rightarrow Y$ and $A_1 \rightarrow Y$ (blue) are absent. They are
+drawn here because these are the effects we want to estimate.
+
+The target is the mean potential outcome under a joint exposure strategy
+$(a_0, a_1)$, for example "always high" $(a_0, a_1) = (\text{high}, \text{high})$:
+
+$$ E[Y(a_0, a_1)] $$
+We have yet to say exactly what g-formula is in general ... please be patient, we will get there ... 
+but in this special two-timepoint case, the g-formula can be expressed as: 
+
+$$ E[Y(a_0, a_1)] = \sum_{l} E[Y \mid A_0 = a_0, L_1 = l, A_1 = a_1] \, \Pr(L_1 = l \mid A_0 = a_0) $$
+
+In words: within each level of $L_1$, take the mean response among subjects
+who actually followed the strategy, and then average over $L_1$ using the
+distribution that $L_1$ *would have* under $a_0$. Note that the weights are
+$\Pr(L_1 = l \mid A_0 = a_0)$, not the marginal $\Pr(L_1 = l)$. This is what
+lets the g-formula handle a confounder that is itself affected by earlier
+exposure.
+
+*Plug-in* g-computation means estimating each piece of the formula from the
+data and plugging the estimates in. Here every variable is discrete, so each
+piece is simply a sample proportion or mean.
+
+#### Step 1: Distribution of $L_1$ given $A_0$
+
+Estimate $\Pr(L_1 = l \mid A_0 = a_0)$ by the proportion of subjects in each
+level of `LOWNEUT` within each level of `AUC1`:
+
+```{r}
+p_L <- subj_dat |>
+  count(AUC1, LOWNEUT) |>
+  group_by(AUC1) |>
+  mutate(P_L = n / sum(n)) |>
+  ungroup()
+p_L
+```
+
+High period-1 exposure makes low neutrophils more likely
+(`r p_L$P_L[p_L$AUC1 == "high" & p_L$LOWNEUT == 1]` vs
+`r p_L$P_L[p_L$AUC1 == "low" & p_L$LOWNEUT == 1]`).
+
+#### Step 2: Mean response given exposure history and $L_1$
+
+Estimate $E[Y \mid A_0 = a_0, L_1 = l, A_1 = a_1]$ by the observed response
+rate in each combination of `AUC1`, `LOWNEUT` and `AUC2`:
+
+```{r}
+m_Y <- subj_dat |>
+  group_by(AUC1, LOWNEUT, AUC2) |>
+  summarise(n = n(), n_resp = sum(RESP), E_Y = mean(RESP), .groups = "drop")
+m_Y
+```
+
+#### Step 3: Combine for one strategy
+
+For the "always high" strategy, keep the rows of `m_Y` with
+`AUC1 == "high"` and `AUC2 == "high"`. Then attach the matching weights from
+Step 1 and form the weighted sum:
+
+```{r}
+g_high <- m_Y |>
+  filter(AUC1 == "high", AUC2 == "high") |>
+  left_join(p_L |> select(AUC1, LOWNEUT, P_L), by = c("AUC1", "LOWNEUT")) |>
+  mutate(CONTRIB = E_Y * P_L)
+g_high
+sum(g_high$CONTRIB)
+```
+
+Written out by hand, this is
+
+$$ E[Y(\text{high}, \text{high})] =
+`r g_high$E_Y[1]` \times `r g_high$P_L[1]` + `r g_high$E_Y[2]` \times `r g_high$P_L[2]`
+= `r sum(g_high$CONTRIB)` $$
+
+Repeat for the "always low" strategy:
+
+```{r}
+g_low <- m_Y |>
+  filter(AUC1 == "low", AUC2 == "low") |>
+  left_join(p_L |> select(AUC1, LOWNEUT, P_L), by = c("AUC1", "LOWNEUT")) |>
+  mutate(CONTRIB = E_Y * P_L)
+g_low
+sum(g_low$CONTRIB)
+```
+
+$$ E[Y(\text{low}, \text{low})] =
+`r g_low$E_Y[1]` \times `r g_low$P_L[1]` + `r g_low$E_Y[2]` \times `r g_low$P_L[2]`
+= `r sum(g_low$CONTRIB)` $$
+
+The two strategies give the same mean response, so the causal effect of
+"always high" vs "always low" exposure is
+`r round(sum(g_high$CONTRIB) - sum(g_low$CONTRIB), 4)`.
+
+#### All four strategies at once
+
+The same calculation for every strategy is one join followed by a grouped sum:
+
+```{r}
+g_all <- m_Y |>
+  left_join(p_L |> select(AUC1, LOWNEUT, P_L), by = c("AUC1", "LOWNEUT")) |>
+  group_by(AUC1, AUC2) |>
+  summarise(E_Y_strategy = sum(E_Y * P_L), .groups = "drop")
+g_all
+```
+
+Exposure has no effect on response under any strategy: every strategy gives a
+mean response of `r unique(round(g_all$E_Y_strategy, 4))`.
+
+#### Why not simply adjust for $L_1$?
+
+Compare this with two common analyses that do not use the g-formula.
+
+**Crude comparison.** Compare response rates among subjects whose observed
+exposures happened to match each strategy:
+
+```{r}
+crude <- subj_dat |>
+  filter(AUC1 == AUC2) |>
+  group_by(AUC1, AUC2) |>
+  summarise(n = n(), E_Y = mean(RESP), .groups = "drop")
+crude
+```
+
+The crude difference is `r round(crude$E_Y[1] - crude$E_Y[2], 3)`. It is biased because
+$L_1$ confounds the period-2 exposure: subjects with low neutrophils are more
+likely to receive low exposure in period 2, and they also respond less often.
+
+**Stratifying on $L_1$.** Within each level of `LOWNEUT`, compare response
+between "always high" and "always low" subjects:
+
+```{r}
+strat <- m_Y |>
+  filter(AUC1 == AUC2) |>
+  select(LOWNEUT, AUC1, E_Y) |>
+  arrange(LOWNEUT, AUC1)
+strat
+```
+
+Within each stratum, "always high" looks better by
+`r strat$E_Y[1] - strat$E_Y[2]`, even though exposure has no effect.
+Stratifying removes confounding of $A_1$, but $L_1$ is a collider on
+$A_0 \rightarrow L_1 \leftarrow U \rightarrow Y$. Conditioning on it opens that
+path and creates a non-causal association between $A_0$ and $Y$. High
+period-1 exposure itself pushes toward low neutrophils, so among subjects with
+the same neutrophil status, high-exposure subjects tend to have more favorable
+values of $U$, and therefore respond more often.
+
+The g-formula avoids both problems. It conditions on $L_1$ when estimating the
+response means (Step 2), which handles confounding of $A_1$. It then averages
+over $L_1$ using its distribution under $a_0$ (Step 1) rather than holding
+$L_1$ fixed. As a result, the collider path stays closed for $A_0$.
+
+
+
+
+### Example of parametric g-formula using the `gfoRmula` package
+
+The calculation above is *nonparametric*: every conditional probability and
+mean was estimated as a sample proportion within a cell. The same answer can
+be obtained with the *parametric* g-formula, provided the models are
+*saturated*, i.e. they have one parameter for each combination of the
+covariates they condition on. A saturated logistic regression reproduces the
+observed cell proportions exactly, so the parametric and nonparametric plug-in
+estimates coincide.
+
+The `gfoRmula` package [@McGrath2020-gformula] implements the parametric
+g-formula for time-varying exposures. Its `gformula()` function
+
+1. fits a model for each time-varying covariate and for the outcome,
+2. simulates a large cohort forward in time under each intervention, drawing
+   each covariate from its fitted model with exposure set by the intervention,
+   and
+3. averages the predicted outcome in the simulated cohort.
+
+Step 2 replaces the exact sum over $l$ in the g-formula with a Monte Carlo
+average, so the package estimate differs from the exact value by a small
+simulation error.
+
+#### Long-format data
+
+`gformula()` expects one row per subject per time point. We use two time
+points:
+
+- `TIME = 0` holds the period-1 exposure $A_0$.
+- `TIME = 1` holds $L_1$, the period-2 exposure $A_1$ and the outcome $Y$.
+
+Exposure is coded as a 0/1 indicator `HIGHAUC` so that it can be modeled with
+logistic regression. There is no baseline covariate, so `LOWNEUT` is set to 0
+at `TIME = 0`. This placeholder is never used in a model, because `gformula()`
+fits covariate models only to rows with `TIME > 0` and takes the `TIME = 0`
+values from the observed data. The end-of-follow-up outcome `RESP` is recorded
+only at the last time point.
+
+```{r}
+library(gfoRmula)
+library(data.table)
+
+long_dat <- bind_rows(
+  subj_dat |>
+    transmute(ID, TIME = 0, HIGHAUC = as.integer(AUC1 == "high"),
+              LOWNEUT = 0L, RESP = NA_integer_),
+  subj_dat |>
+    transmute(ID, TIME = 1, HIGHAUC = as.integer(AUC2 == "high"),
+              LOWNEUT, RESP)
+) |>
+  arrange(ID, TIME)
+
+head(long_dat)
+```
+
+#### Saturated models
+
+The term `lag1_HIGHAUC` refers to the previous time point's value of `HIGHAUC`, so
+at `TIME = 1` it equals $A_0$. The package creates it from the `histories` and
+`histvars` arguments. The models are:
+
+| Variable | Model | Free parameters | Cells |
+|----------|-------|-----------------|-------|
+| $L_1$ | `LOWNEUT ~ lag1_HIGHAUC` | 2 | 2 levels of $A_0$ |
+| $A_1$ | `HIGHAUC ~ lag1_HIGHAUC * LOWNEUT` | 4 | 4 combinations of $(A_0, L_1)$ |
+| $Y$ | `RESP ~ lag1_HIGHAUC * LOWNEUT * HIGHAUC` | 8 | 8 combinations of $(A_0, L_1, A_1)$ |
+
+The model for $A_1$ is not part of the g-formula for a static strategy, since
+the intervention overrides $A_1$. `gformula()` still requires it because it
+also simulates the *natural course* (no intervention), which serves as a check
+on the models.
+
+We compare two static strategies, "always high" (`HIGHAUC = 1` at both times) and
+"always low" (`HIGHAUC = 0` at both times), with "always low" as the reference.
+To keep the Monte Carlo error small, we simulate $10^6$ subjects rather than
+the default (the size of the observed data).
+
+```{r}
+gf_fit <- gformula(
+  obs_data = as.data.table(long_dat),
+  id = "ID",
+  time_name = "TIME",
+  time_points = 2,
+  covnames = c("LOWNEUT", "HIGHAUC"),
+  covtypes = c("binary", "binary"),
+  covparams = list(covmodels = c(
+    LOWNEUT ~ lag1_HIGHAUC,
+    HIGHAUC ~ lag1_HIGHAUC * LOWNEUT
+  )),
+  histories = c(lagged),
+  histvars = list(c("HIGHAUC")),
+  outcome_name = "RESP",
+  outcome_type = "binary_eof",
+  ymodel = RESP ~ lag1_HIGHAUC * LOWNEUT * HIGHAUC,
+  intervention1.HIGHAUC = list(static, rep(1, 2)),
+  intervention2.HIGHAUC = list(static, rep(0, 2)),
+  int_descript = c("Always high", "Always low"),
+  ref_int = 2,
+  nsimul = 1e6,
+  seed = 2026,
+  model_fits = TRUE
+)
+gf_fit
+```
+
+The `g-form mean` column gives the estimated mean response under each
+strategy. Intervention 0 is the natural course, whose g-formula estimate
+should agree with the observed (`NP mean`) response rate.
+
+#### Connecting the fitted models to the hand calculation
+
+Because the models are saturated, their fitted probabilities are exactly the
+cell proportions from Steps 1 and 2. For $L_1$:
+
+```{r}
+tibble(lag1_HIGHAUC = c(1, 0)) |>
+  mutate(
+    AUC1 = if_else(lag1_HIGHAUC == 1, "high", "low"),
+    P_LOWNEUT_model = predict(gf_fit$fits$LOWNEUT, newdata = pick(lag1_HIGHAUC),
+                              type = "response")
+  ) |>
+  left_join(p_L |> filter(LOWNEUT == 1) |> select(AUC1, P_LOWNEUT_hand = P_L),
+            by = "AUC1")
+```
+
+And for $Y$:
+
+```{r}
+m_Y |>
+  mutate(
+    lag1_HIGHAUC = as.integer(AUC1 == "high"),
+    HIGHAUC = as.integer(AUC2 == "high"),
+    E_Y_model = predict(gf_fit$fits$RESP,
+                        newdata = pick(lag1_HIGHAUC, LOWNEUT, HIGHAUC),
+                        type = "response")
+  ) |>
+  select(AUC1, LOWNEUT, AUC2, E_Y_hand = E_Y, E_Y_model)
+```
+
+#### Comparing the results
+
+```{r}
+gf_res <- gf_fit$result
+tibble(
+  Strategy = c("Always high", "Always low"),
+  `By hand (exact)` = c(sum(g_high$CONTRIB), sum(g_low$CONTRIB)),
+  `gfoRmula (Monte Carlo)` = gf_res[["g-form mean"]][gf_res[["Interv."]] %in% 1:2]
+)
+```
+
+The two approaches agree up to Monte Carlo error. Both recover the true null
+effect, and the estimated difference between "always high" and "always low" is
+`r sprintf("%.4f", gf_res[["Mean difference"]][gf_res[["Interv."]] == 1])`.
+Setting `nsamples` to a positive number adds bootstrap confidence intervals.
+
+The package's advantage is that it does not rely on cells. With continuous
+covariates, many time points or many covariates, cells become sparse or empty,
+and the hand calculation is no longer feasible. Unsaturated parametric models
+then smooth over the sparse cells. The price is that the estimate is valid only
+if those models are correctly specified, in addition to the identifying
+assumptions.
+
+### Example 2: Dose-mediated confounding in exposure–response
+
+The first example used a stylized two-period table. This example applies the
+same ideas to a setting that is familiar to pharmacometricians: a
+multiple-cycle oncology trial in which exposure suppresses a safety biomarker,
+and the biomarker in turn drives dose interruptions. It is adapted from the
+dose-mediated confounding scenario in @Braniff2026-causalER. To keep the focus
+on g-computation, two simplifications are made relative to the paper:
+
+- **Exposure is known.** The paper fits a population PK model and imputes each
+  subject's exposure from the empirical Bayes estimates. Here we use each
+  subject's true exposure directly.
+- **The code is self-contained.** The data-generating process and analysis
+  are written out below rather than sourced from the paper's supplementary
+  code.
+
+#### Data-generating process
+
+Subjects are randomized 1:1 to a low or a high dose $A$ and followed for 10
+dosing intervals $t = 1, \ldots, 10$. In each interval:
+
+1. **Biomarker.** The biomarker $B_t$ (think of it as a neutrophil count,
+   with median baseline value 1) starts at its baseline value $B_0$ in
+   interval 1. After that it moves toward an exposure-dependent setpoint with
+   proportional noise:
+   $$ S_t = \frac{B_0}{1 + E_{t-1}/IE_{50}}, \qquad
+      B_t \sim N\!\left(\mu_t, (0.25\,\mu_t)^2\right), \qquad
+      \mu_t = S_t - (S_t - B_{t-1})\, e^{-k_B}. $$
+   Higher exposure in one interval lowers the biomarker in the next.
+2. **Dose interruption.** From interval 2 onward, a low biomarker makes a dose
+   interruption $I_t$ more likely:
+   $$ \text{logit}\, \Pr(I_t = 1) = \gamma_0 + \gamma_B\,(\tilde B - B_t), $$
+   where $\tilde B$ is the median baseline biomarker. The dose actually
+   given is $D_t = (1 - I_t)\, A$.
+3. **Exposure.** A one-compartment IV bolus model converts the doses given so
+   far into the average concentration $E_t$ over the interval.
+4. **Event.** The discrete-time hazard of an adverse event $R_t$ increases
+   with exposure and with biomarker suppression:
+   $$ \text{logit}\, \Pr(R_t = 1 \mid R_{t-1} = 0) =
+      \alpha_0 + \alpha_E\,(E_t - E_\text{ref}) + \alpha_B\,(\tilde B - B_t). $$
+   Follow-up stops at the first event.
+
+The DAG below unrolls the first two intervals. $R$ stands for the event
+outcome over follow-up, and the exposure-dependent dose interruption is folded
+into the arrow $B_2 \rightarrow E_2$.
+
+```{r, echo=FALSE}
+#| engine: tikz
+#| fig-ext: png
+#| fig-dpi: 300
+
+    \begin{tikzpicture}[->,>=Stealth]
+    \node[] (A) at (0,0) {$A$};
+    \node[] (A-long) at (0,-0.5) {\footnotesize Dose};
+    \node[] (E1) at (2.5,0) {$E_1$};
+    \node[] (E1-long) at (2.5,-0.5) {\footnotesize Exposure 1};
+    \node[] (E2) at (6.5,0) {$E_2$};
+    \node[] (E2-long) at (6.5,-0.5) {\footnotesize Exposure 2};
+    \node[] (R) at (9.5,0) {$R$};
+    \node[] (R-long) at (9.5,-0.5) {\footnotesize Event};
+    \node[] (B0) at (0,2.5) {$B_0$};
+    \node[align=right] (B0-long) at (-1.2,2.5) {\footnotesize Baseline\\ \footnotesize Biomarker};
+    \node[] (B2) at (4.5,2.5) {$B_2$};
+    \node[] (B2-long) at (5.75,2.5) {\footnotesize Biomarker 2};
+
+      \path
+        (E1) edge [very thick, color=blue, bend right=30] (R)
+        (E2) edge [very thick, color=blue]  (R)
+        (A)  edge [very thick, color=gray]  (E1)
+        (E1) edge [very thick, color=gray]  (E2)
+        (E1) edge [very thick, color=gray]  (B2)
+        (B0) edge [very thick, color=gray]  (B2)
+        (B0) edge [very thick, color=gray, bend left=40] (R)
+        (B2) edge [very thick, color=red]   (E2)
+        (B2) edge [very thick, color=red]   (R)
+        ;
+    \end{tikzpicture}
+```
+
+The structure is the same treatment–confounder feedback as in
+Example 1, with $B_2$ in the role of $L_1$:
+
+- $B_2$ is a **confounder** of $E_2$ through the backdoor path
+  $E_2 \leftarrow B_2 \rightarrow R$ (red). Subjects whose biomarker drops are
+  more likely to have their dose interrupted, so they have *lower* exposure.
+  They also have a *higher* event risk because their biomarker is low.
+- $B_2$ is also a **mediator** of $E_1$: part of the effect of exposure on the
+  event acts through biomarker suppression, $E_1 \rightarrow B_2 \rightarrow R$.
+
+So an analysis that ignores $B_t$ is confounded, and an analysis that
+conditions on $B_t$ blocks part of the effect we want to estimate.
+
+The parameter values below are those of the paper's dose-mediated scenario.
+Clearance does not depend on the biomarker in this scenario, so the
+biomarker affects exposure only through dose interruptions.
+
+```{r}
+param <- c(
+  # Dose randomization
+  a.frac = 0.5, a.low = 10, a.high = 20,
+  # Biomarker dynamics
+  b0.lmu = 0, b0.lsd = 0.25, IE50 = 1.5, kB = 0.25, b.sd = 0.25,
+  # Dose interruption
+  gamma.0 = -3, gamma.B = 4,
+  # PK: 1-compartment IV bolus, half-life of 1 interval, median CL of 10
+  cl0.lmu = log(10), cl0.lsd = 0.2, v0.lmu = log(10 / log(2)), v0.lsd = 0.1,
+  # Event hazard
+  alpha.0 = -3.5, alpha.B = 3, alpha.E = 0.25
+)
+Nints  <- 10
+B0.med <- exp(param[["b0.lmu"]])
+# Reference exposure: population-average steady-state exposure, dose / CL
+E.ref  <- (param[["a.frac"]] * param[["a.low"]] +
+           (1 - param[["a.frac"]]) * param[["a.high"]]) / exp(param[["cl0.lmu"]])
+```
+
+The simulation is written as two functions. `make_subjects()` draws each
+subject's dose and individual parameters. `simulate_dgp()` steps the subjects
+through the intervals. When `E.fix` is `NA` it simulates the *natural course*,
+the trial as it actually happens. When `E.fix` is a number, it simulates the
+counterfactual world in which every subject's exposure is held at that value
+in every interval.
+
+```{r}
+make_subjects <- function(N, param) {
+  n.low <- round(N * param[["a.frac"]])
+  tibble(
+    ID = seq_len(N),
+    A  = sample(c(rep(param[["a.low"]], n.low),
+                  rep(param[["a.high"]], N - n.low))),
+    B0 = rlnorm(N, param[["b0.lmu"]], param[["b0.lsd"]]),
+    CL = rlnorm(N, param[["cl0.lmu"]], param[["cl0.lsd"]]),
+    V  = rlnorm(N, param[["v0.lmu"]], param[["v0.lsd"]])
+  )
+}
+
+simulate_dgp <- function(subj, param, Nints, E.fix = NA) {
+  N     <- nrow(subj)
+  k     <- subj$CL / subj$V
+  B     <- subj$B0
+  C.end <- rep(0, N)
+  E     <- rep(0, N)
+  out   <- vector("list", Nints)
+  for (t in seq_len(Nints)) {
+    if (t > 1) {
+      # Biomarker moves toward an exposure-dependent setpoint
+      B.set <- subj$B0 / (1 + E / param[["IE50"]])
+      mu.B  <- B.set - (B.set - B) * exp(-param[["kB"]])
+      B     <- pmax(rnorm(N, mu.B, param[["b.sd"]] * mu.B), 0.001)
+      # Low biomarker -> dose interruption
+      I <- rbinom(N, 1, plogis(param[["gamma.0"]] +
+                                 param[["gamma.B"]] * (B0.med - B)))
+    } else {
+      I <- rep(0L, N)
+    }
+    D <- (1 - I) * subj$A
+    # 1-compartment IV bolus: exposure = average concentration over interval
+    C.start <- C.end + D / subj$V
+    C.end   <- C.start * exp(-k)
+    E <- if (is.na(E.fix)) C.start / k * (1 - exp(-k)) else rep(E.fix, N)
+    # Event hazard
+    Pr <- plogis(param[["alpha.0"]] +
+                   param[["alpha.E"]] * (E - E.ref) +
+                   param[["alpha.B"]] * (B0.med - B))
+    out[[t]] <- tibble(ID = subj$ID, Ts = t - 1, A = subj$A, B0 = subj$B0,
+                       B = B, I = I, D = D, E = E, Pr = Pr,
+                       R = rbinom(N, 1, Pr))
+  }
+  bind_rows(out) |> arrange(ID, Ts)
+}
+```
+
+#### Estimand and ground truth
+
+The estimand is the *causal exposure–response curve*: the risk of an event by
+the end of interval 10 if every subject's exposure were held at $e$ in every
+interval,
+$$ \Pr\left[R(\bar e) = 1\right], \qquad \bar e = (e, e, \ldots, e), $$
+for $e$ between 0.5 and 2.5. Exposures of 1 and 2 are the typical
+steady-state exposures under the low and high dose.
+
+Because we control the data-generating process, we can compute the true curve
+by simulating a large population under each static intervention. For each
+subject, the risk by interval 10 is $1 - \prod_t (1 - \Pr(R_t = 1))$, and the
+population risk is the average over subjects.
+
+```{r}
+exposure.levels <- seq(0.5, 2.5, by = 0.5)
+
+set.seed(42)
+ref.subj <- make_subjects(25000, param)
+truth <- bind_rows(lapply(exposure.levels, function(e) {
+  simulate_dgp(ref.subj, param, Nints, E.fix = e) |>
+    group_by(ID) |>
+    summarise(Risk = 1 - prod(1 - Pr)) |>
+    summarise(Risk = mean(Risk)) |>
+    mutate(E = e)
+}))
+truth
+```
+
+#### The observed trial
+
+The observed data come from a single trial of 1,000 subjects under the natural
+course, with each subject's follow-up ending at their first event.
+
+```{r}
+set.seed(2026)
+trial.subj <- make_subjects(1000, param)
+obs <- simulate_dgp(trial.subj, param, Nints) |>
+  group_by(ID) |>
+  filter(cumsum(lag(R, default = 0)) == 0) |>
+  ungroup()
+
+obs |>
+  group_by(ID) |>
+  summarise(R = max(R)) |>
+  summarise(N = n(), Events = sum(R), Risk = mean(R))
+```
+
+The figure shows the feedback loop at work. Subjects on the high dose have
+higher early exposure, which suppresses their biomarker. This leads to more
+dose interruptions, which pull their exposure back down.
+
+```{r, fig.width=9, fig.height=3.5}
+arm_cols <- c("Low dose" = "#2a78d6", "High dose" = "#eb6834")
+
+obs |>
+  mutate(Arm = factor(if_else(A == param[["a.low"]], "Low dose", "High dose"),
+                      levels = names(arm_cols)),
+         Interval = Ts + 1) |>
+  group_by(Arm, Interval) |>
+  summarise(`Exposure, E` = mean(E),
+            `Biomarker, B` = mean(B),
+            `Dose interruptions (fraction)` = mean(I),
+            .groups = "drop") |>
+  pivot_longer(-c(Arm, Interval), names_to = "Quantity", values_to = "Mean") |>
+  mutate(Quantity = factor(Quantity, levels = c("Exposure, E", "Biomarker, B",
+                                                "Dose interruptions (fraction)"))) |>
+  ggplot(aes(Interval, Mean, color = Arm)) +
+  geom_line(linewidth = 0.8) +
+  geom_point(size = 2) +
+  facet_wrap(~Quantity, scales = "free_y") +
+  scale_color_manual(values = arm_cols) +
+  scale_x_continuous(breaks = 1:Nints) +
+  labs(x = "Interval", y = "Mean among subjects at risk", color = NULL) +
+  theme_bw(base_size = 12) +
+  theme(legend.position = "top", panel.grid.minor = element_blank())
+```
+
+### Naive analyses
+
+A common approach is pooled logistic regression of the per-interval event
+indicator on the time-varying exposure, with a separate intercept for each
+interval. The fitted hazards are converted to a risk by interval 10 for each
+exposure level. We fit two versions, mirroring the two naive analyses in
+Example 1:
+
+- **Unadjusted:** `R ~ E + factor(Ts)`.
+- **Adjusted for the biomarker:** `R ~ E + B + factor(Ts)`, with predictions
+  made at the median baseline biomarker value.
+
+```{r}
+risk_from_hazard <- function(fit, newdata) {
+  newdata |>
+    mutate(Haz = predict(fit, newdata = newdata, type = "response")) |>
+    group_by(E) |>
+    summarise(Risk = 1 - prod(1 - Haz))
+}
+
+pred.grid <- tidyr::expand_grid(E = exposure.levels, Ts = 0:(Nints - 1))
+
+fit.unadj <- glm(R ~ E + factor(Ts), family = binomial, data = obs)
+fit.adjB  <- glm(R ~ E + B + factor(Ts), family = binomial, data = obs)
+
+naive <- bind_rows(
+  risk_from_hazard(fit.unadj, pred.grid) |>
+    mutate(Method = "Unadjusted"),
+  risk_from_hazard(fit.adjB, pred.grid |> mutate(B = B0.med)) |>
+    mutate(Method = "Adjusted for B")
+)
+naive
+```
+
+The unadjusted analysis gets the *direction* of the effect wrong. Risk appears
+to fall as exposure rises, because subjects with a suppressed biomarker are
+both the ones who have their dose interrupted and the ones at higher risk.
+Adjusting for $B_t$ removes this confounding, but it holds the biomarker
+fixed. This blocks the path $E \rightarrow B \rightarrow R$, so the curve is
+far too flat. It also answers a different, conditional question: the risk for
+a subject whose biomarker somehow stays at its median value.
+
+#### Parametric g-formula
+
+The g-formula for this setting extends the two-period formula of Example 1 to
+10 intervals, with a continuous confounder and a survival outcome. Plug-in
+estimation by hand over cells is no longer possible, but the recipe is the
+same. We need:
+
+1. **A model for the time-varying confounder given the past.** Here this is
+   the biomarker model. It has the same functional form as the
+   data-generating process, with $k_B$ and $IE_{50}$ estimated by generalized
+   nonlinear least squares (`nlme::gnls`):
+   $$ E[B_t \mid B_{t-1}, E_{t-1}, B_0] =
+      \left(1 - e^{-k_B}\right) \frac{B_0}{1 + E_{t-1}/IE_{50}} + e^{-k_B} B_{t-1}, $$
+   with variance proportional to the square of the mean.
+2. **A model for the outcome given the past.** Here this is a pooled logistic
+   regression for the per-interval hazard, `R ~ E + B`.
+3. **Monte Carlo simulation** of a large cohort under each static exposure
+   intervention. Each subject keeps their observed $B_0$, exposure is set to
+   $e$, $B_t$ is drawn from the fitted biomarker model, and the event hazard
+   comes from the fitted outcome model.
+
+No model is needed for exposure itself, because the intervention sets it.
+`gformula()` still requires a model statement for every covariate, so we give
+exposure a dummy model `E ~ 1`. As a consequence, the natural-course estimate
+in the output is not meaningful and is ignored.
+
+The biomarker model is not one of the covariate types built into `gfoRmula`,
+so we supply custom fitting and prediction functions. The prediction function
+draws a new biomarker value with the fitted proportional error, mirroring the
+data-generating process. Its `...` argument is required, because `gformula()`
+passes the intervention arguments on to custom prediction functions.
+
+```{r}
+bm_fit <- function(covparams, covname, obs_data, j) {
+  nlme::gnls(
+    B ~ (1 - exp(-exp(lkB))) * B0 / (1 + lag1_E / exp(lIE50)) +
+      exp(-exp(lkB)) * lag1_B,
+    data    = obs_data,
+    params  = lkB + lIE50 ~ 1,
+    start   = list(lkB = log(0.25), lIE50 = log(1.5)),
+    weights = nlme::varPower(value = 1, fixed = 1)
+  )
+}
+
+bm_pred <- function(obs_data, newdf, fitcov, time_name, t, condition,
+                    covname, ...) {
+  mu <- as.numeric(predict(fitcov, newdata = newdf))
+  pmax(rnorm(length(mu), mu, fitcov$sigma * abs(mu)), 0.001)
+}
+```
+
+One static intervention is defined for each exposure level. They are built as
+a named list (`intervention1.E`, `intervention2.E`, ...) and passed to
+`gformula()` with `do.call()`.
+
+```{r}
+interventions <- setNames(
+  lapply(exposure.levels, function(e) list(static, rep(e, Nints))),
+  paste0("intervention", seq_along(exposure.levels), ".E")
+)
+
+gf_args <- list(
+  obs_data          = as.data.table(obs |> select(ID, Ts, B0, B, E, R)),
+  id                = "ID",
+  time_name         = "Ts",
+  time_points       = Nints,
+  covnames          = c("E", "B"),
+  covtypes          = c("normal", "custom"),
+  # Dummy model statements: E is set by the intervention, and B uses bm_fit.
+  # The B statement must mention the lagged terms so gformula() creates them.
+  covparams         = list(covmodels = c(E ~ 1, B ~ lag1_E + lag1_B + B0)),
+  covfits_custom    = c(NA, bm_fit),
+  covpredict_custom = c(NA, bm_pred),
+  histories         = c(lagged),
+  histvars          = list(c("E", "B")),
+  basecovs          = "B0",
+  outcome_name      = "R",
+  outcome_type      = "survival",
+  ymodel            = R ~ E + B,
+  int_descript      = paste("E =", exposure.levels),
+  nsimul            = 10000,
+  seed              = 2026,
+  model_fits        = TRUE
+)
+gf_fit2 <- do.call(gformula, c(gf_args, interventions))
+```
+
+The fitted models recover the data-generating parameters reasonably well. The
+true values are $\log k_B = `r round(log(param[["kB"]]), 3)`$,
+$\log IE_{50} = `r round(log(param[["IE50"]]), 3)`$,
+$\alpha_E = `r param[["alpha.E"]]`$ and $\alpha_B = `r param[["alpha.B"]]`$.
+The outcome model's coefficient for $B$ estimates $-\alpha_B$, because the
+data-generating process uses $\tilde B - B_t$.
+
+```{r}
+coef(gf_fit2$fits$B)
+coef(gf_fit2$fits$R)
+```
+
+The risk by the end of follow-up under each intervention is in the last time
+point of the results:
+
+```{r}
+gform <- gf_fit2$result |>
+  as_tibble() |>
+  filter(k == Nints - 1, Interv. != 0) |>
+  transmute(E = exposure.levels[Interv.], Risk = `g-form risk`,
+            Method = "G-formula")
+gform
+```
+
+#### Comparing the estimates
+
+```{r}
+er_all <- bind_rows(
+  truth |> mutate(Method = "Truth"),
+  gform,
+  naive
+) |>
+  mutate(Method = factor(Method, levels = c("Truth", "G-formula",
+                                            "Unadjusted", "Adjusted for B")))
+
+er_all |>
+  select(Method, E, Risk) |>
+  pivot_wider(names_from = Method, values_from = Risk)
+```
+
+```{r, fig.width=7, fig.height=4.5}
+method_cols <- c("Truth" = "#0b0b0b", "G-formula" = "#2a78d6",
+                 "Unadjusted" = "#eb6834", "Adjusted for B" = "#1baf7a")
+
+ggplot(er_all, aes(E, Risk, color = Method, linetype = Method)) +
+  geom_line(linewidth = 0.8) +
+  geom_point(size = 2.5) +
+  geom_text(data = er_all |> filter(E == max(E)),
+            aes(label = Method), hjust = -0.15, size = 3.5,
+            color = "#52514e", show.legend = FALSE) +
+  scale_color_manual(values = method_cols) +
+  scale_linetype_manual(values = c("Truth" = "solid", "G-formula" = "solid",
+                                   "Unadjusted" = "dashed",
+                                   "Adjusted for B" = "dashed")) +
+  scale_x_continuous(breaks = exposure.levels,
+                     expand = expansion(mult = c(0.05, 0.35))) +
+  scale_y_continuous(limits = c(0, NA)) +
+  labs(x = "Exposure held fixed in every interval, e",
+       y = "Risk of event by interval 10",
+       color = NULL, linetype = NULL) +
+  theme_bw(base_size = 12) +
+  theme(legend.position = "top", panel.grid.minor = element_blank())
+```
+
+The g-formula curve follows the true exposure–response curve, while both
+naive analyses are badly biased: one has the wrong sign and the other is far
+too flat. The g-formula estimate comes from a single trial of 1,000 subjects,
+so it differs from the truth by sampling error. That error is visible in the
+fitted exposure coefficient above. Setting `nsamples` in `gformula()` gives
+bootstrap confidence intervals, at the cost of refitting the models in every
+bootstrap sample.
+
+The g-formula works here because the conditions from Example 1 carry over:
+
+- The confounder model and the outcome model are both **correctly specified**.
+  They have the same form as the data-generating process.
+- **Sequential exchangeability holds.** The biomarker $B_t$ captures
+  everything that drives both the dose interruptions and the event hazard.
+- **Positivity holds.** The randomized dose and the variation in
+  interruptions produce a range of exposures at every biomarker level.
+
+In real data, none of these can be guaranteed. The paper examines what happens
+when they fail, for example when exposure must be imputed from a fitted PK
+model.
