@@ -44,20 +44,7 @@ In terms of practical skills, it will be helpful to think of these problems in t
 2. Dealing with time-varying confounding using discrete-time models. When time-varying confounding is in play, the proper "g-formula compliant" simulations are somewhat complex. Rather than code up these simulations "by hand", we will use the R package `gfoRmula`, which facilitates these simulations for discrete-time models. 
 3. It is important to note that g-formula is not an approach to modeling per se, but is rather a means of deriving inferences from fitted models (or from observed means, in the case of "plug-in" g-formula). Nonetheless, the current state of g-formula research does currently put some constraints on the types of models we can employ. In particular, it is still an open question how to apply g-formula with continuous time models, such as a standard population PKPD model [@Braniff2026-causalER]. Accordingly, we won't attempt to treat these cases here.
 
-### Competing terminology
-
-Pharmacometrics and causal inference grew up in different communities, and several everyday words carry different meanings in each. The most important example is "exposure": to a pharmacometrician, exposure is a drug concentration (or a summary of one, such as $AUC$), whereas in the causal inference literature, "exposure" is simply the name for the variable whose causal effect we want to estimate, whatever that variable happens to be. In the first example below, the causal "exposure" is dose, and the pharmacometric exposure ($AUC$) is the *outcome*. @tbl-terminology summarizes the terms most likely to cause confusion.
-
-| Term | In causal inference | In pharmacometrics |
-|------|---------------------|--------------------|
-| Exposure | The variable whose causal effect is of interest, often denoted $A$. It may be a dose, a concentration, a drug, a behavior, etc. Synonymous with "treatment" | Drug concentration in the body $C(t)$, or a summary of the concentration–time profile over a dosing interval ($AUC$, $C_{max}$, $C_{trough}$) |
-| Treatment or Intervention | Synonyms for exposure. It could correspond to a variable that is actually subject to manipulation, or to a merely hypothetical manipulation | Typically a variable like dose that is actually subject to manipulation |
-| Time-varying exposure | An exposure whose value can change over follow-up, e.g. could be time-varying dose | The concentration–time profile, $C(t)$. |
-| Point exposure | An exposure that nominally occurs at a single point in time, as opposed to one that varies over follow-up. | Understood most naturally as a concentration at a specified time.  |
-
-: Terms with different meanings in causal inference and pharmacometrics. {#tbl-terminology tbl-colwidths="[16,42,42]"}
-
-Where possible, we will use the word "exposure" in the causal inference sense, and we will say "drug concentration" or name the specific metric (e.g. $AUC$) when we mean pharmacokinetic exposure. One exception (sorry!): where we write "exposure-response", you can assume that we are talking about the effect of pharmacokinetic exposure on response (in contrast to "dose-response").
+As a reminder, we use "exposure" in the causal inference sense throughout this chapter (see @sec-terminology and @tbl-terminology).
 
 
 ## G-formula for point exposures with baseline confounding

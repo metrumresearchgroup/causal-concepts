@@ -4,6 +4,10 @@ This material is been jointly developed by MetrumRG and Genentech / Roche.
 
 ## THIS IS WORK IN PROGRESS
 
+## Use of AI Tools
+
+Claude, an AI assistant developed by Anthropic, was used to help draft parts of the code and text in this book. All AI-assisted content has been reviewed and edited by the authors, who take full responsibility for the material.
+
 ## License
 This repository is licensed under the Creative Commons Attribution–NonCommercial 4.0 International (CC BY-NC 4.0) license.
 
