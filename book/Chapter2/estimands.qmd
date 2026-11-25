@@ -10,7 +10,27 @@ knitr::opts_chunk$set(engine.opts = list(
 
 ## Estimand Concepts from ICH E9 (R1)
 
-## Mathematical Representation of Estimands
+The ICH E9(R1) addendum [@ICH2019-E9R1] introduced a framework for stating precisely *what* a clinical trial is meant to estimate, before deciding *how* to estimate it. Its central idea is that a trial objective should be translated into an **estimand**: a precise description of the treatment effect of interest. Only then should one choose an **estimator** (the analysis method) and report the resulting **estimate**. Sensitivity analyses then probe how much the estimate depends on the assumptions of the estimator.
+
+An estimand is defined by five attributes:
+
+1. **Treatment**: the treatment condition of interest and, where relevant, the alternative it is compared with.
+2. **Population**: the patients targeted by the clinical question.
+3. **Variable (endpoint)**: the quantity measured on each patient to address the question.
+4. **Intercurrent events**: how events occurring after treatment initiation that affect the interpretation or existence of the endpoint (e.g. treatment discontinuation, dose reduction, rescue medication, death) are accounted for.
+5. **Population-level summary**: the summary measure used to compare treatment conditions (e.g. a difference in means, a risk ratio, a hazard ratio).
+
+The fourth attribute is the main novelty of the addendum. ICH E9(R1) describes five strategies for handling intercurrent events:
+
+- **Treatment policy**: the intercurrent event is considered part of the treatment strategy, and the endpoint is used regardless of whether it occurs.
+- **Hypothetical**: the effect is defined under a hypothetical scenario in which the intercurrent event would not occur (e.g. had no patients needed a dose reduction).
+- **Composite variable**: the occurrence of the intercurrent event is incorporated into the endpoint itself (e.g. counting discontinuation as treatment failure).
+- **While on treatment**: the endpoint is considered only up to the occurrence of the intercurrent event.
+- **Principal stratum**: the target population is restricted to the subpopulation in which the intercurrent event would (or would not) occur, under one or both treatments.
+
+Although the addendum does not use the formal language of causal inference, each of these attributes has a direct counterpart in potential outcome notation. In the remainder of this chapter, we use that notation to express estimands mathematically, and we return to the treatment policy and hypothetical strategies in the context of dose-exposure-response.
+
+## Potential Outcomes and the Mathematical Representation of Estimands
 
 In order to express estimands mathematically, we need a notational system that distinguishes between what _will_ happen if we let nature take its course, and what _would_ happen if we were to intervene. For the second set of concepts, we will use potential outcome notation. The following exploration in R, adapted from the supplemental material of @Rogers2023-kh, is intended to develop intuitions about the differences between conditional distributions of observable quantities on the one hand, and potential outcome distributions on the other. 
 

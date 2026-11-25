@@ -10,8 +10,8 @@ Our perspective is that causal reasoning is especially important in pharmacometr
 
 ![Fighting for a close second place](fig/img2-goldmedal.png){#fig-close-second width=80% fig-align="center"}
 
-## Motivating Example: The TOGA and HELOISE Trials
+<!-- ## Motivating Example: The TOGA and HELOISE Trials -->
 
-## What Causal Inference Doesn't Do
+<!-- ## What Causal Inference Doesn't Do -->
 
 
