@@ -141,6 +141,8 @@ A typical development program proceeds by selecting doses primarily based on Pha
 The presumed causal structure in @Bartels2026-eh is summarized in the following DAG. Note that we appear to have broken our own rules, since the graph includes undirected edges (with no arrowheads) between the covariate ("L") variables. This is just our way of signaling that the variables represented in these three nodes have a joint distribution with a statistical dependence structure that we acknowledge without bothering to explain the causal dependencies that give rise to the statistical dependencies (it turns out that we don't need to specify that level of detail for the relevant derivations to work). 
 
 ```{r, echo=FALSE}
+#| label: fig-bartels-dag
+#| fig-cap: 'Presumed causal structure for dose, early exposure, dose reduction and platelets in @Bartels2026-eh. Undirected gray edges link covariates that are statistically dependent.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -198,6 +200,8 @@ In the first scenario, we treat dose reduction itself as the endpoint of interes
 
 
 ```{r, echo=FALSE}
+#| label: fig-scenario1-dag
+#| fig-cap: 'Scenario 1: dose reduction ($R$) is the endpoint.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -250,6 +254,8 @@ We now consider a different endpoint, taking platelets at study end as the prima
 
 
 ```{r, echo=FALSE}
+#| label: fig-scenario2-dag
+#| fig-cap: 'Scenario 2: platelets at study end ($Y$) are the endpoint, and dose reduction is an intercurrent event.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300

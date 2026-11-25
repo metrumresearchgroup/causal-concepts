@@ -4,14 +4,15 @@ project:
 book:
   title: "Causal Concepts for Pharmacometricians"
   author: 
-    - Francois Mercier 
-    - Jim Rogers
+    - Francois Mercier, Ph.D. (Genentech)
+    - James A. Rogers, Ph.D. (Metrum Research Group)
   date: "6/20/2026"
   chapters:
     - index.qmd
     - Chapter0/intro.qmd
     - Chapter1/dags.qmd
     - Chapter2/estimands.qmd
+    - Chapter3/g-computation.qmd
     - references.qmd
 
 format:
