@@ -29,9 +29,11 @@ Our graphical conventions in this book are intended to be similar to those used 
 We illustrate these conventions in comparison to dagitty conventions in the following figures: 
 
 
-![Counfounding DAG](fig/img1-confounding.png){width=80% fig-align="center"}
+![Confounding DAG drawn with dagitty conventions.](fig/img1-confounding.png){#fig-confounding-dagitty width=80% fig-align="center"}
 
 ```{r, echo = FALSE}
+#| label: fig-confounding-book
+#| fig-cap: 'The same confounding DAG drawn with the conventions of this book. The causal path of interest ($D \to R$) is blue and the backdoor path through $L$ is red.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -52,6 +54,8 @@ We illustrate these conventions in comparison to dagitty conventions in the foll
 If we then wish to depict the same relationships, but with adjustment for $L$, we will use:
 
 ```{r, echo=FALSE}
+#| label: fig-confounding-adjusted
+#| fig-cap: 'Confounding DAG with adjustment for $L$ (rectangle). The backdoor path is blocked, so its edges are gray.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -81,6 +85,8 @@ in the outcome.
 Examples of intervention are: dose, rescue medication; counter-example: race.
 
 ```{r, echo=FALSE}
+#| label: fig-rct
+#| fig-cap: 'DAG for a randomized controlled trial: treatment $D$ affects response $R$.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -104,6 +110,8 @@ absence of causal relationship.
 
 
 ```{r, echo=FALSE}
+#| label: fig-rct-precision
+#| fig-cap: 'Randomized controlled trial with a precision covariate $L$. There is no arrow from $L$ to $D$.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -131,6 +139,8 @@ A mediator is a node on the pathway between intervention and outcome.
 Full mediation is a strong assumption.
 
 ```{r, echo=FALSE}
+#| label: fig-der-full-mediation
+#| fig-cap: 'Dose ($D$), exposure ($E$) and response ($R$), with the effect of dose fully mediated by exposure.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -157,6 +167,8 @@ alone may not capture the full effect of dose on response.
 In such settings, estimating the total effect of $D$ on $R$ directly is a more robust target.
 
 ```{r, echo=FALSE}
+#| label: fig-der-direct
+#| fig-cap: 'D-E-R DAG with a direct effect of dose on response that bypasses the measured exposure.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -183,6 +195,8 @@ A naïve exposure-response analysis would therefore conflate the drug effect wit
 background cardiovascular risk driven by body weight.
 
 ```{r, echo=FALSE}
+#| label: fig-der-confounded
+#| fig-cap: 'D-E-R DAG in which a covariate $L$ (e.g. body weight) confounds the exposure-response relationship.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -213,6 +227,8 @@ is open and induces bias. Conditioning on $L$ blocks this path and is necessary 
 unbiased estimation of the $D \to R$ effect.
 
 ```{r, echo=FALSE}
+#| label: fig-cond-confounder
+#| fig-cap: '$L$ as a confounder: conditioning on $L$ is needed to block the backdoor path.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -235,6 +251,8 @@ default. Conditioning on $L$ opens this path and *introduces* bias where none ex
 This is a common pitfall — conditioning on a variable that seems relevant can make things worse.
 
 ```{r, echo=FALSE}
+#| label: fig-cond-collider
+#| fig-cap: '$L$ as a collider: conditioning on $L$ (rectangle) opens a biasing path.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -256,6 +274,8 @@ $D$ and $R$ is unaffected whether or not we condition on $L$.
 Conditioning on $L$ neither removes nor introduces bias.
 
 ```{r, echo=FALSE}
+#| label: fig-cond-irrelevant
+#| fig-cap: '$L$ as an irrelevant covariate: conditioning on $L$ neither removes nor introduces bias.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -289,6 +309,8 @@ Conditioning on $\mathit{Asian}$ closes this path and restores exchangeability.
 Body weight ($\mathit{WT}$) and sex ($\mathit{Sex}$) play no active causal role in this simplified picture.
 
 ```{r, echo=FALSE}
+#| label: fig-study-ancestry
+#| fig-cap: 'Pooled studies: study and Asian ancestry open a backdoor path from dose $D$ to outcome $Y$.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -313,6 +335,8 @@ Body weight ($\mathit{WT}$) and sex ($\mathit{Sex}$) play no active causal role 
 After conditioning on $\mathit{Asian}$, the backdoor path is blocked and all edges along it are no longer biasing.
 
 ```{r, echo=FALSE}
+#| label: fig-study-ancestry-adjusted
+#| fig-cap: 'Pooled studies after conditioning on Asian ancestry, which blocks the backdoor path.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -343,6 +367,8 @@ pharmacokinetics and pharmacodynamics.
 The resulting causal structure is shown below.
 
 ```{r, echo=FALSE}
+#| label: fig-study-ancestry-wt-sex
+#| fig-cap: 'Pooled studies with body weight and sex added. Four backdoor paths are now open.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -390,6 +416,8 @@ $\mathit{Asian}$ and $\mathit{Sex}$ — a new source of bias.
 $\mathit{WT}$ should therefore not be included in the adjustment set.
 
 ```{r, echo=FALSE}
+#| label: fig-study-ancestry-wt-sex-adjusted
+#| fig-cap: 'Adjusting for Asian ancestry and sex blocks all backdoor paths. Body weight, a collider, is not adjusted for.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -419,6 +447,8 @@ $\mathit{WT}$ should therefore not be included in the adjustment set.
 ### Trastuzumab in Gastric Cancer: Conounding due to Cachexia
 
 ```{r, echo=FALSE}
+#| label: fig-trastuzumab-cachexia
+#| fig-cap: 'Trastuzumab in gastric cancer: shared factors such as cachexia ($L_{\mathrm{shared}}$) affect both clearance and response, confounding the exposure-response relationship.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -461,6 +491,8 @@ A common analysis classifies patients as "low CA125" or "high CA125" based on wh
 A naïve Kaplan-Meier analysis comparing overall survival between the two groups produces the following figure — a striking but **biased** result whose origin the DAG below will expose.
 
 ```{r, echo=FALSE}
+#| label: fig-km-ca125
+#| fig-cap: 'Naive Kaplan-Meier analysis of overall survival by nadir CA125 group (simulated data). The separation between the curves is caused by immortal time bias.'
 #| fig-width: 6
 #| fig-height: 4.2
 #| fig-align: center
@@ -536,6 +568,8 @@ The striking separation between the curves is an artifact of a biased analysis �
 The causal structure is made precise in the following DAG, where $D$ is the treatment, $M$ the CA125 level measured at Week 9, $S_0$ survival to Week 9, $S_1$ overall survival at end of study, and $U_F$ unmeasured patient frailty.
 
 ```{r, echo = FALSE}
+#| label: fig-immortal-time-dag
+#| fig-cap: 'DAG for immortal time bias: treatment $D$, survival to Week 9 $S_0$, CA125 at Week 9 $M$, overall survival $S_1$ and unmeasured frailty $U_F$.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300

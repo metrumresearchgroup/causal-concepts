@@ -1,4 +1,6 @@
-# G-formula and G-computation
+# G-formula and G-computation[^terminology]
+
+[^terminology]: Some authors make a distinction between g-formula and g-computation, but it is a subtle distinction and it usually isn't carefully maintained. In the material that follows, we will use the two terms interchangeably. 
 
 ```{r setup, include=FALSE}
 # Pass the vector directly. Knitr will re-read this vector freshly for EVERY chunk.
@@ -17,28 +19,58 @@ library(tidyr)
 library(rlang)
 ```
 
+### What this chapter is about
 
-### Terminology
+In this chapter we cover g-formula, which is a prediction-based approach to deriving valid causal inferences. G-formula is not the only way to derive valid causal inferences -- for example, in subsequent chapters we will see alternative methods based on inverse propensity weighting -- but g-formula is especially well suited to pharmacometric analyses that already involve modeling and simulation. 
 
-Some authors make a distinction between g-formula and g-computation, but it is a subtle distinction and it usually isn't carefully maintained. In the material that follows, we will use the two terms interchangeably. 
+### Why g-formula is important
 
-### Why use G-formula?
+If your analyses already employ modeling and simulation, you can simply think of g-formula as the correct logic to employ in your simulations in order to answer a question about cause and effect. You may have conducted analyses in the past where, on the basis of intuition or experience, you implicitly used g-formula, even if you did not know it by that name. You may also have encountered situations where intuition and experience were not a sufficient guide, and it was not clear what simulation logic you should follow. The theory associated with g-formula will be especially helpful in those situations. 
 
-If your work already involves the use of modeling and simulation to answer causal questions, the answer is simple: g-formula is just refers to using correct simulation logic. Conversely, if you have ever used simulation to correctly answer a causal question, you may have used g-formula without even knowing it! 
+
+### Goals for this chapter
+
+By the end of this chapter, you will be have both the conceptual understanding and the practical skills to be able to employ g-formula to address certain exposure-response problems involving both baseline and time-varying confounding. 
+
+#### Conceptual understanding
+
+In order to build intuition about what g-formula is doing, we will look at a simple application of something called the "plug-in g-formula". If you are a pharmacometrician, we don't expect this version of g-formula to be especially useful in your day-to-day work, but it's helpful to understand because it strips the logic down to a bare minimum, without the distraction of modeling. 
+
+#### Practical skills
+
+In terms of practical skills, it will be helpful to think of these problems in terms of three levels of difficulty, only two of which will be addressed in this chapter. 
+
+1. Dealing with baseline confounding only. In this context, the proper "g-formula compliant" simulations can easily be coded up "by hand", and there is no limitation of the types of models that we can use.  
+2. Dealing with time-varying confounding using discrete-time models. When time-varying confounding is in play, the proper "g-formula compliant" simulations are somewhat complex. Rather than code up these simulations "by hand", we will use the R package `gfoRmula`, which facilitates these simulations for discrete-time models. 
+3. It is important to note that g-formula is not an approach to modeling per se, but is rather a means of deriving inferences from fitted models (or from observed means, in the case of "plug-in" g-formula). Nonetheless, the current state of g-formula research does currently put some constraints on the types of models we can employ. In particular, it is still an open question how to apply g-formula with continuous time models, such as a standard population PKPD model [@Braniff2026-causalER]. Accordingly, we won't attempt to treat these cases here.
+
+### Competing terminology
+
+Pharmacometrics and causal inference grew up in different communities, and several everyday words carry different meanings in each. The most important example is "exposure": to a pharmacometrician, exposure is a drug concentration (or a summary of one, such as $AUC$), whereas in the causal inference literature, "exposure" is simply the name for the variable whose causal effect we want to estimate, whatever that variable happens to be. In the first example below, the causal "exposure" is dose, and the pharmacometric exposure ($AUC$) is the *outcome*. @tbl-terminology summarizes the terms most likely to cause confusion.
+
+| Term | In causal inference | In pharmacometrics |
+|------|---------------------|--------------------|
+| Exposure | The variable whose causal effect is of interest, often denoted $A$. It may be a dose, a concentration, a drug, a behavior, etc. Synonymous with "treatment" | Drug concentration in the body $C(t)$, or a summary of the concentration–time profile over a dosing interval ($AUC$, $C_{max}$, $C_{trough}$) |
+| Treatment or Intervention | Synonyms for exposure. It could correspond to a variable that is actually subject to manipulation, or to a merely hypothetical manipulation | Typically a variable like dose that is actually subject to manipulation |
+| Time-varying exposure | An exposure whose value can change over follow-up, e.g. could be time-varying dose | The concentration–time profile, $C(t)$. |
+| Point exposure | An exposure that nominally occurs at a single point in time, as opposed to one that varies over follow-up. | Understood most naturally as a concentration at a specified time.  |
+
+: Terms with different meanings in causal inference and pharmacometrics. {#tbl-terminology tbl-colwidths="[16,42,42]"}
+
+Where possible, we will use the word "exposure" in the causal inference sense, and we will say "drug concentration" or name the specific metric (e.g. $AUC$) when we mean pharmacokinetic exposure. One exception (sorry!): where we write "exposure-response", you can assume that we are talking about the effect of pharmacokinetic exposure on response (in contrast to "dose-response").
+
 
 ## G-formula for point exposures with baseline confounding
 
-We will use the term "point exposure" to refer to any measure of exposure that doesn't vary as a function of time. This includes exposures that are assessed at a specific point in time, e.g. plasma concentration of drug at 8 hours, as well as exposure metrics that are obtained by integrating out time, e.g. $AUC$ after the first 24 hours of dosing (one could argue that the latter is not a true "point" exposure, but we will be a bit flexible with the meaning in order to avoid a more cumbersome term like "non-time-varying exposure").
-
-When we are interested in the effects of a point exposure on a response, and when that response occurs after the exposure timepoint (or after the exposure period), we will specifically be concerned with _baseline_ confounding (as opposed to time-varying confounding, which we will get to soon). Baseline confounding has a very intuitive remedy, which is sometimes referred to as "standardization". Standardization is a special case of g-formula.
+When we are interested in the effects of a point exposure on a response, we will specifically be concerned with _baseline_ confounding (time-varying confounding can't arise if the exposure variable is not itself time-varying). Baseline confounding has a very intuitive remedy, which is sometimes referred to as "standardization". Standardization is a special case of g-formula. Computationally, standardization involves the same steps as "marginalization", although the latter concept is sometime
 
 ### Example: dose and AUC in a single ascending dose study
 
-Consider a first-in-human single ascending dose (SAD) study. Four dose levels
+Consider a first-in-human single ascending dose (SAD) study with 5 cohorts. Let's suppose that the clinical development plan is aiming to develop the drug in a target population that is 50% men and 50% women. Suppose that, to address fetal safety concerns, the first four dose levels
 are tested in escalation cohorts that enroll **men only**. The highest dose is then
-studied in an expansion cohort that enrolls **50% men and 50% women**. Such a design may be motivated for ethical reasons, but it confounds the relationship between dose and exposure.
+studied in an expansion cohort that enrolls **50% men and 50% women**. There may be good ethical reasons for such a design, but it confounds the relationship between dose and exposure.
 
-In this case, the "exposure" (the point intervention) is $\text{Dose}$, and $AUC$ is the
+In this case, the "point exposure" is $\text{Dose}$, and $AUC$ is the
 outcome. Let's suppose we want to know how $AUC$ changes as a function of dose _in a target population composed of 50% men and 50% women_. 
 
 To keep the example transparent, the PK is linear, and body weight is the only
@@ -55,6 +87,8 @@ expansion cohort. The DAG is shown below, with $A$ = dose, $Y$ = $AUC$,
 $S$ = sex, and $W$ = body weight.
 
 ```{r, echo=FALSE}
+#| label: fig-sad-dag
+#| fig-cap: 'DAG for the SAD study. Sex ($S$) determines which doses ($A$) a subject can receive and, through body weight ($W$), affects AUC ($Y$).'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -136,6 +170,7 @@ $AUC/\text{Dose}$ does not depend on dose, so any trend in this plot is not
 caused by dose. Women (who are only present at 300 mg) sit higher.
 
 ```{r, fig.width=7, fig.height=4}
+#| label: fig-sad-auc-dose
 #| fig-cap: "Dose-normalized AUC by dose and sex in the simulated SAD study. Women are enrolled only at the 300 mg dose."
 sad_dat |>
   mutate(SEX = factor(SEX, levels = c("Male", "Female"))) |>
@@ -161,8 +196,8 @@ $$ E[Y(a)], \quad a \in \{10, 30, 100, 300\} $$
 
 Since we wrote the data-generating process, we can compute the truth by
 simulation: give *every* member of a large 50/50 population each dose in turn
-and average the resulting $AUC$s. This is the "correct simulation logic" from
-the start of the chapter. Dose is set by intervention, not by the cohort
+and average the resulting $AUC$s. This is the "correct simulation logic" that we referred to at the outset 
+ of the chapter. In the simulation, dose is set by intervention on every person, not by the cohort
 someone happened to be enrolled in.
 
 ```{r}
@@ -212,7 +247,7 @@ There are two ingredients:
 2. **A sample from $F_W$**. The expansion cohort is a 50/50 sample of the target
    population, so its observed weights can stand in for $F_W$.
 
-The integral then becomes a simulation. For each dose $a$, set *every* target
+The task of integration can then be accomplished by averaging over the simulated values. For each dose $a$, set *every* target
 subject's dose to $a$, predict their mean $AUC$ from the model, and average:
 
 ```{r}
@@ -234,11 +269,13 @@ sad_std <- sad_target |>
 
 Note the *subjects* are fixed and only the *dose* changes across rows. Each
 target subject therefore appears once at every dose level. This is the
-counterfactual intervention "give everyone dose $a$" applied to the model. 
+counterfactual intervention "give everyone dose $a$" applied to the model. To develop an intution for what the `cross-join` is accomplishing in the code above, take a look at [Kat Hoffman's excellent _Visual Guide to G-computation_](https://github.com/kathoffman/causal-inference-visual-guides/blob/master/visual-guides/G-Computation.pdf)
 
 #### Comparing the estimates
 
 ```{r}
+#| label: tbl-sad-estimates
+#| tbl-cap: 'Mean AUC by dose in the 50/50 target population: naive and standardized estimates compared with the truth.'
 sad_naive |>
   left_join(sad_std, by = "DOSE") |>
   left_join(sad_truth, by = "DOSE") |>
@@ -257,11 +294,13 @@ That's it! We have applied g-formula! Hopefully you find yourself saying, "Of co
 
 ### Example illustrating plug-in G-formula
 
-In the preceding example, the key confounding variable, weight, was continuously valued. Similarly, in many the applications of interest to us, both the confounding variable(s) and the intervention variable(s) will be continuous, and we will model their effects (as we did in the preceding example), using parametric regression. When we implement g-formula using parametric regression models, we are using _parametric_ g-formula, and that variant of g-formula will be our primary focus in this book.
+In the preceding example, the key confounding variable, weight, was continuously valued. Similarly, in many the applications in this book, both the confounding variable(s) and the exposure variable(s) will be continuous, and we will model their effects (as we did in the preceding example), using parametric regression. When we implement g-formula using parametric regression models, we are using _parametric_ g-formula, and that variant of g-formula will be our primary focus in this book.
 
 For didactic purposes however, it will be helpful to strip away the distraction of regression models as we begin our exploration of time-varying confounding. To do this, the following example implements the _plug-in_ g-formula, which is a version of g-formula that can be computed using only the observed  conditional means. The plug-in g-formula can only be used when all confounding variables and intervention variables are categorically valued. The following example is constructed to conform (somewhat artificially) to this requirement. The data are adapted from Table 21.1 in @Hernan2024-whatif.  
 
-In @Hernan2024-whatif , the data are presented in the form of a summary table. The essential structure of that table is preserved below, albeit using variable names that correspond more closely to a standard pharmacometric problem in oncology. Note that we have preserved the exorbitant sample sizes of the original example because we want to focus on issues of bias in estimation (without the distraction of precision issues, which become relevant at lower sample sizes.) 
+In @Hernan2024-whatif , the data are presented in the form of a summary table. The essential structure of that table is preserved below, albeit using variable names that correspond more closely to a standard pharmacometric problem in oncology[^explain-design]. The original example is described as arising from a sequentially. Note that we have preserved the exorbitant sample sizes of the original example because we want to focus on issues of bias in estimation (without the distraction of precision issues, which become relevant at lower sample sizes.) 
+
+[^explain-design]: The original example is based on a hypothetical trial with sequential randomization. In our application, we won't need to assume such a design, and we won't. Our hypothetical example involves the same essential causal structure, but arising from dose changes that occur at the discretion of clinicians, rather than through stratified randomization. 
 
 ```{r}
 summ_dat <- tibble(
@@ -273,6 +312,8 @@ summ_dat <- tibble(
   ORR = 0.01 * rep(c(84, 52, 76, 44), each = 2)
 )
 ```
+
+
 
 In order to more easily analyze this data, we expand the summary table to one subject per row:
 
@@ -295,74 +336,95 @@ variables to the usual notation as follows:
 
 | Symbol | Variable | Meaning |
 |--------|----------|---------|
-| $A_0$ | `AUC1` | Exposure in period 1 (`high` or `low`) |
-| $L_1$ | `LOWNEUT` | Low neutrophil count after period 1 (0/1) |
-| $A_1$ | `AUC2` | Exposure in period 2 (`high` or `low`) |
+| $D_1$ | `DOSE1` | Dose for period 1 (`high` for everyone) |
+| $A_1$ | `AUC1` | Area under $C(t)$ curve in period 1 (`high` or `low`) |
+| $L_2$ | `LOWNEUT` | Low neutrophil count after period 1 (0/1) |
+| $D_2$ | `DOSE2` | Dose period 2 (`high` or `low`) |
+| $A_2$ | `AUC2` | Area under $C(t)$ curve in period 2 (`high` or `low`) |
 | $Y$ | `RESP` | Objective response (0/1) |
 
-The DAG below, adapted from Figure 20.3 of @Hernan2024-whatif, shows the assumed
-causal structure. $U$ is an unmeasured common cause of $L_1$ and $Y$ (for
+: Variables in the two-period example and their notation. {#tbl-two-period-vars}
+
+Though it's not obvious (yet) these data have been constructed so that exposure has no effect on response. However, we will willfully forget this fact when it comes time to draw the DAG, because in practice we would never know the true data generating mechanism. The DAG below, adapted from Figure 20.3 of @Hernan2024-whatif, shows the assumed
+causal structure. $U$ is an unmeasured common cause of $L_2$ and $Y$ (for
 example, underlying disease severity).
 
+For purposes of this example, we will focus on how to estimate the causal effect of $AUC$ on reponse (the "exposure-response" in the usual pharmacometric sense). Depending on the context, it might be sufficient to ignore $AUC$ entirely and directly estimate the "dose-response" relationship instead. However, as summarized by @Braniff2026-causalER, 
+
+> While dose is a natural intervention variable, dose–response inference is specific to the formulation, regimen, and delivery mechanism studied and does not generalize readily across many design dimensions relevant to development. A key contribution of ER analysis is the decomposition of the dose-exposure-response relation into two separable questions: is the dose achieving adequate exposure, and is that exposure sufficient to drive response? This decomposition enables modular optimization so that formulation, regimen, and delivery can be modified while maintaining clear exposure targets, guiding development across changing phases and populations.
+
+When we adopt this perspective (as pharmacometricians most often do), we are implicitly treating $AUC$ as the treatment or intervention variable. Even though we cannot directly intervene on $AUC$, an exposure-response analysis is implicitly asking: "If we _could_ intervene directly to change $AUC$, what would happen to the response?". Moreover specifically, we will adopt the perspective that we want to know the causal effect of an entire exposure trajectory, so the hypothetical intervention involves setting the value of both $AUC1$ and $AUC2$. 
+
+
 ```{r, echo=FALSE}
+#| label: fig-two-period-dag
+#| fig-cap: 'Assumed causal structure for the two-period example, adapted from Figure 20.3 of @Hernan2024-whatif. $U$ is an unmeasured common cause of $L_2$ and $Y$.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
 
     \begin{tikzpicture}[->,>=Stealth]
-    \node[] (A0) at (0,0) {$A_0$};
-    \node[] (A0-long) at (-0.9,0) {\footnotesize AUC1};
-    \node[] (L1) at (2.5,0) {$L_1$};
-    \node[] (L1-long) at (2.5,-0.5) {\footnotesize Low Neutrophils};
-    \node[] (A1) at (5,0) {$A_1$};
-    \node[] (A1-long) at (5,-0.5) {\footnotesize AUC2};
+    \node[] (D1) at (-1.25,0) {$D_1$};
+    \node[] (A1) at (0,0) {$A_1$};
+    \node[] (A1-long) at (0,0.5) {\footnotesize AUC1};
+    \node[] (L2) at (2.5,0) {$L_2$};
+    \node[] (L2-long) at (2.5,-0.5) {\footnotesize Low Neutrophils};
+    \node[] (D2) at (3.75,0) {$D_2$};
+    \node[] (A2) at (5,0) {$A_2$};
+    \node[] (A2-long) at (5,-0.5) {\footnotesize AUC2};
     \node[] (Y) at (7.5,0) {$Y$};
     \node[] (Y-long) at (8.6,0) {\footnotesize Response};
     \node[] (U) at (5,2) {$U$};
     \node[] (U-long) at (5,2.5) {\footnotesize Unmeasured};
 
       \path
-        (A0) edge [very thick, color=blue, bend right=35] (Y)
-        (A1) edge [very thick, color=blue]  (Y)
-        (A0) edge [very thick, color=gray]  (L1)
-        (L1) edge [very thick, color=red]   (A1)
-        (U)  edge [very thick, color=red]   (L1)
+        (D1) edge [very thick, color=blue]  (A1)
+        (D2) edge [very thick, color=red]  (A2)
+        (A1) edge [very thick, color=blue, bend right=35] (Y)
+        (A2) edge [very thick, color=blue]  (Y)
+        (A1) edge [very thick, color=gray]  (L2)
+        (L2) edge [very thick, color=red]   (D2)
+        (U)  edge [very thick, color=red]   (L2)
         (U)  edge [very thick, color=red]   (Y)
         ;
     \end{tikzpicture}
 ```
 
-$L_1$ plays two roles:
+In this simplified representation, $L_2$ does not appear to be a time-varying covariate. Of course, we could easily add baseline neutrophiles as $L_1$, but that would just a cosmetic change. The essential feature of the DAG that introduces time-varying confounding is the fact that $L_2$, being downstream of $A_1$ and upstream of $A_2$, plays two roles:
 
-- It is a **confounder** of $A_1$: the backdoor path
-  $A_1 \leftarrow L_1 \leftarrow U \rightarrow Y$ (red) is open unless we
-  condition on $L_1$.
-- It is a **collider** on the path $A_0 \rightarrow L_1 \leftarrow U \rightarrow Y$.
-  This path is closed as long as we do *not* condition on $L_1$.
+- It is a **confounder** of $A_2$. Low neutrophils prompt a change in the
+  period-2 dose ($L_2 \rightarrow D_2$), which in turn changes period-2
+  exposure ($D_2 \rightarrow A_2$). The backdoor path
+  $A_2 \leftarrow D_2 \leftarrow L_2 \leftarrow U \rightarrow Y$ (red) is open
+  unless we condition on $L_2$.
+- It is a **collider** on the path $A_1 \rightarrow L_2 \leftarrow U \rightarrow Y$.
+  This path is closed as long as we do *not* condition on $L_2$ or on its
+  descendant $D_2$.
 
-Because $A_0$ affects $L_1$, which in turn affects $A_1$, this structure is
-called *treatment–confounder feedback*. Adjusting for $L_1$ is needed to
+Because $A_1$ affects $L_2$, which in turn affects $A_2$, this structure is
+called *treatment–confounder feedback*. Adjusting for $L_2$ is needed to
 handle the first path but opens the second, so no single conditional analysis
-(adjusting or not adjusting for $L_1$) gives an unbiased estimate of the
-joint effect of $A_0$ and $A_1$.
+(adjusting or not adjusting for $L_2$) gives an unbiased estimate of the
+joint effect of $A_1$ and $A_2$.
 
-In the data of Table 21.1, exposure has no effect on response, so the true
-arrows $A_0 \rightarrow Y$ and $A_1 \rightarrow Y$ (blue) are absent. They are
-drawn here because these are the effects we want to estimate.
+There are several different exposure histories that we could theoretically compare: 
 
-The target is the mean potential outcome under a joint exposure strategy
-$(a_0, a_1)$, for example "always high" $(a_0, a_1) = (\text{high}, \text{high})$:
+- "always high" $(a_1, a_2) = (\text{high}, \text{high})$,
+- "high-then-low" $(a_1, a_2) = (\text{high}, \text{low})$ 
+- "always low" $(a_1, a_2) = (\text{low}, \text{low})$  
+- "low-then-high" $(a_1, a_2) = (\text{low}, \text{high})$. 
 
-$$ E[Y(a_0, a_1)] $$
+Note that to compare any of the strategies listed above is to target a _hypothetical_ estimand, as opposed to a treatment policy estimand. In a treatment policy perspective, the dose reduction would be considered as an intercurrent event, and would necessarily be incorporated into the treatment definition. By contrast, if we want to isolate the causal effect of exposure per se, we have to contrast hypothetical scenarios in which the intercurrent event has no effect. To simplify our discussion, we will compare the "always high" and "always low" strategies, but the following discussion would apply equally to a comparison of any of the hypothetical strategies. 
+
 We have yet to say exactly what g-formula is in general ... please be patient, we will get there ... 
 but in this special two-timepoint case, the g-formula can be expressed as: 
 
-$$ E[Y(a_0, a_1)] = \sum_{l} E[Y \mid A_0 = a_0, L_1 = l, A_1 = a_1] \, \Pr(L_1 = l \mid A_0 = a_0) $$
+$$ E[Y(a_1, a_2)] = \sum_{l} E[Y \mid A_1 = a_1, L_2 = l, A_2 = a_2] \, \Pr(L_2 = l \mid A_1 = a_1) $$
 
-In words: within each level of $L_1$, take the mean response among subjects
-who actually followed the strategy, and then average over $L_1$ using the
-distribution that $L_1$ *would have* under $a_0$. Note that the weights are
-$\Pr(L_1 = l \mid A_0 = a_0)$, not the marginal $\Pr(L_1 = l)$. This is what
+In words: within each level of $L_2$, take the mean response among subjects
+who actually followed the strategy, and then average over $L_2$ using the
+distribution that $L_2$ *would have* under $a_1$. Note that the weights are
+$\Pr(L_2 = l \mid A_1 = a_1)$, not the marginal $\Pr(L_2 = l)$. This is what
 lets the g-formula handle a confounder that is itself affected by earlier
 exposure.
 
@@ -370,9 +432,9 @@ exposure.
 data and plugging the estimates in. Here every variable is discrete, so each
 piece is simply a sample proportion or mean.
 
-#### Step 1: Distribution of $L_1$ given $A_0$
+#### Step 1: Distribution of $L_2$ given $A_1$
 
-Estimate $\Pr(L_1 = l \mid A_0 = a_0)$ by the proportion of subjects in each
+Estimate $\Pr(L_2 = l \mid A_1 = a_1)$ by the proportion of subjects in each
 level of `LOWNEUT` within each level of `AUC1`:
 
 ```{r}
@@ -388,9 +450,9 @@ High period-1 exposure makes low neutrophils more likely
 (`r p_L$P_L[p_L$AUC1 == "high" & p_L$LOWNEUT == 1]` vs
 `r p_L$P_L[p_L$AUC1 == "low" & p_L$LOWNEUT == 1]`).
 
-#### Step 2: Mean response given exposure history and $L_1$
+#### Step 2: Mean response given exposure history and $L_2$
 
-Estimate $E[Y \mid A_0 = a_0, L_1 = l, A_1 = a_1]$ by the observed response
+Estimate $E[Y \mid A_1 = a_1, L_2 = l, A_2 = a_2]$ by the observed response
 rate in each combination of `AUC1`, `LOWNEUT` and `AUC2`:
 
 ```{r}
@@ -455,7 +517,7 @@ g_all
 Exposure has no effect on response under any strategy: every strategy gives a
 mean response of `r unique(round(g_all$E_Y_strategy, 4))`.
 
-#### Why not simply adjust for $L_1$?
+#### Why not simply adjust for $L_2$?
 
 Compare this with two common analyses that do not use the g-formula.
 
@@ -471,33 +533,33 @@ crude
 ```
 
 The crude difference is `r round(crude$E_Y[1] - crude$E_Y[2], 3)`. It is biased because
-$L_1$ confounds the period-2 exposure: subjects with low neutrophils are more
+$L_2$ confounds the period-2 exposure: subjects with low neutrophils are more
 likely to receive low exposure in period 2, and they also respond less often.
 
-**Stratifying on $L_1$.** Within each level of `LOWNEUT`, compare response
+**Stratifying on $L_2$.** Within each level of `LOWNEUT`, compare response
 between "always high" and "always low" subjects:
 
 ```{r}
 strat <- m_Y |>
   filter(AUC1 == AUC2) |>
-  select(LOWNEUT, AUC1, E_Y) |>
-  arrange(LOWNEUT, AUC1)
+  select(LOWNEUT, AUC1, AUC2, E_Y) |>
+  arrange(LOWNEUT, AUC1, AUC2)
 strat
 ```
 
 Within each stratum, "always high" looks better by
-`r strat$E_Y[1] - strat$E_Y[2]`, even though exposure has no effect.
-Stratifying removes confounding of $A_1$, but $L_1$ is a collider on
-$A_0 \rightarrow L_1 \leftarrow U \rightarrow Y$. Conditioning on it opens that
-path and creates a non-causal association between $A_0$ and $Y$. High
+`r strat$E_Y[1] - strat$E_Y[2]`, even though, by construction, exposure has no effect.
+Stratifying removes confounding of $A_2$, but $L_2$ is a collider on
+$A_1 \rightarrow L_2 \leftarrow U \rightarrow Y$. Conditioning on it opens that
+path and creates a non-causal association between $A_1$ and $Y$. High
 period-1 exposure itself pushes toward low neutrophils, so among subjects with
 the same neutrophil status, high-exposure subjects tend to have more favorable
-values of $U$, and therefore respond more often.
+values of $U$, and therefore respond more often, explaining the above bias (+0.08 in "always high").
 
-The g-formula avoids both problems. It conditions on $L_1$ when estimating the
-response means (Step 2), which handles confounding of $A_1$. It then averages
-over $L_1$ using its distribution under $a_0$ (Step 1) rather than holding
-$L_1$ fixed. As a result, the collider path stays closed for $A_0$.
+The g-formula avoids both problems. It conditions on $L_2$ when estimating the
+response means (Step 2), which handles confounding of $A_2$. It then averages
+over $L_2$ using its distribution under $a_1$ (Step 1) rather than holding
+$L_2$ fixed. As a result, the collider path stays closed for $A_1$.
 
 
 
@@ -530,8 +592,8 @@ simulation error.
 `gformula()` expects one row per subject per time point. We use two time
 points:
 
-- `TIME = 0` holds the period-1 exposure $A_0$.
-- `TIME = 1` holds $L_1$, the period-2 exposure $A_1$ and the outcome $Y$.
+- `TIME = 0` holds the period-1 exposure $A_1$.
+- `TIME = 1` holds $L_2$, the period-2 exposure $A_2$ and the outcome $Y$.
 
 Exposure is coded as a 0/1 indicator `HIGHAUC` so that it can be modeled with
 logistic regression. There is no baseline covariate, so `LOWNEUT` is set to 0
@@ -560,17 +622,19 @@ head(long_dat)
 #### Saturated models
 
 The term `lag1_HIGHAUC` refers to the previous time point's value of `HIGHAUC`, so
-at `TIME = 1` it equals $A_0$. The package creates it from the `histories` and
+at `TIME = 1` it equals $A_1$. The package creates it from the `histories` and
 `histvars` arguments. The models are:
 
 | Variable | Model | Free parameters | Cells |
 |----------|-------|-----------------|-------|
-| $L_1$ | `LOWNEUT ~ lag1_HIGHAUC` | 2 | 2 levels of $A_0$ |
-| $A_1$ | `HIGHAUC ~ lag1_HIGHAUC * LOWNEUT` | 4 | 4 combinations of $(A_0, L_1)$ |
-| $Y$ | `RESP ~ lag1_HIGHAUC * LOWNEUT * HIGHAUC` | 8 | 8 combinations of $(A_0, L_1, A_1)$ |
+| $L_2$ | `LOWNEUT ~ lag1_HIGHAUC` | 2 | 2 levels of $A_1$ |
+| $A_2$ | `HIGHAUC ~ lag1_HIGHAUC * LOWNEUT` | 4 | 4 combinations of $(A_1, L_2)$ |
+| $Y$ | `RESP ~ lag1_HIGHAUC * LOWNEUT * HIGHAUC` | 8 | 8 combinations of $(A_1, L_2, A_2)$ |
 
-The model for $A_1$ is not part of the g-formula for a static strategy, since
-the intervention overrides $A_1$. `gformula()` still requires it because it
+: Saturated models used in the `gfoRmula` analysis. {#tbl-saturated-models}
+
+The model for $A_2$ is not part of the g-formula for a static strategy, since
+the intervention overrides $A_2$. `gformula()` still requires it because it
 also simulates the *natural course* (no intervention), which serves as a check
 on the models.
 
@@ -614,7 +678,7 @@ should agree with the observed (`NP mean`) response rate.
 #### Connecting the fitted models to the hand calculation
 
 Because the models are saturated, their fitted probabilities are exactly the
-cell proportions from Steps 1 and 2. For $L_1$:
+cell proportions from Steps 1 and 2. For $L_2$:
 
 ```{r}
 tibble(lag1_HIGHAUC = c(1, 0)) |>
@@ -657,12 +721,14 @@ effect, and the estimated difference between "always high" and "always low" is
 `r sprintf("%.4f", gf_res[["Mean difference"]][gf_res[["Interv."]] == 1])`.
 Setting `nsamples` to a positive number adds bootstrap confidence intervals.
 
-The package's advantage is that it does not rely on cells. With continuous
-covariates, many time points or many covariates, cells become sparse or empty,
+The advantage of parametric g-formula is that it does not rely on cells. With continuous
+covariates, many time points or many covariates, cells become sparse or empty[^positivity],
 and the hand calculation is no longer feasible. Unsaturated parametric models
 then smooth over the sparse cells. The price is that the estimate is valid only
 if those models are correctly specified, in addition to the identifying
 assumptions.
+
+[^positivity]: The occurrence of "empty cells" is referred to in the causal inference literature as a violation of "positivity". To properly address this topic it would be necessary to distinguish several different types of positivity violations. For present purposes we avoid these nuances simply rest with the obvious point that, depending on the available data, parametric assumptions may need to be made in order to estimate all quantities of interest. 
 
 ### Example 2: Dose-mediated confounding in exposure–response
 
@@ -711,6 +777,8 @@ outcome over follow-up, and the exposure-dependent dose interruption is folded
 into the arrow $B_2 \rightarrow E_2$.
 
 ```{r, echo=FALSE}
+#| label: fig-dose-mediated-dag
+#| fig-cap: 'DAG for the dose-mediated confounding example, unrolled over the first two intervals.'
 #| engine: tikz
 #| fig-ext: png
 #| fig-dpi: 300
@@ -744,7 +812,7 @@ into the arrow $B_2 \rightarrow E_2$.
 ```
 
 The structure is the same treatment–confounder feedback as in
-Example 1, with $B_2$ in the role of $L_1$:
+Example 1, with $B_2$ in the role of $L_2$:
 
 - $B_2$ is a **confounder** of $E_2$ through the backdoor path
   $E_2 \leftarrow B_2 \rightarrow R$ (red). Subjects whose biomarker drops are
@@ -838,7 +906,7 @@ simulate_dgp <- function(subj, param, Nints, E.fix = NA) {
 
 #### Estimand and ground truth
 
-The estimand is the *causal exposure–response curve*: the risk of an event by
+We have adopted the perspective in which the mathematical estimand is the *causal exposure–response curve*: the risk of an event by
 the end of interval 10 if every subject's exposure were held at $e$ in every
 interval,
 $$ \Pr\left[R(\bar e) = 1\right], \qquad \bar e = (e, e, \ldots, e), $$
@@ -885,10 +953,12 @@ obs |>
 ```
 
 The figure shows the feedback loop at work. Subjects on the high dose have
-higher early exposure, which suppresses their biomarker. This leads to more
+higher early exposure (red curve), which suppresses their biomarker. This leads to more
 dose interruptions, which pull their exposure back down.
 
 ```{r, fig.width=9, fig.height=3.5}
+#| label: fig-feedback
+#| fig-cap: 'Mean exposure, biomarker and fraction of dose interruptions by interval and dose arm, among subjects still at risk.'
 arm_cols <- c("Low dose" = "#2a78d6", "High dose" = "#eb6834")
 
 obs |>
@@ -1084,6 +1154,8 @@ er_all |>
 ```
 
 ```{r, fig.width=7, fig.height=4.5}
+#| label: fig-er-comparison
+#| fig-cap: 'Risk of an event by interval 10 as a function of exposure held fixed in every interval: truth, g-formula and two naive analyses.'
 method_cols <- c("Truth" = "#0b0b0b", "G-formula" = "#2a78d6",
                  "Unadjusted" = "#eb6834", "Adjusted for B" = "#1baf7a")
 
