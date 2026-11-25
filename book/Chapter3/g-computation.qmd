@@ -1,4 +1,4 @@
-# G-formula and G-computation[^terminology]
+# G-formula and G-computation
 
 [^terminology]: Some authors make a distinction between g-formula and g-computation, but it is a subtle distinction and it usually isn't carefully maintained. In the material that follows, we will use the two terms interchangeably. 
 
@@ -21,7 +21,7 @@ library(rlang)
 
 ### What this chapter is about
 
-In this chapter we cover g-formula, which is a prediction-based approach to deriving valid causal inferences. G-formula is not the only way to derive valid causal inferences -- for example, in subsequent chapters we will see alternative methods based on inverse propensity weighting -- but g-formula is especially well suited to pharmacometric analyses that already involve modeling and simulation. 
+In this chapter we cover g-formula[^terminology], which is a prediction-based approach to deriving valid causal inferences. G-formula is not the only way to derive valid causal inferences -- for example, in subsequent chapters we will see alternative methods based on inverse propensity weighting -- but g-formula is especially well suited to pharmacometric analyses that already involve modeling and simulation. 
 
 ### Why g-formula is important
 
