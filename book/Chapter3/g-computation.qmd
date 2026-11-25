@@ -30,7 +30,7 @@ If your analyses already employ modeling and simulation, you can simply think of
 
 ### Goals for this chapter
 
-By the end of this chapter, you will be have both the conceptual understanding and the practical skills to be able to employ g-formula to address certain exposure-response problems involving both baseline and time-varying confounding. 
+By the end of this chapter, you will have both the conceptual understanding and the practical skills to be able to employ g-formula to address certain exposure-response problems involving both baseline and time-varying confounding. 
 
 #### Conceptual understanding
 
@@ -62,7 +62,7 @@ Where possible, we will use the word "exposure" in the causal inference sense, a
 
 ## G-formula for point exposures with baseline confounding
 
-When we are interested in the effects of a point exposure on a response, we will specifically be concerned with _baseline_ confounding (time-varying confounding can't arise if the exposure variable is not itself time-varying). Baseline confounding has a very intuitive remedy, which is sometimes referred to as "standardization". Standardization is a special case of g-formula. Computationally, standardization involves the same steps as "marginalization", although the latter concept is sometime
+When we are interested in the effects of a point exposure on a response, we will specifically be concerned with _baseline_ confounding (time-varying confounding can't arise if the exposure variable is not itself time-varying). Baseline confounding has a very intuitive remedy, which is sometimes referred to as "standardization". Standardization is a special case of g-formula. 
 
 ### Example: dose and AUC in a single ascending dose study
 
