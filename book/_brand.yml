@@ -1,0 +1,19 @@
+# Brand definition for the book (https://quarto.org/docs/authoring/brand.html)
+# Colors are sampled from images/metrum-logo.png.
+
+color:
+  palette:
+    metrum-green: "#006747"
+    charcoal: "#333333"
+  foreground: charcoal
+  background: "#ffffff"
+  primary: metrum-green
+  secondary: charcoal
+
+logo:
+  medium: images/metrum-logo.png
+
+defaults:
+  bootstrap:
+    defaults:
+      link-color: $brand-metrum-green
