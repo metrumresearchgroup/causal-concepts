@@ -85,7 +85,7 @@ div.csl-indent {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../references.html" rel="next">
+<link href="../Chapter3/g-computation.html" rel="next">
 <link href="../Chapter1/dags.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -96,7 +96,7 @@ div.csl-indent {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-24369470c036f38a51220ca9a6759448.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-11c3c37eb1cfbb0d18db20d6795087db.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -179,7 +179,10 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      <img src="../images/metrum-logo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Causal Concepts for Pharmacometricians</a> 
     </div>
@@ -217,6 +220,12 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../Chapter3/g-computation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">G-formula and G-computation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../references.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">References</span></a>
   </div>
@@ -232,7 +241,7 @@ window.Quarto = {
    
   <ul>
   <li><a href="#estimand-concepts-from-ich-e9-r1" id="toc-estimand-concepts-from-ich-e9-r1" class="nav-link active" data-scroll-target="#estimand-concepts-from-ich-e9-r1"><span class="header-section-number">3.1</span> Estimand Concepts from ICH E9 (R1)</a></li>
-  <li><a href="#mathematical-representation-of-estimands" id="toc-mathematical-representation-of-estimands" class="nav-link" data-scroll-target="#mathematical-representation-of-estimands"><span class="header-section-number">3.2</span> Mathematical Representation of Estimands</a></li>
+  <li><a href="#potential-outcomes-and-the-mathematical-representation-of-estimands" id="toc-potential-outcomes-and-the-mathematical-representation-of-estimands" class="nav-link" data-scroll-target="#potential-outcomes-and-the-mathematical-representation-of-estimands"><span class="header-section-number">3.2</span> Potential Outcomes and the Mathematical Representation of Estimands</a></li>
   <li><a href="#dose-exposure-response-estimands" id="toc-dose-exposure-response-estimands" class="nav-link" data-scroll-target="#dose-exposure-response-estimands"><span class="header-section-number">3.3</span> Dose-exposure-response Estimands</a>
   <ul>
   <li><a href="#scenario-1-no-difference-between-treatment-policy-and-hypothetical-estimands" id="toc-scenario-1-no-difference-between-treatment-policy-and-hypothetical-estimands" class="nav-link" data-scroll-target="#scenario-1-no-difference-between-treatment-policy-and-hypothetical-estimands"><span class="header-section-number">3.3.1</span> Scenario 1: No difference between treatment policy and hypothetical estimands</a></li>
@@ -266,9 +275,27 @@ window.Quarto = {
 
 <section id="estimand-concepts-from-ich-e9-r1" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="estimand-concepts-from-ich-e9-r1"><span class="header-section-number">3.1</span> Estimand Concepts from ICH E9 (R1)</h2>
+<p>The ICH E9(R1) addendum <span class="citation" data-cites="ICH2019-E9R1">(<a href="../references.html#ref-ICH2019-E9R1" role="doc-biblioref">ICH 2019</a>)</span> introduced a framework for stating precisely <em>what</em> a clinical trial is meant to estimate, before deciding <em>how</em> to estimate it. Its central idea is that a trial objective should be translated into an <strong>estimand</strong>: a precise description of the treatment effect of interest. Only then should one choose an <strong>estimator</strong> (the analysis method) and report the resulting <strong>estimate</strong>. Sensitivity analyses then probe how much the estimate depends on the assumptions of the estimator.</p>
+<p>An estimand is defined by five attributes:</p>
+<ol type="1">
+<li><strong>Treatment</strong>: the treatment condition of interest and, where relevant, the alternative it is compared with.</li>
+<li><strong>Population</strong>: the patients targeted by the clinical question.</li>
+<li><strong>Variable (endpoint)</strong>: the quantity measured on each patient to address the question.</li>
+<li><strong>Intercurrent events</strong>: how events occurring after treatment initiation that affect the interpretation or existence of the endpoint (e.g.&nbsp;treatment discontinuation, dose reduction, rescue medication, death) are accounted for.</li>
+<li><strong>Population-level summary</strong>: the summary measure used to compare treatment conditions (e.g.&nbsp;a difference in means, a risk ratio, a hazard ratio).</li>
+</ol>
+<p>The fourth attribute is the main novelty of the addendum. ICH E9(R1) describes five strategies for handling intercurrent events:</p>
+<ul>
+<li><strong>Treatment policy</strong>: the intercurrent event is considered part of the treatment strategy, and the endpoint is used regardless of whether it occurs.</li>
+<li><strong>Hypothetical</strong>: the effect is defined under a hypothetical scenario in which the intercurrent event would not occur (e.g.&nbsp;had no patients needed a dose reduction).</li>
+<li><strong>Composite variable</strong>: the occurrence of the intercurrent event is incorporated into the endpoint itself (e.g.&nbsp;counting discontinuation as treatment failure).</li>
+<li><strong>While on treatment</strong>: the endpoint is considered only up to the occurrence of the intercurrent event.</li>
+<li><strong>Principal stratum</strong>: the target population is restricted to the subpopulation in which the intercurrent event would (or would not) occur, under one or both treatments.</li>
+</ul>
+<p>Although the addendum does not use the formal language of causal inference, each of these attributes has a direct counterpart in potential outcome notation. In the remainder of this chapter, we use that notation to express estimands mathematically, and we return to the treatment policy and hypothetical strategies in the context of dose-exposure-response.</p>
 </section>
-<section id="mathematical-representation-of-estimands" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="mathematical-representation-of-estimands"><span class="header-section-number">3.2</span> Mathematical Representation of Estimands</h2>
+<section id="potential-outcomes-and-the-mathematical-representation-of-estimands" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="potential-outcomes-and-the-mathematical-representation-of-estimands"><span class="header-section-number">3.2</span> Potential Outcomes and the Mathematical Representation of Estimands</h2>
 <p>In order to express estimands mathematically, we need a notational system that distinguishes between what <em>will</em> happen if we let nature take its course, and what <em>would</em> happen if we were to intervene. For the second set of concepts, we will use potential outcome notation. The following exploration in R, adapted from the supplemental material of <span class="citation" data-cites="Rogers2023-kh">Rogers, Maas, and Pitarch (<a href="../references.html#ref-Rogers2023-kh" role="doc-biblioref">2023</a>)</span>, is intended to develop intuitions about the differences between conditional distributions of observable quantities on the one hand, and potential outcome distributions on the other.</p>
 <p>The fundamental problem of causal inference is that, when it comes to intervening on a single subject or experimental unit, we can only try one thing at a time. This constraint is summarized poetically in the words that Plato attributes to Heraclitus: “… all things move and nothing remains still … you cannot step twice into the same stream.” We can of course return to the same subject, or the same experimental unit, to evaluate a different intervention, but the experimental conditions will never quite be the same. For this reason, the potential outcome distributions associated with any real-world process will only ever be partially observable. In the R-based exploration that follows, we are able to free ourselves from this constraint by working with simulated data. In simulation world, we know all the “what-ifs” that we can’t directly observe in the real world.</p>
 <p>For simplicity at the outset, we will consider a scenario with just two levels of treatment, referred to as “control” and “active” and indexed by 0 and 1, and two possible outcomes, corresponding to failure and success, also denoted with 0 and 1. We will simulate 4000 subjects. This number is sufficiently large to make the statistical imprecision in our estimates small in comparison to the treatment effect, so that – for didactic purposes – we can mostly ignore the usual distinction between population and sample, and we can focus exclusively on issues of bias. For each simulated subject, we will set the value of the potential outcome <span class="math inline">\(Y^0\)</span> (represented in our simulated dataset as <code>Y0</code> ), corresponding to the outcome that <em>would</em> occur <em>if</em> the given subject receives the control treatment, and the potential outcome <span class="math inline">\(Y^1\)</span> (represented in our simulated dataset as <code>Y1</code>), corresponding to the outcome that <em>would</em> occur <em>if</em> the given subject receives the active treatment.</p>
@@ -412,9 +439,14 @@ window.Quarto = {
 <p>The presumed causal structure in <span class="citation" data-cites="Bartels2026-eh">Bartels et al. (<a href="../references.html#ref-Bartels2026-eh" role="doc-biblioref">2026</a>)</span> is summarized in the following DAG. Note that we appear to have broken our own rules, since the graph includes undirected edges (with no arrowheads) between the covariate (“L”) variables. This is just our way of signaling that the variables represented in these three nodes have a joint distribution with a statistical dependence structure that we acknowledge without bothering to explain the causal dependencies that give rise to the statistical dependencies (it turns out that we don’t need to specify that level of detail for the relevant derivations to work).</p>
 <div class="cell">
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="estimands_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="2100"></p>
+<div id="fig-bartels-dag" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-bartels-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="estimands_files/figure-html/fig-bartels-dag-1.png" class="img-fluid figure-img" width="2100">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bartels-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.1: Presumed causal structure for dose, early exposure, dose reduction and platelets in <span class="citation" data-cites="Bartels2026-eh">Bartels et al. (<a href="../references.html#ref-Bartels2026-eh" role="doc-biblioref">2026</a>)</span>. Undirected gray edges link covariates that are statistically dependent.
+</figcaption>
 </figure>
 </div>
 </div>
@@ -425,9 +457,14 @@ window.Quarto = {
 <p>In the first scenario, we treat dose reduction itself as the endpoint of interest (the idea being that, in this context, a dose reduction signifies a starting dose that was too high), and we proceed as if there are no intercurrent events between the initial dose assignment and dose reductions. Given that assumption, there is no distinction between the treatment policy estimand and the hypothetical estimand (because we can’t even entertain intervening on the intercurrent events if there are no intercurrent events!)</p>
 <div class="cell">
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="estimands_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="2100"></p>
+<div id="fig-scenario1-dag" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-scenario1-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="estimands_files/figure-html/fig-scenario1-dag-1.png" class="img-fluid figure-img" width="2100">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-scenario1-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.2: Scenario 1: dose reduction (<span class="math inline">\(R\)</span>) is the endpoint.
+</figcaption>
 </figure>
 </div>
 </div>
@@ -440,9 +477,14 @@ window.Quarto = {
 <p>We now consider a different endpoint, taking platelets at study end as the primary endpoint of interest. In this framing, dose reduction must be considered as an intercurrent event, because such events may occur at times after dose assignment and before measurement of the outcome. We assume the same causal connections as above:</p>
 <div class="cell">
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="estimands_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="2100"></p>
+<div id="fig-scenario2-dag" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-scenario2-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="estimands_files/figure-html/fig-scenario2-dag-1.png" class="img-fluid figure-img" width="2100">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-scenario2-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.3: Scenario 2: platelets at study end (<span class="math inline">\(Y\)</span>) are the endpoint, and dose reduction is an intercurrent event.
+</figcaption>
 </figure>
 </div>
 </div>
@@ -467,6 +509,9 @@ Bartels, Christian, Yuchen Wang, Jonathan French, and James Rogers. 2026. <span>
 </div>
 <div id="ref-Fleming2025-gm" class="csl-entry" role="listitem">
 Fleming, Thomas R, Kevin J Carroll, Janet T Wittes, Scott S Emerson, Mark D Rothmann, Sylva Collins, and Gregory Levin. 2025. <span>“A Perspective on the Appropriate Implementation of <span>ICH</span> <span>E9</span>(<span>R1</span>) Addendum Strategies for Handling Intercurrent Events.”</span> <em>Stat. Med.</em> 44 (10-12): e70104.
+</div>
+<div id="ref-ICH2019-E9R1" class="csl-entry" role="listitem">
+ICH. 2019. <span>“<span>ICH</span> <span>E9</span>(<span>R1</span>) Addendum on Estimands and Sensitivity Analysis in Clinical Trials to the Guideline on Statistical Principles for Clinical Trials.”</span> International Council for Harmonisation of Technical Requirements for Pharmaceuticals for Human Use; <a href="https://database.ich.org/sites/default/files/E9-R1_Step4_Guideline_2019_1203.pdf" class="uri">https://database.ich.org/sites/default/files/E9-R1_Step4_Guideline_2019_1203.pdf</a>.
 </div>
 <div id="ref-Rogers2023-kh" class="csl-entry" role="listitem">
 Rogers, James A, Hugo Maas, and Alejandro Pérez Pitarch. 2023. <span>“An Introduction to Causal Inference for Pharmacometricians.”</span> <em>CPT Pharmacometrics Syst Pharmacol</em> 12 (1): 27–40.
@@ -882,8 +927,8 @@ Rogers, James A, Hugo Maas, and Alejandro Pérez Pitarch. 2023. <span>“An Intr
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../references.html" class="pagination-link" aria-label="References">
-        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../Chapter3/g-computation.html" class="pagination-link" aria-label="G-formula and G-computation">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">G-formula and G-computation</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -61,7 +61,7 @@ div.csl-indent {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-24369470c036f38a51220ca9a6759448.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-11c3c37eb1cfbb0d18db20d6795087db.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -115,7 +115,10 @@ div.csl-indent {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      <img src="../images/metrum-logo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Causal Concepts for Pharmacometricians</a> 
     </div>
@@ -153,6 +156,12 @@ div.csl-indent {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../Chapter3/g-computation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">G-formula and G-computation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../references.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">References</span></a>
   </div>
@@ -168,8 +177,6 @@ div.csl-indent {
    
   <ul>
   <li><a href="#why-causal-inference" id="toc-why-causal-inference" class="nav-link active" data-scroll-target="#why-causal-inference"><span class="header-section-number">1.1</span> Why Causal Inference?</a></li>
-  <li><a href="#motivating-example-the-toga-and-heloise-trials" id="toc-motivating-example-the-toga-and-heloise-trials" class="nav-link" data-scroll-target="#motivating-example-the-toga-and-heloise-trials"><span class="header-section-number">1.2</span> Motivating Example: The TOGA and HELOISE Trials</a></li>
-  <li><a href="#what-causal-inference-doesnt-do" id="toc-what-causal-inference-doesnt-do" class="nav-link" data-scroll-target="#what-causal-inference-doesnt-do"><span class="header-section-number">1.3</span> What Causal Inference Doesn’t Do</a></li>
   </ul>
 </nav>
     </div>
@@ -198,25 +205,29 @@ div.csl-indent {
 <section id="why-causal-inference" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="why-causal-inference"><span class="header-section-number">1.1</span> Why Causal Inference?</h2>
 <p>Sound causal reasoning is essential to pharmacometrics (<span class="citation" data-cites="Rogers2023-kh">Rogers, Maas, and Pitarch (<a href="../references.html#ref-Rogers2023-kh" role="doc-biblioref">2023</a>)</span>). A motivating premise of this book is that pharmacometricians will be better able to engage in causal reasoning with stochastic data if they are able to avail themselves of the formal vocabulary, notation, and concepts of formal causal inference. While this book may introduce the reader to some new analytic techniques, our emphasis will be on causal concepts as an aid to elicitation and interpretation, as suggested in the figure below.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="fig/img1-qsvoyage.png" class="img-fluid figure-img" style="width:80.0%"></p>
-<figcaption>The quantitative science journey</figcaption>
+<div id="fig-qs-journey" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-qs-journey-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/img1-qsvoyage.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-qs-journey-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.1: The quantitative science journey
+</figcaption>
 </figure>
 </div>
 <p>Our perspective is that causal reasoning is especially important in pharmacometrics because it is often the case that pharmacometric questions must be addressed without the benefit of a dedicated randomized trial. As such, our goal is often not to provide the gold standard evidence that would result from a randomized trial, but rather to foster high-quality decision making when the ideal data is not available at the time the decision needs to be made, as suggested in the following figure.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="fig/img2-goldmedal.png" class="img-fluid figure-img" style="width:80.0%"></p>
-<figcaption>Fighting for a close second place</figcaption>
+<div id="fig-close-second" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-close-second-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/img2-goldmedal.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-close-second-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.2: Fighting for a close second place
+</figcaption>
 </figure>
 </div>
-</section>
-<section id="motivating-example-the-toga-and-heloise-trials" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="motivating-example-the-toga-and-heloise-trials"><span class="header-section-number">1.2</span> Motivating Example: The TOGA and HELOISE Trials</h2>
-</section>
-<section id="what-causal-inference-doesnt-do" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="what-causal-inference-doesnt-do"><span class="header-section-number">1.3</span> What Causal Inference Doesn’t Do</h2>
+<!-- ## Motivating Example: The TOGA and HELOISE Trials -->
+<!-- ## What Causal Inference Doesn't Do -->
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">

@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>4&nbsp; G-formula and G-computation – Causal Concepts for Pharmacometricians</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../references.html" rel="next">
+<link href="../Chapter2/estimands.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-11c3c37eb1cfbb0d18db20d6795087db.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Chapter3/g-computation.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">G-formula and G-computation</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      <img src="../images/metrum-logo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Causal Concepts for Pharmacometricians</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapter0/intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapter1/dags.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Causal Directed Acyclic Graphs</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapter2/estimands.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Estimands</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapter3/g-computation.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">G-formula and G-computation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#what-this-chapter-is-about" id="toc-what-this-chapter-is-about" class="nav-link active" data-scroll-target="#what-this-chapter-is-about"><span class="header-section-number">4.0.1</span> What this chapter is about</a></li>
+  <li><a href="#why-g-formula-is-important" id="toc-why-g-formula-is-important" class="nav-link" data-scroll-target="#why-g-formula-is-important"><span class="header-section-number">4.0.2</span> Why g-formula is important</a></li>
+  <li><a href="#goals-for-this-chapter" id="toc-goals-for-this-chapter" class="nav-link" data-scroll-target="#goals-for-this-chapter"><span class="header-section-number">4.0.3</span> Goals for this chapter</a>
+  <ul>
+  <li><a href="#conceptual-understanding" id="toc-conceptual-understanding" class="nav-link" data-scroll-target="#conceptual-understanding"><span class="header-section-number">4.0.3.1</span> Conceptual understanding</a></li>
+  <li><a href="#practical-skills" id="toc-practical-skills" class="nav-link" data-scroll-target="#practical-skills"><span class="header-section-number">4.0.3.2</span> Practical skills</a></li>
+  </ul></li>
+  <li><a href="#g-formula-for-point-exposures-with-baseline-confounding" id="toc-g-formula-for-point-exposures-with-baseline-confounding" class="nav-link" data-scroll-target="#g-formula-for-point-exposures-with-baseline-confounding"><span class="header-section-number">4.1</span> G-formula for point exposures with baseline confounding</a>
+  <ul>
+  <li><a href="#example-dose-and-auc-in-a-single-ascending-dose-study" id="toc-example-dose-and-auc-in-a-single-ascending-dose-study" class="nav-link" data-scroll-target="#example-dose-and-auc-in-a-single-ascending-dose-study"><span class="header-section-number">4.1.1</span> Example: dose and AUC in a single ascending dose study</a>
+  <ul class="collapse">
+  <li><a href="#simulating-the-study" id="toc-simulating-the-study" class="nav-link" data-scroll-target="#simulating-the-study"><span class="header-section-number">4.1.1.1</span> Simulating the study</a></li>
+  <li><a href="#estimand-and-ground-truth" id="toc-estimand-and-ground-truth" class="nav-link" data-scroll-target="#estimand-and-ground-truth"><span class="header-section-number">4.1.1.2</span> Estimand and ground truth</a></li>
+  <li><a href="#naive-analysis" id="toc-naive-analysis" class="nav-link" data-scroll-target="#naive-analysis"><span class="header-section-number">4.1.1.3</span> Naive analysis</a></li>
+  <li><a href="#standardization-the-g-formula-for-a-point-exposure" id="toc-standardization-the-g-formula-for-a-point-exposure" class="nav-link" data-scroll-target="#standardization-the-g-formula-for-a-point-exposure"><span class="header-section-number">4.1.1.4</span> Standardization (the g-formula for a point exposure)</a></li>
+  <li><a href="#comparing-the-estimates" id="toc-comparing-the-estimates" class="nav-link" data-scroll-target="#comparing-the-estimates"><span class="header-section-number">4.1.1.5</span> Comparing the estimates</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#g-formula-for-time-varying-exposure-with-longitudinal-confounding" id="toc-g-formula-for-time-varying-exposure-with-longitudinal-confounding" class="nav-link" data-scroll-target="#g-formula-for-time-varying-exposure-with-longitudinal-confounding"><span class="header-section-number">4.2</span> G-formula for time-varying exposure with longitudinal confounding</a>
+  <ul>
+  <li><a href="#example-illustrating-plug-in-g-formula" id="toc-example-illustrating-plug-in-g-formula" class="nav-link" data-scroll-target="#example-illustrating-plug-in-g-formula"><span class="header-section-number">4.2.1</span> Example illustrating plug-in G-formula</a>
+  <ul class="collapse">
+  <li><a href="#step-1-distribution-of-l_2-given-a_1" id="toc-step-1-distribution-of-l_2-given-a_1" class="nav-link" data-scroll-target="#step-1-distribution-of-l_2-given-a_1"><span class="header-section-number">4.2.1.1</span> Step 1: Distribution of <span class="math inline">\(L_2\)</span> given <span class="math inline">\(A_1\)</span></a></li>
+  <li><a href="#step-2-mean-response-given-exposure-history-and-l_2" id="toc-step-2-mean-response-given-exposure-history-and-l_2" class="nav-link" data-scroll-target="#step-2-mean-response-given-exposure-history-and-l_2"><span class="header-section-number">4.2.1.2</span> Step 2: Mean response given exposure history and <span class="math inline">\(L_2\)</span></a></li>
+  <li><a href="#step-3-combine-for-one-strategy" id="toc-step-3-combine-for-one-strategy" class="nav-link" data-scroll-target="#step-3-combine-for-one-strategy"><span class="header-section-number">4.2.1.3</span> Step 3: Combine for one strategy</a></li>
+  <li><a href="#all-four-strategies-at-once" id="toc-all-four-strategies-at-once" class="nav-link" data-scroll-target="#all-four-strategies-at-once"><span class="header-section-number">4.2.1.4</span> All four strategies at once</a></li>
+  <li><a href="#why-not-simply-adjust-for-l_2" id="toc-why-not-simply-adjust-for-l_2" class="nav-link" data-scroll-target="#why-not-simply-adjust-for-l_2"><span class="header-section-number">4.2.1.5</span> Why not simply adjust for <span class="math inline">\(L_2\)</span>?</a></li>
+  </ul></li>
+  <li><a href="#example-of-parametric-g-formula-using-the-gformula-package" id="toc-example-of-parametric-g-formula-using-the-gformula-package" class="nav-link" data-scroll-target="#example-of-parametric-g-formula-using-the-gformula-package"><span class="header-section-number">4.2.2</span> Example of parametric g-formula using the <code>gfoRmula</code> package</a>
+  <ul class="collapse">
+  <li><a href="#long-format-data" id="toc-long-format-data" class="nav-link" data-scroll-target="#long-format-data"><span class="header-section-number">4.2.2.1</span> Long-format data</a></li>
+  <li><a href="#saturated-models" id="toc-saturated-models" class="nav-link" data-scroll-target="#saturated-models"><span class="header-section-number">4.2.2.2</span> Saturated models</a></li>
+  <li><a href="#connecting-the-fitted-models-to-the-hand-calculation" id="toc-connecting-the-fitted-models-to-the-hand-calculation" class="nav-link" data-scroll-target="#connecting-the-fitted-models-to-the-hand-calculation"><span class="header-section-number">4.2.2.3</span> Connecting the fitted models to the hand calculation</a></li>
+  <li><a href="#comparing-the-results" id="toc-comparing-the-results" class="nav-link" data-scroll-target="#comparing-the-results"><span class="header-section-number">4.2.2.4</span> Comparing the results</a></li>
+  </ul></li>
+  <li><a href="#example-2-dose-mediated-confounding-in-exposureresponse" id="toc-example-2-dose-mediated-confounding-in-exposureresponse" class="nav-link" data-scroll-target="#example-2-dose-mediated-confounding-in-exposureresponse"><span class="header-section-number">4.2.3</span> Example 2: Dose-mediated confounding in exposure–response</a>
+  <ul class="collapse">
+  <li><a href="#data-generating-process" id="toc-data-generating-process" class="nav-link" data-scroll-target="#data-generating-process"><span class="header-section-number">4.2.3.1</span> Data-generating process</a></li>
+  <li><a href="#estimand-and-ground-truth-1" id="toc-estimand-and-ground-truth-1" class="nav-link" data-scroll-target="#estimand-and-ground-truth-1"><span class="header-section-number">4.2.3.2</span> Estimand and ground truth</a></li>
+  <li><a href="#the-observed-trial" id="toc-the-observed-trial" class="nav-link" data-scroll-target="#the-observed-trial"><span class="header-section-number">4.2.3.3</span> The observed trial</a></li>
+  </ul></li>
+  <li><a href="#naive-analyses" id="toc-naive-analyses" class="nav-link" data-scroll-target="#naive-analyses"><span class="header-section-number">4.2.4</span> Naive analyses</a>
+  <ul class="collapse">
+  <li><a href="#parametric-g-formula" id="toc-parametric-g-formula" class="nav-link" data-scroll-target="#parametric-g-formula"><span class="header-section-number">4.2.4.1</span> Parametric g-formula</a></li>
+  <li><a href="#comparing-the-estimates-1" id="toc-comparing-the-estimates-1" class="nav-link" data-scroll-target="#comparing-the-estimates-1"><span class="header-section-number">4.2.4.2</span> Comparing the estimates</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">G-formula and G-computation</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="what-this-chapter-is-about" class="level3" data-number="4.0.1">
+<h3 data-number="4.0.1" class="anchored" data-anchor-id="what-this-chapter-is-about"><span class="header-section-number">4.0.1</span> What this chapter is about</h3>
+<p>In this chapter we cover g-formula<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>, which is a prediction-based approach to deriving valid causal inferences. G-formula is not the only way to derive valid causal inferences – for example, in subsequent chapters we will see alternative methods based on inverse propensity weighting – but g-formula is especially well suited to pharmacometric analyses that already involve modeling and simulation.</p>
+</section>
+<section id="why-g-formula-is-important" class="level3" data-number="4.0.2">
+<h3 data-number="4.0.2" class="anchored" data-anchor-id="why-g-formula-is-important"><span class="header-section-number">4.0.2</span> Why g-formula is important</h3>
+<p>If your analyses already employ modeling and simulation, you can simply think of g-formula as the correct logic to employ in your simulations in order to answer a question about cause and effect. You may have conducted analyses in the past where, on the basis of intuition or experience, you implicitly used g-formula, even if you did not know it by that name. You may also have encountered situations where intuition and experience were not a sufficient guide, and it was not clear what simulation logic you should follow. The theory associated with g-formula will be especially helpful in those situations.</p>
+</section>
+<section id="goals-for-this-chapter" class="level3" data-number="4.0.3">
+<h3 data-number="4.0.3" class="anchored" data-anchor-id="goals-for-this-chapter"><span class="header-section-number">4.0.3</span> Goals for this chapter</h3>
+<p>By the end of this chapter, you will have both the conceptual understanding and the practical skills to be able to employ g-formula to address certain exposure-response problems involving both baseline and time-varying confounding.</p>
+<section id="conceptual-understanding" class="level4" data-number="4.0.3.1">
+<h4 data-number="4.0.3.1" class="anchored" data-anchor-id="conceptual-understanding"><span class="header-section-number">4.0.3.1</span> Conceptual understanding</h4>
+<p>In order to build intuition about what g-formula is doing, we will look at a simple application of something called the “plug-in g-formula”. If you are a pharmacometrician, we don’t expect this version of g-formula to be especially useful in your day-to-day work, but it’s helpful to understand because it strips the logic down to a bare minimum, without the distraction of modeling.</p>
+</section>
+<section id="practical-skills" class="level4" data-number="4.0.3.2">
+<h4 data-number="4.0.3.2" class="anchored" data-anchor-id="practical-skills"><span class="header-section-number">4.0.3.2</span> Practical skills</h4>
+<p>In terms of practical skills, it will be helpful to think of these problems in terms of three levels of difficulty, only two of which will be addressed in this chapter.</p>
+<ol type="1">
+<li>Dealing with baseline confounding only. In this context, the proper “g-formula compliant” simulations can easily be coded up “by hand”, and there is no limitation of the types of models that we can use.<br>
+</li>
+<li>Dealing with time-varying confounding using discrete-time models. When time-varying confounding is in play, the proper “g-formula compliant” simulations are somewhat complex. Rather than code up these simulations “by hand”, we will use the R package <code>gfoRmula</code>, which facilitates these simulations for discrete-time models.</li>
+<li>It is important to note that g-formula is not an approach to modeling per se, but is rather a means of deriving inferences from fitted models (or from observed means, in the case of “plug-in” g-formula). Nonetheless, the current state of g-formula research does currently put some constraints on the types of models we can employ. In particular, it is still an open question how to apply g-formula with continuous time models, such as a standard population PKPD model <span class="citation" data-cites="Braniff2026-causalER">(<a href="../references.html#ref-Braniff2026-causalER" role="doc-biblioref">Braniff 2026</a>)</span>. Accordingly, we won’t attempt to treat these cases here.</li>
+</ol>
+<p>As a reminder, we use “exposure” in the causal inference sense throughout this chapter (see <a href="../Chapter1/dags.html#sec-terminology" class="quarto-xref"><span>Section 2.3</span></a> and <a href="../Chapter1/dags.html#tbl-terminology" class="quarto-xref">Table&nbsp;<span>2.1</span></a>).</p>
+</section>
+</section>
+<section id="g-formula-for-point-exposures-with-baseline-confounding" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="g-formula-for-point-exposures-with-baseline-confounding"><span class="header-section-number">4.1</span> G-formula for point exposures with baseline confounding</h2>
+<p>When we are interested in the effects of a point exposure on a response, we will specifically be concerned with <em>baseline</em> confounding (time-varying confounding can’t arise if the exposure variable is not itself time-varying). Baseline confounding has a very intuitive remedy, which is sometimes referred to as “standardization”. Standardization is a special case of g-formula.</p>
+<section id="example-dose-and-auc-in-a-single-ascending-dose-study" class="level3" data-number="4.1.1">
+<h3 data-number="4.1.1" class="anchored" data-anchor-id="example-dose-and-auc-in-a-single-ascending-dose-study"><span class="header-section-number">4.1.1</span> Example: dose and AUC in a single ascending dose study</h3>
+<p>Consider a first-in-human single ascending dose (SAD) study with 5 cohorts. Let’s suppose that the clinical development plan is aiming to develop the drug in a target population that is 50% men and 50% women. Suppose that, to address fetal safety concerns, the first four dose levels are tested in escalation cohorts that enroll <strong>men only</strong>. The highest dose is then studied in an expansion cohort that enrolls <strong>50% men and 50% women</strong>. There may be good ethical reasons for such a design, but it confounds the relationship between dose and exposure.</p>
+<p>In this case, the “point exposure” is <span class="math inline">\(\text{Dose}\)</span>, and <span class="math inline">\(AUC\)</span> is the outcome. Let’s suppose we want to know how <span class="math inline">\(AUC\)</span> changes as a function of dose <em>in a target population composed of 50% men and 50% women</em>.</p>
+<p>To keep the example transparent, the PK is linear, and body weight is the only PK covariate. It acts on clearance through allometric scaling:</p>
+<p><span class="math display">\[
+CL_i = CL_{pop} \left(\frac{WT_i}{70}\right)^{0.75} e^{\eta_i},
+\qquad AUC_i = \frac{\text{Dose}_i}{CL_i}
+\]</span></p>
+<p>By construction, sex affects <span class="math inline">\(AUC\)</span> <em>only</em> through body size. Sex also determines which doses a subject can receive, because women only enter the study only in the expansion cohort. The DAG is shown below, with <span class="math inline">\(A\)</span> = dose, <span class="math inline">\(Y\)</span> = <span class="math inline">\(AUC\)</span>, <span class="math inline">\(S\)</span> = sex, and <span class="math inline">\(W\)</span> = body weight.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-sad-dag" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sad-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="g-computation_files/figure-html/fig-sad-dag-1.png" class="img-fluid figure-img" width="2100">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sad-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.1: DAG for the SAD study. Sex (<span class="math inline">\(S\)</span>) determines which doses (<span class="math inline">\(A\)</span>) a subject can receive and, through body weight (<span class="math inline">\(W\)</span>), affects AUC (<span class="math inline">\(Y\)</span>).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In the absence of any adjustments for weight, the backdoor path <span class="math inline">\(A \leftarrow S \rightarrow W \rightarrow Y\)</span> (red) is open, indicating that the (unadjusted) association between <span class="math inline">\(\text{Dose}\)</span> and <span class="math inline">\(AUC\)</span> is biased relative to the true causal effect. A naive comparison of <span class="math inline">\(AUC\)</span> across doses therefore compares different populations as well as different doses. Either <span class="math inline">\(S\)</span> or <span class="math inline">\(W\)</span> blocks the path. We adjust for <span class="math inline">\(W\)</span> (drawn as a rectangle) for a reason we explain below.</p>
+<section id="simulating-the-study" class="level4" data-number="4.1.1.1">
+<h4 data-number="4.1.1.1" class="anchored" data-anchor-id="simulating-the-study"><span class="header-section-number">4.1.1.1</span> Simulating the study</h4>
+<p>The simulation below uses doses of 10, 30, 100 and 300 mg, with six men in each escalation cohort and 40 subjects (20 men, 20 women) in the expansion cohort at 300 mg. Body weight is log-normal, with a median of 85 kg in men and 65 kg in women.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>sad_param <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">doses   =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">30</span>, <span class="dv">100</span>, <span class="dv">300</span>),     <span class="co"># mg</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_esc   =</span> <span class="dv">6</span>,                       <span class="co"># men per escalation cohort</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_exp   =</span> <span class="dv">40</span>,                      <span class="co"># expansion cohort, 50% women</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">exp_dose =</span> <span class="dv">300</span>,                    <span class="co"># expansion cohort dose (mg)</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">wt_med  =</span> <span class="fu">c</span>(<span class="at">Male =</span> <span class="dv">85</span>, <span class="at">Female =</span> <span class="dv">65</span>),  <span class="co"># kg</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">wt_lsd  =</span> <span class="fl">0.15</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">cl_pop  =</span> <span class="dv">5</span>,                       <span class="co"># L/h for a 70 kg subject</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">cl_exp  =</span> <span class="fl">0.75</span>,                    <span class="co"># allometric exponent</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">omega   =</span> <span class="fl">0.25</span>                     <span class="co"># SD of eta on CL</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Draw body weight, clearance and AUC for a set of subjects with given sex and dose</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>sad_pk <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, <span class="at">p =</span> sad_param) {</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  dat <span class="sc">|&gt;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">WT  =</span> <span class="fu">exp</span>(<span class="fu">rnorm</span>(<span class="fu">n</span>(), <span class="fu">log</span>(p<span class="sc">$</span>wt_med[SEX]), p<span class="sc">$</span>wt_lsd)),</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">CL  =</span> p<span class="sc">$</span>cl_pop <span class="sc">*</span> (WT <span class="sc">/</span> <span class="dv">70</span>)<span class="sc">^</span>p<span class="sc">$</span>cl_exp <span class="sc">*</span> <span class="fu">exp</span>(<span class="fu">rnorm</span>(<span class="fu">n</span>(), <span class="dv">0</span>, p<span class="sc">$</span>omega)),</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">AUC =</span> DOSE <span class="sc">/</span> CL</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>sad_simulate_trial <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">p =</span> sad_param) {</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  escalation <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">COHORT =</span> <span class="st">"Escalation"</span>,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">DOSE   =</span> <span class="fu">rep</span>(p<span class="sc">$</span>doses, <span class="at">each =</span> p<span class="sc">$</span>n_esc),</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">SEX    =</span> <span class="st">"Male"</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  expansion <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">COHORT =</span> <span class="st">"Expansion"</span>,</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">DOSE   =</span> p<span class="sc">$</span>exp_dose,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">SEX    =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Male"</span>, <span class="st">"Female"</span>), <span class="at">each =</span> p<span class="sc">$</span>n_exp <span class="sc">/</span> <span class="dv">2</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(escalation, expansion) <span class="sc">|&gt;</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">ID =</span> <span class="fu">row_number</span>(), <span class="at">.before =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sad_pk</span>(p)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">20261109</span>)</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>sad_dat <span class="ot">&lt;-</span> <span class="fu">sad_simulate_trial</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The figure shows dose-normalized <span class="math inline">\(AUC\)</span> for each subject. If the PK is linear, <span class="math inline">\(AUC/\text{Dose}\)</span> does not depend on dose, so any trend in this plot is not caused by dose. Women (who are only present at 300 mg) sit higher.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>sad_dat <span class="sc">|&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">SEX =</span> <span class="fu">factor</span>(SEX, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Male"</span>, <span class="st">"Female"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="fu">factor</span>(DOSE), AUC <span class="sc">/</span> DOSE, <span class="at">colour =</span> SEX)) <span class="sc">+</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_jitterdodge</span>(<span class="at">jitter.width =</span> <span class="fl">0.15</span>, <span class="at">dodge.width =</span> <span class="fl">0.5</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">seed =</span> <span class="dv">1</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="fl">2.5</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="at">Male =</span> <span class="st">"#2a78d6"</span>, <span class="at">Female =</span> <span class="st">"#eb6834"</span>), <span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Dose (mg)"</span>, <span class="at">y =</span> <span class="st">"AUC / Dose (h/L)"</span>) <span class="sc">+</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-sad-auc-dose" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sad-auc-dose-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="g-computation_files/figure-html/fig-sad-auc-dose-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sad-auc-dose-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.2: Dose-normalized AUC by dose and sex in the simulated SAD study. Women are enrolled only at the 300 mg dose.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="estimand-and-ground-truth" class="level4" data-number="4.1.1.2">
+<h4 data-number="4.1.1.2" class="anchored" data-anchor-id="estimand-and-ground-truth"><span class="header-section-number">4.1.1.2</span> Estimand and ground truth</h4>
+<p>Let <span class="math inline">\(Y(a)\)</span> be the potential <span class="math inline">\(AUC\)</span> for a subject if they received dose <span class="math inline">\(a\)</span>. Our target is the mean potential <span class="math inline">\(AUC\)</span> at each dose in a <strong>50/50 population of men and women</strong>. This is the population the drug will be used in.</p>
+<p><span class="math display">\[ E[Y(a)], \quad a \in \{10, 30, 100, 300\} \]</span></p>
+<p>Since we wrote the data-generating process, we can compute the truth by simulation: give <em>every</em> member of a large 50/50 population each dose in turn and average the resulting <span class="math inline">\(AUC\)</span>s. This is the “correct simulation logic” that we referred to at the outset of the chapter. In the simulation, dose is set by intervention on every person, not by the cohort someone happened to be enrolled in.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sad_truth <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">SEX =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Male"</span>, <span class="st">"Female"</span>), <span class="at">each =</span> <span class="fl">5e5</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cross_join</span>(<span class="fu">tibble</span>(<span class="at">DOSE =</span> sad_param<span class="sc">$</span>doses)) <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sad_pk</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(DOSE) <span class="sc">|&gt;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Truth =</span> <span class="fu">mean</span>(AUC))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Note that <code>sad_pk()</code> draws a new weight and <span class="math inline">\(\eta\)</span> for each subject–dose row. That is harmless here because the truth is a population mean, not an individual-level contrast.</p>
+</section>
+<section id="naive-analysis" class="level4" data-number="4.1.1.3">
+<h4 data-number="4.1.1.3" class="anchored" data-anchor-id="naive-analysis"><span class="header-section-number">4.1.1.3</span> Naive analysis</h4>
+<p>The naive estimate of <span class="math inline">\(E[Y(a)]\)</span> is the observed mean <span class="math inline">\(AUC\)</span> among subjects who got dose <span class="math inline">\(a\)</span>:</p>
+<p><span class="math display">\[ \hat{E}[Y \mid A = a] \]</span></p>
+<p>This is the right answer only if the subjects at each dose are exchangeable with the target population. Here they are not: the escalation doses include men only.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sad_naive <span class="ot">&lt;-</span> sad_dat <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(DOSE) <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Naive =</span> <span class="fu">mean</span>(AUC))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="standardization-the-g-formula-for-a-point-exposure" class="level4" data-number="4.1.1.4">
+<h4 data-number="4.1.1.4" class="anchored" data-anchor-id="standardization-the-g-formula-for-a-point-exposure"><span class="header-section-number">4.1.1.4</span> Standardization (the g-formula for a point exposure)</h4>
+<p>Because <span class="math inline">\(W\)</span> blocks the backdoor path, conditional exchangeability holds given <span class="math inline">\(W\)</span>, and the g-formula for a point exposure is</p>
+<p><span class="math display">\[
+E[Y(a)] = \int E[Y \mid A = a, W = w] \, dF_W(w),
+\]</span></p>
+<p>where <span class="math inline">\(F_W\)</span> is the distribution of body weight in the <em>target</em> population. There are two ingredients:</p>
+<ol type="1">
+<li><strong>An outcome model</strong> for <span class="math inline">\(E[Y \mid A, W]\)</span>. We use a log-linear regression, which matches the structure of the PK model: <span class="math inline">\(\log AUC = \beta_0 + \beta_1 \log \text{Dose} + \beta_2 \log WT + \varepsilon\)</span>.</li>
+<li><strong>A sample from <span class="math inline">\(F_W\)</span></strong>. The expansion cohort is a 50/50 sample of the target population, so its observed weights can stand in for <span class="math inline">\(F_W\)</span>.</li>
+</ol>
+<p>The task of integration can then be accomplished by averaging over the simulated values. For each dose <span class="math inline">\(a\)</span>, set <em>every</em> target subject’s dose to <span class="math inline">\(a\)</span>, predict their mean <span class="math inline">\(AUC\)</span> from the model, and average:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sad_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(AUC) <span class="sc">~</span> <span class="fu">log</span>(DOSE) <span class="sc">+</span> <span class="fu">log</span>(WT), <span class="at">data =</span> sad_dat)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>sad_target <span class="ot">&lt;-</span> sad_dat <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(COHORT <span class="sc">==</span> <span class="st">"Expansion"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(ID, SEX, WT)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>sad_std <span class="ot">&lt;-</span> sad_target <span class="sc">|&gt;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cross_join</span>(<span class="fu">tibble</span>(<span class="at">DOSE =</span> sad_param<span class="sc">$</span>doses)) <span class="sc">|&gt;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># back-transform: the mean of a log-normal is exp(mu + sigma^2 / 2)</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">PRED =</span> <span class="fu">exp</span>(<span class="fu">predict</span>(sad_fit, <span class="at">newdata =</span> <span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">+</span> <span class="fu">sigma</span>(sad_fit)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="dv">2</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(DOSE) <span class="sc">|&gt;</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Standardized =</span> <span class="fu">mean</span>(PRED))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Note the <em>subjects</em> are fixed and only the <em>dose</em> changes across rows. Each target subject therefore appears once at every dose level. This is the counterfactual intervention “give everyone dose <span class="math inline">\(a\)</span>” applied to the model. To develop an intution for what the <code>cross-join</code> is accomplishing in the code above, take a look at <a href="https://github.com/kathoffman/causal-inference-visual-guides/blob/master/visual-guides/G-Computation.pdf">Kat Hoffman’s excellent <em>Visual Guide to G-computation</em></a></p>
+</section>
+<section id="comparing-the-estimates" class="level4" data-number="4.1.1.5">
+<h4 data-number="4.1.1.5" class="anchored" data-anchor-id="comparing-the-estimates"><span class="header-section-number">4.1.1.5</span> Comparing the estimates</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sad_naive <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(sad_std, <span class="at">by =</span> <span class="st">"DOSE"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(sad_truth, <span class="at">by =</span> <span class="st">"DOSE"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(Naive, Standardized), <span class="fu">list</span>(<span class="at">bias =</span> <span class="sc">~</span> <span class="dv">100</span> <span class="sc">*</span> (.x <span class="sc">/</span> Truth <span class="sc">-</span> <span class="dv">1</span>)),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">.names =</span> <span class="st">"{.col} bias (%)"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">1</span>, <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Dose (mg)"</span>, <span class="st">"Naive"</span>, <span class="st">"Standardized"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">"Truth"</span>, <span class="st">"Naive bias (%)"</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">"Standardized bias (%)"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="tbl-sad-estimates" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-sad-estimates-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;4.1: Mean AUC by dose in the 50/50 target population: naive and standardized estimates compared with the truth.
+</figcaption>
+<div aria-describedby="tbl-sad-estimates-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 8%">
+<col style="width: 18%">
+<col style="width: 8%">
+<col style="width: 20%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Dose (mg)</th>
+<th style="text-align: right;">Naive</th>
+<th style="text-align: right;">Standardized</th>
+<th style="text-align: right;">Truth</th>
+<th style="text-align: right;">Naive bias (%)</th>
+<th style="text-align: right;">Standardized bias (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">1.9</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">-3.4</td>
+<td style="text-align: right;">-2.1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">4.7</td>
+<td style="text-align: right;">6.0</td>
+<td style="text-align: right;">6.0</td>
+<td style="text-align: right;">-22.1</td>
+<td style="text-align: right;">0.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">16.2</td>
+<td style="text-align: right;">20.8</td>
+<td style="text-align: right;">19.9</td>
+<td style="text-align: right;">-18.7</td>
+<td style="text-align: right;">4.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">300</td>
+<td style="text-align: right;">64.2</td>
+<td style="text-align: right;">64.2</td>
+<td style="text-align: right;">59.8</td>
+<td style="text-align: right;">7.3</td>
+<td style="text-align: right;">7.3</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>That’s it! We have applied g-formula! Hopefully you find yourself saying, “Of course that works! That’s what I would have done in any case, even if I had never heard of standardization or g-formula!” If so, great, but don’t get too high on your horse yet: it will get more complicated when we get to time-varying confounding.</p>
+</section>
+</section>
+</section>
+<section id="g-formula-for-time-varying-exposure-with-longitudinal-confounding" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="g-formula-for-time-varying-exposure-with-longitudinal-confounding"><span class="header-section-number">4.2</span> G-formula for time-varying exposure with longitudinal confounding</h2>
+<section id="example-illustrating-plug-in-g-formula" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="example-illustrating-plug-in-g-formula"><span class="header-section-number">4.2.1</span> Example illustrating plug-in G-formula</h3>
+<p>In the preceding example, the key confounding variable, weight, was continuously valued. Similarly, in many the applications in this book, both the confounding variable(s) and the exposure variable(s) will be continuous, and we will model their effects (as we did in the preceding example), using parametric regression. When we implement g-formula using parametric regression models, we are using <em>parametric</em> g-formula, and that variant of g-formula will be our primary focus in this book.</p>
+<p>For didactic purposes however, it will be helpful to strip away the distraction of regression models as we begin our exploration of time-varying confounding. To do this, the following example implements the <em>plug-in</em> g-formula, which is a version of g-formula that can be computed using only the observed conditional means. The plug-in g-formula can only be used when all confounding variables and intervention variables are categorically valued. The following example is constructed to conform (somewhat artificially) to this requirement. The data are adapted from Table 21.1 in <span class="citation" data-cites="Hernan2024-whatif">Hernán and Robins (<a href="../references.html#ref-Hernan2024-whatif" role="doc-biblioref">2024</a>)</span>.</p>
+<p>In <span class="citation" data-cites="Hernan2024-whatif">Hernán and Robins (<a href="../references.html#ref-Hernan2024-whatif" role="doc-biblioref">2024</a>)</span> , the data are presented in the form of a summary table. The essential structure of that table is preserved below, albeit using variable names that correspond more closely to a standard pharmacometric problem in oncology<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. The original example is described as arising from a sequentially. Note that we have preserved the exorbitant sample sizes of the original example because we want to focus on issues of bias in estimation (without the distraction of precision issues, which become relevant at lower sample sizes.)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>summ_dat <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">DOSE =</span> <span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">8</span>),</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">AUC1 =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"high"</span>, <span class="st">"low"</span>), <span class="at">each =</span> <span class="dv">4</span>), </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">LOWNEUT =</span> <span class="fu">rep</span>(<span class="fu">rep</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>, <span class="at">each =</span> <span class="dv">2</span>), <span class="dv">2</span>), </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">AUC2 =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"high"</span>, <span class="st">"low"</span>), <span class="dv">4</span>),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">N =</span> <span class="dv">100</span> <span class="sc">*</span> <span class="fu">c</span>(<span class="dv">24</span>, <span class="dv">16</span>, <span class="dv">24</span>, <span class="dv">96</span>, <span class="dv">48</span>, <span class="dv">32</span>, <span class="dv">16</span>, <span class="dv">64</span>), </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">ORR =</span> <span class="fl">0.01</span> <span class="sc">*</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">84</span>, <span class="dv">52</span>, <span class="dv">76</span>, <span class="dv">44</span>), <span class="at">each =</span> <span class="dv">2</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In order to more easily analyze this data, we expand the summary table to one subject per row:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>subj_dat <span class="ot">&lt;-</span> summ_dat <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">N_RESP =</span> <span class="fu">round</span>(N <span class="sc">*</span> ORR)) <span class="sc">|&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="fu">rep</span>(<span class="fu">row_number</span>(), N)) <span class="sc">|&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(AUC1, LOWNEUT, AUC2) <span class="sc">|&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">RESP =</span> <span class="fu">as.integer</span>(<span class="fu">row_number</span>() <span class="sc">&lt;=</span> N_RESP)) <span class="sc">|&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">prop =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ID =</span> <span class="fu">row_number</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(ID, DOSE, AUC1, LOWNEUT, AUC2, RESP)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The subject-level data <code>subj_dat</code> describe a two-period study. Map the variables to the usual notation as follows:</p>
+<div id="tbl-two-period-vars" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-two-period-vars-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;4.2: Variables in the two-period example and their notation.
+</figcaption>
+<div aria-describedby="tbl-two-period-vars-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 29%">
+<col style="width: 37%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Symbol</th>
+<th>Variable</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(D_1\)</span></td>
+<td><code>DOSE1</code></td>
+<td>Dose for period 1 (<code>high</code> for everyone)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(A_1\)</span></td>
+<td><code>AUC1</code></td>
+<td>Area under <span class="math inline">\(C(t)\)</span> curve in period 1 (<code>high</code> or <code>low</code>)</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(L_2\)</span></td>
+<td><code>LOWNEUT</code></td>
+<td>Low neutrophil count after period 1 (0/1)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(D_2\)</span></td>
+<td><code>DOSE2</code></td>
+<td>Dose period 2 (<code>high</code> or <code>low</code>)</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(A_2\)</span></td>
+<td><code>AUC2</code></td>
+<td>Area under <span class="math inline">\(C(t)\)</span> curve in period 2 (<code>high</code> or <code>low</code>)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(Y\)</span></td>
+<td><code>RESP</code></td>
+<td>Objective response (0/1)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Though it’s not obvious (yet) these data have been constructed so that exposure has no effect on response. However, we will willfully forget this fact when it comes time to draw the DAG, because in practice we would never know the true data generating mechanism. The DAG below, adapted from Figure 20.3 of <span class="citation" data-cites="Hernan2024-whatif">Hernán and Robins (<a href="../references.html#ref-Hernan2024-whatif" role="doc-biblioref">2024</a>)</span>, shows the assumed causal structure. <span class="math inline">\(U\)</span> is an unmeasured common cause of <span class="math inline">\(L_2\)</span> and <span class="math inline">\(Y\)</span> (for example, underlying disease severity).</p>
+<p>For purposes of this example, we will focus on how to estimate the causal effect of <span class="math inline">\(AUC\)</span> on reponse (the “exposure-response” in the usual pharmacometric sense). Depending on the context, it might be sufficient to ignore <span class="math inline">\(AUC\)</span> entirely and directly estimate the “dose-response” relationship instead. However, as summarized by <span class="citation" data-cites="Braniff2026-causalER">Braniff (<a href="../references.html#ref-Braniff2026-causalER" role="doc-biblioref">2026</a>)</span>,</p>
+<blockquote class="blockquote">
+<p>While dose is a natural intervention variable, dose–response inference is specific to the formulation, regimen, and delivery mechanism studied and does not generalize readily across many design dimensions relevant to development. A key contribution of ER analysis is the decomposition of the dose-exposure-response relation into two separable questions: is the dose achieving adequate exposure, and is that exposure sufficient to drive response? This decomposition enables modular optimization so that formulation, regimen, and delivery can be modified while maintaining clear exposure targets, guiding development across changing phases and populations.</p>
+</blockquote>
+<p>When we adopt this perspective (as pharmacometricians most often do), we are implicitly treating <span class="math inline">\(AUC\)</span> as the treatment or intervention variable. Even though we cannot directly intervene on <span class="math inline">\(AUC\)</span>, an exposure-response analysis is implicitly asking: “If we <em>could</em> intervene directly to change <span class="math inline">\(AUC\)</span>, what would happen to the response?”. Moreover specifically, we will adopt the perspective that we want to know the causal effect of an entire exposure trajectory, so the hypothetical intervention involves setting the value of both <span class="math inline">\(AUC1\)</span> and <span class="math inline">\(AUC2\)</span>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-two-period-dag" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-two-period-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="g-computation_files/figure-html/fig-two-period-dag-1.png" class="img-fluid figure-img" width="2100">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-two-period-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.3: Assumed causal structure for the two-period example, adapted from Figure 20.3 of <span class="citation" data-cites="Hernan2024-whatif">Hernán and Robins (<a href="../references.html#ref-Hernan2024-whatif" role="doc-biblioref">2024</a>)</span>. <span class="math inline">\(U\)</span> is an unmeasured common cause of <span class="math inline">\(L_2\)</span> and <span class="math inline">\(Y\)</span>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In this simplified representation, <span class="math inline">\(L_2\)</span> does not appear to be a time-varying covariate. Of course, we could easily add baseline neutrophiles as <span class="math inline">\(L_1\)</span>, but that would just a cosmetic change. The essential feature of the DAG that introduces time-varying confounding is the fact that <span class="math inline">\(L_2\)</span>, being downstream of <span class="math inline">\(A_1\)</span> and upstream of <span class="math inline">\(A_2\)</span>, plays two roles:</p>
+<ul>
+<li>It is a <strong>confounder</strong> of <span class="math inline">\(A_2\)</span>. Low neutrophils prompt a change in the period-2 dose (<span class="math inline">\(L_2 \rightarrow D_2\)</span>), which in turn changes period-2 exposure (<span class="math inline">\(D_2 \rightarrow A_2\)</span>). The backdoor path <span class="math inline">\(A_2 \leftarrow D_2 \leftarrow L_2 \leftarrow U \rightarrow Y\)</span> (red) is open unless we condition on <span class="math inline">\(L_2\)</span>.</li>
+<li>It is a <strong>collider</strong> on the path <span class="math inline">\(A_1 \rightarrow L_2 \leftarrow U \rightarrow Y\)</span>. This path is closed as long as we do <em>not</em> condition on <span class="math inline">\(L_2\)</span> or on its descendant <span class="math inline">\(D_2\)</span>.</li>
+</ul>
+<p>Because <span class="math inline">\(A_1\)</span> affects <span class="math inline">\(L_2\)</span>, which in turn affects <span class="math inline">\(A_2\)</span>, this structure is called <em>treatment–confounder feedback</em>. Adjusting for <span class="math inline">\(L_2\)</span> is needed to handle the first path but opens the second, so no single conditional analysis (adjusting or not adjusting for <span class="math inline">\(L_2\)</span>) gives an unbiased estimate of the joint effect of <span class="math inline">\(A_1\)</span> and <span class="math inline">\(A_2\)</span>.</p>
+<p>There are several different exposure histories that we could theoretically compare:</p>
+<ul>
+<li>“always high” <span class="math inline">\((a_1, a_2) = (\text{high}, \text{high})\)</span>,</li>
+<li>“high-then-low” <span class="math inline">\((a_1, a_2) = (\text{high}, \text{low})\)</span></li>
+<li>“always low” <span class="math inline">\((a_1, a_2) = (\text{low}, \text{low})\)</span><br>
+</li>
+<li>“low-then-high” <span class="math inline">\((a_1, a_2) = (\text{low}, \text{high})\)</span>.</li>
+</ul>
+<p>Note that to compare any of the strategies listed above is to target a <em>hypothetical</em> estimand, as opposed to a treatment policy estimand. In a treatment policy perspective, the dose reduction would be considered as an intercurrent event, and would necessarily be incorporated into the treatment definition. By contrast, if we want to isolate the causal effect of exposure per se, we have to contrast hypothetical scenarios in which the intercurrent event has no effect. To simplify our discussion, we will compare the “always high” and “always low” strategies, but the following discussion would apply equally to a comparison of any of the hypothetical strategies.</p>
+<p>We have yet to say exactly what g-formula is in general … please be patient, we will get there … but in this special two-timepoint case, the g-formula can be expressed as:</p>
+<p><span class="math display">\[ E[Y(a_1, a_2)] = \sum_{l} E[Y \mid A_1 = a_1, L_2 = l, A_2 = a_2] \, \Pr(L_2 = l \mid A_1 = a_1) \]</span></p>
+<p>In words: within each level of <span class="math inline">\(L_2\)</span>, take the mean response among subjects who actually followed the strategy, and then average over <span class="math inline">\(L_2\)</span> using the distribution that <span class="math inline">\(L_2\)</span> <em>would have</em> under <span class="math inline">\(a_1\)</span>. Note that the weights are <span class="math inline">\(\Pr(L_2 = l \mid A_1 = a_1)\)</span>, not the marginal <span class="math inline">\(\Pr(L_2 = l)\)</span>. This is what lets the g-formula handle a confounder that is itself affected by earlier exposure.</p>
+<p><em>Plug-in</em> g-computation means estimating each piece of the formula from the data and plugging the estimates in. Here every variable is discrete, so each piece is simply a sample proportion or mean.</p>
+<section id="step-1-distribution-of-l_2-given-a_1" class="level4" data-number="4.2.1.1">
+<h4 data-number="4.2.1.1" class="anchored" data-anchor-id="step-1-distribution-of-l_2-given-a_1"><span class="header-section-number">4.2.1.1</span> Step 1: Distribution of <span class="math inline">\(L_2\)</span> given <span class="math inline">\(A_1\)</span></h4>
+<p>Estimate <span class="math inline">\(\Pr(L_2 = l \mid A_1 = a_1)\)</span> by the proportion of subjects in each level of <code>LOWNEUT</code> within each level of <code>AUC1</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>p_L <span class="ot">&lt;-</span> subj_dat <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(AUC1, LOWNEUT) <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(AUC1) <span class="sc">|&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">P_L =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>p_L</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 4
+  AUC1  LOWNEUT     n   P_L
+  &lt;chr&gt;   &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+1 high        0  4000  0.25
+2 high        1 12000  0.75
+3 low         0  8000  0.5 
+4 low         1  8000  0.5 </code></pre>
+</div>
+</div>
+<p>High period-1 exposure makes low neutrophils more likely (0.75 vs 0.5).</p>
+</section>
+<section id="step-2-mean-response-given-exposure-history-and-l_2" class="level4" data-number="4.2.1.2">
+<h4 data-number="4.2.1.2" class="anchored" data-anchor-id="step-2-mean-response-given-exposure-history-and-l_2"><span class="header-section-number">4.2.1.2</span> Step 2: Mean response given exposure history and <span class="math inline">\(L_2\)</span></h4>
+<p>Estimate <span class="math inline">\(E[Y \mid A_1 = a_1, L_2 = l, A_2 = a_2]\)</span> by the observed response rate in each combination of <code>AUC1</code>, <code>LOWNEUT</code> and <code>AUC2</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>m_Y <span class="ot">&lt;-</span> subj_dat <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(AUC1, LOWNEUT, AUC2) <span class="sc">|&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">n_resp =</span> <span class="fu">sum</span>(RESP), <span class="at">E_Y =</span> <span class="fu">mean</span>(RESP), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>m_Y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 6
+  AUC1  LOWNEUT AUC2      n n_resp   E_Y
+  &lt;chr&gt;   &lt;int&gt; &lt;chr&gt; &lt;int&gt;  &lt;int&gt; &lt;dbl&gt;
+1 high        0 high   2400   2016  0.84
+2 high        0 low    1600   1344  0.84
+3 high        1 high   2400   1248  0.52
+4 high        1 low    9600   4992  0.52
+5 low         0 high   4800   3648  0.76
+6 low         0 low    3200   2432  0.76
+7 low         1 high   1600    704  0.44
+8 low         1 low    6400   2816  0.44</code></pre>
+</div>
+</div>
+</section>
+<section id="step-3-combine-for-one-strategy" class="level4" data-number="4.2.1.3">
+<h4 data-number="4.2.1.3" class="anchored" data-anchor-id="step-3-combine-for-one-strategy"><span class="header-section-number">4.2.1.3</span> Step 3: Combine for one strategy</h4>
+<p>For the “always high” strategy, keep the rows of <code>m_Y</code> with <code>AUC1 == "high"</code> and <code>AUC2 == "high"</code>. Then attach the matching weights from Step 1 and form the weighted sum:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>g_high <span class="ot">&lt;-</span> m_Y <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(AUC1 <span class="sc">==</span> <span class="st">"high"</span>, AUC2 <span class="sc">==</span> <span class="st">"high"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(p_L <span class="sc">|&gt;</span> <span class="fu">select</span>(AUC1, LOWNEUT, P_L), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"AUC1"</span>, <span class="st">"LOWNEUT"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">CONTRIB =</span> E_Y <span class="sc">*</span> P_L)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>g_high</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 8
+  AUC1  LOWNEUT AUC2      n n_resp   E_Y   P_L CONTRIB
+  &lt;chr&gt;   &lt;int&gt; &lt;chr&gt; &lt;int&gt;  &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+1 high        0 high   2400   2016  0.84  0.25    0.21
+2 high        1 high   2400   1248  0.52  0.75    0.39</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(g_high<span class="sc">$</span>CONTRIB)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6</code></pre>
+</div>
+</div>
+<p>Written out by hand, this is</p>
+<p><span class="math display">\[ E[Y(\text{high}, \text{high})] =
+0.84 \times 0.25 + 0.52 \times 0.75
+= 0.6 \]</span></p>
+<p>Repeat for the “always low” strategy:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>g_low <span class="ot">&lt;-</span> m_Y <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(AUC1 <span class="sc">==</span> <span class="st">"low"</span>, AUC2 <span class="sc">==</span> <span class="st">"low"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(p_L <span class="sc">|&gt;</span> <span class="fu">select</span>(AUC1, LOWNEUT, P_L), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"AUC1"</span>, <span class="st">"LOWNEUT"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">CONTRIB =</span> E_Y <span class="sc">*</span> P_L)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>g_low</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 8
+  AUC1  LOWNEUT AUC2      n n_resp   E_Y   P_L CONTRIB
+  &lt;chr&gt;   &lt;int&gt; &lt;chr&gt; &lt;int&gt;  &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+1 low         0 low    3200   2432  0.76   0.5    0.38
+2 low         1 low    6400   2816  0.44   0.5    0.22</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(g_low<span class="sc">$</span>CONTRIB)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6</code></pre>
+</div>
+</div>
+<p><span class="math display">\[ E[Y(\text{low}, \text{low})] =
+0.76 \times 0.5 + 0.44 \times 0.5
+= 0.6 \]</span></p>
+<p>The two strategies give the same mean response, so the causal effect of “always high” vs “always low” exposure is 0.</p>
+</section>
+<section id="all-four-strategies-at-once" class="level4" data-number="4.2.1.4">
+<h4 data-number="4.2.1.4" class="anchored" data-anchor-id="all-four-strategies-at-once"><span class="header-section-number">4.2.1.4</span> All four strategies at once</h4>
+<p>The same calculation for every strategy is one join followed by a grouped sum:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>g_all <span class="ot">&lt;-</span> m_Y <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(p_L <span class="sc">|&gt;</span> <span class="fu">select</span>(AUC1, LOWNEUT, P_L), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"AUC1"</span>, <span class="st">"LOWNEUT"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(AUC1, AUC2) <span class="sc">|&gt;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">E_Y_strategy =</span> <span class="fu">sum</span>(E_Y <span class="sc">*</span> P_L), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>g_all</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+  AUC1  AUC2  E_Y_strategy
+  &lt;chr&gt; &lt;chr&gt;        &lt;dbl&gt;
+1 high  high           0.6
+2 high  low            0.6
+3 low   high           0.6
+4 low   low            0.6</code></pre>
+</div>
+</div>
+<p>Exposure has no effect on response under any strategy: every strategy gives a mean response of 0.6.</p>
+</section>
+<section id="why-not-simply-adjust-for-l_2" class="level4" data-number="4.2.1.5">
+<h4 data-number="4.2.1.5" class="anchored" data-anchor-id="why-not-simply-adjust-for-l_2"><span class="header-section-number">4.2.1.5</span> Why not simply adjust for <span class="math inline">\(L_2\)</span>?</h4>
+<p>Compare this with two common analyses that do not use the g-formula.</p>
+<p><strong>Crude comparison.</strong> Compare response rates among subjects whose observed exposures happened to match each strategy:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>crude <span class="ot">&lt;-</span> subj_dat <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(AUC1 <span class="sc">==</span> AUC2) <span class="sc">|&gt;</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(AUC1, AUC2) <span class="sc">|&gt;</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">E_Y =</span> <span class="fu">mean</span>(RESP), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>crude</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+  AUC1  AUC2      n   E_Y
+  &lt;chr&gt; &lt;chr&gt; &lt;int&gt; &lt;dbl&gt;
+1 high  high   4800 0.68 
+2 low   low    9600 0.547</code></pre>
+</div>
+</div>
+<p>The crude difference is 0.133. It is biased because <span class="math inline">\(L_2\)</span> confounds the period-2 exposure: subjects with low neutrophils are more likely to receive low exposure in period 2, and they also respond less often.</p>
+<p><strong>Stratifying on <span class="math inline">\(L_2\)</span>.</strong> Within each level of <code>LOWNEUT</code>, compare response between “always high” and “always low” subjects:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>strat <span class="ot">&lt;-</span> m_Y <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(AUC1 <span class="sc">==</span> AUC2) <span class="sc">|&gt;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(LOWNEUT, AUC1, AUC2, E_Y) <span class="sc">|&gt;</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(LOWNEUT, AUC1, AUC2)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>strat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 4
+  LOWNEUT AUC1  AUC2    E_Y
+    &lt;int&gt; &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;
+1       0 high  high   0.84
+2       0 low   low    0.76
+3       1 high  high   0.52
+4       1 low   low    0.44</code></pre>
+</div>
+</div>
+<p>Within each stratum, “always high” looks better by 0.08, even though, by construction, exposure has no effect. Stratifying removes confounding of <span class="math inline">\(A_2\)</span>, but <span class="math inline">\(L_2\)</span> is a collider on <span class="math inline">\(A_1 \rightarrow L_2 \leftarrow U \rightarrow Y\)</span>. Conditioning on it opens that path and creates a non-causal association between <span class="math inline">\(A_1\)</span> and <span class="math inline">\(Y\)</span>. High period-1 exposure itself pushes toward low neutrophils, so among subjects with the same neutrophil status, high-exposure subjects tend to have more favorable values of <span class="math inline">\(U\)</span>, and therefore respond more often, explaining the above bias (+0.08 in “always high”).</p>
+<p>The g-formula avoids both problems. It conditions on <span class="math inline">\(L_2\)</span> when estimating the response means (Step 2), which handles confounding of <span class="math inline">\(A_2\)</span>. It then averages over <span class="math inline">\(L_2\)</span> using its distribution under <span class="math inline">\(a_1\)</span> (Step 1) rather than holding <span class="math inline">\(L_2\)</span> fixed. As a result, the collider path stays closed for <span class="math inline">\(A_1\)</span>.</p>
+</section>
+</section>
+<section id="example-of-parametric-g-formula-using-the-gformula-package" class="level3" data-number="4.2.2">
+<h3 data-number="4.2.2" class="anchored" data-anchor-id="example-of-parametric-g-formula-using-the-gformula-package"><span class="header-section-number">4.2.2</span> Example of parametric g-formula using the <code>gfoRmula</code> package</h3>
+<p>The calculation above is <em>nonparametric</em>: every conditional probability and mean was estimated as a sample proportion within a cell. The same answer can be obtained with the <em>parametric</em> g-formula, provided the models are <em>saturated</em>, i.e.&nbsp;they have one parameter for each combination of the covariates they condition on. A saturated logistic regression reproduces the observed cell proportions exactly, so the parametric and nonparametric plug-in estimates coincide.</p>
+<p>The <code>gfoRmula</code> package <span class="citation" data-cites="McGrath2020-gformula">(<a href="../references.html#ref-McGrath2020-gformula" role="doc-biblioref">McGrath et al. 2020</a>)</span> implements the parametric g-formula for time-varying exposures. Its <code>gformula()</code> function</p>
+<ol type="1">
+<li>fits a model for each time-varying covariate and for the outcome,</li>
+<li>simulates a large cohort forward in time under each intervention, drawing each covariate from its fitted model with exposure set by the intervention, and</li>
+<li>averages the predicted outcome in the simulated cohort.</li>
+</ol>
+<p>Step 2 replaces the exact sum over <span class="math inline">\(l\)</span> in the g-formula with a Monte Carlo average, so the package estimate differs from the exact value by a small simulation error.</p>
+<section id="long-format-data" class="level4" data-number="4.2.2.1">
+<h4 data-number="4.2.2.1" class="anchored" data-anchor-id="long-format-data"><span class="header-section-number">4.2.2.1</span> Long-format data</h4>
+<p><code>gformula()</code> expects one row per subject per time point. We use two time points:</p>
+<ul>
+<li><code>TIME = 0</code> holds the period-1 exposure <span class="math inline">\(A_1\)</span>.</li>
+<li><code>TIME = 1</code> holds <span class="math inline">\(L_2\)</span>, the period-2 exposure <span class="math inline">\(A_2\)</span> and the outcome <span class="math inline">\(Y\)</span>.</li>
+</ul>
+<p>Exposure is coded as a 0/1 indicator <code>HIGHAUC</code> so that it can be modeled with logistic regression. There is no baseline covariate, so <code>LOWNEUT</code> is set to 0 at <code>TIME = 0</code>. This placeholder is never used in a model, because <code>gformula()</code> fits covariate models only to rows with <code>TIME &gt; 0</code> and takes the <code>TIME = 0</code> values from the observed data. The end-of-follow-up outcome <code>RESP</code> is recorded only at the last time point.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gfoRmula)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'data.table'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:rlang':
+
+    :=</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:dplyr':
+
+    between, first, last</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>long_dat <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  subj_dat <span class="sc">|&gt;</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">transmute</span>(ID, <span class="at">TIME =</span> <span class="dv">0</span>, <span class="at">HIGHAUC =</span> <span class="fu">as.integer</span>(AUC1 <span class="sc">==</span> <span class="st">"high"</span>),</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">LOWNEUT =</span> <span class="dv">0</span>L, <span class="at">RESP =</span> <span class="cn">NA_integer_</span>),</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  subj_dat <span class="sc">|&gt;</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">transmute</span>(ID, <span class="at">TIME =</span> <span class="dv">1</span>, <span class="at">HIGHAUC =</span> <span class="fu">as.integer</span>(AUC2 <span class="sc">==</span> <span class="st">"high"</span>),</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>              LOWNEUT, RESP)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(ID, TIME)</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(long_dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+     ID  TIME HIGHAUC LOWNEUT  RESP
+  &lt;int&gt; &lt;dbl&gt;   &lt;int&gt;   &lt;int&gt; &lt;int&gt;
+1     1     0       1       0    NA
+2     1     1       0       1     0
+3     2     0       1       0    NA
+4     2     1       0       0     1
+5     3     0       1       0    NA
+6     3     1       0       1     1</code></pre>
+</div>
+</div>
+</section>
+<section id="saturated-models" class="level4" data-number="4.2.2.2">
+<h4 data-number="4.2.2.2" class="anchored" data-anchor-id="saturated-models"><span class="header-section-number">4.2.2.2</span> Saturated models</h4>
+<p>The term <code>lag1_HIGHAUC</code> refers to the previous time point’s value of <code>HIGHAUC</code>, so at <code>TIME = 1</code> it equals <span class="math inline">\(A_1\)</span>. The package creates it from the <code>histories</code> and <code>histvars</code> arguments. The models are:</p>
+<div id="tbl-saturated-models" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-saturated-models-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;4.3: Saturated models used in the <code>gfoRmula</code> analysis.
+</figcaption>
+<div aria-describedby="tbl-saturated-models-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 17%">
+<col style="width: 41%">
+<col style="width: 17%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Model</th>
+<th>Free parameters</th>
+<th>Cells</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(L_2\)</span></td>
+<td><code>LOWNEUT ~ lag1_HIGHAUC</code></td>
+<td>2</td>
+<td>2 levels of <span class="math inline">\(A_1\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(A_2\)</span></td>
+<td><code>HIGHAUC ~ lag1_HIGHAUC * LOWNEUT</code></td>
+<td>4</td>
+<td>4 combinations of <span class="math inline">\((A_1, L_2)\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(Y\)</span></td>
+<td><code>RESP ~ lag1_HIGHAUC * LOWNEUT * HIGHAUC</code></td>
+<td>8</td>
+<td>8 combinations of <span class="math inline">\((A_1, L_2, A_2)\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>The model for <span class="math inline">\(A_2\)</span> is not part of the g-formula for a static strategy, since the intervention overrides <span class="math inline">\(A_2\)</span>. <code>gformula()</code> still requires it because it also simulates the <em>natural course</em> (no intervention), which serves as a check on the models.</p>
+<p>We compare two static strategies, “always high” (<code>HIGHAUC = 1</code> at both times) and “always low” (<code>HIGHAUC = 0</code> at both times), with “always low” as the reference. To keep the Monte Carlo error small, we simulate <span class="math inline">\(10^6\)</span> subjects rather than the default (the size of the observed data).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>gf_fit <span class="ot">&lt;-</span> <span class="fu">gformula</span>(</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">obs_data =</span> <span class="fu">as.data.table</span>(long_dat),</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"ID"</span>,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">time_name =</span> <span class="st">"TIME"</span>,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">time_points =</span> <span class="dv">2</span>,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">covnames =</span> <span class="fu">c</span>(<span class="st">"LOWNEUT"</span>, <span class="st">"HIGHAUC"</span>),</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">covtypes =</span> <span class="fu">c</span>(<span class="st">"binary"</span>, <span class="st">"binary"</span>),</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">covparams =</span> <span class="fu">list</span>(<span class="at">covmodels =</span> <span class="fu">c</span>(</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    LOWNEUT <span class="sc">~</span> lag1_HIGHAUC,</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    HIGHAUC <span class="sc">~</span> lag1_HIGHAUC <span class="sc">*</span> LOWNEUT</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>  )),</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">histories =</span> <span class="fu">c</span>(lagged),</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">histvars =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"HIGHAUC"</span>)),</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_name =</span> <span class="st">"RESP"</span>,</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_type =</span> <span class="st">"binary_eof"</span>,</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">ymodel =</span> RESP <span class="sc">~</span> lag1_HIGHAUC <span class="sc">*</span> LOWNEUT <span class="sc">*</span> HIGHAUC,</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">intervention1.HIGHAUC =</span> <span class="fu">list</span>(static, <span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">2</span>)),</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">intervention2.HIGHAUC =</span> <span class="fu">list</span>(static, <span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">2</span>)),</span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">int_descript =</span> <span class="fu">c</span>(<span class="st">"Always high"</span>, <span class="st">"Always low"</span>),</span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_int =</span> <span class="dv">2</span>,</span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">nsimul =</span> <span class="fl">1e6</span>,</span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">2026</span>,</span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_fits =</span> <span class="cn">TRUE</span></span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>gf_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>PREDICTED RISK UNDER MULTIPLE INTERVENTIONS
+
+Intervention     Description
+0        Natural course
+1        Always high
+2        Always low
+
+Sample size = 32000, Monte Carlo sample size = 1e+06
+Number of bootstrap samples = 0
+Reference intervention = 2
+
+ 
+
+     k Interv. NP mean g-form mean Mean ratio Mean difference % Intervened On
+ &lt;num&gt;   &lt;num&gt;   &lt;num&gt;       &lt;num&gt;      &lt;num&gt;           &lt;num&gt;           &lt;num&gt;
+     1       0     0.6   0.5999307   1.000134      0.00008016          0.0000
+     1       1      NA   0.6001072   1.000428      0.00025664         84.9699
+     1       2      NA   0.5998506   1.000000      0.00000000         70.0247
+ Aver % Intervened On
+                &lt;num&gt;
+              0.00000
+             59.96580
+             45.01905</code></pre>
+</div>
+</div>
+<p>The <code>g-form mean</code> column gives the estimated mean response under each strategy. Intervention 0 is the natural course, whose g-formula estimate should agree with the observed (<code>NP mean</code>) response rate.</p>
+</section>
+<section id="connecting-the-fitted-models-to-the-hand-calculation" class="level4" data-number="4.2.2.3">
+<h4 data-number="4.2.2.3" class="anchored" data-anchor-id="connecting-the-fitted-models-to-the-hand-calculation"><span class="header-section-number">4.2.2.3</span> Connecting the fitted models to the hand calculation</h4>
+<p>Because the models are saturated, their fitted probabilities are exactly the cell proportions from Steps 1 and 2. For <span class="math inline">\(L_2\)</span>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">lag1_HIGHAUC =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">AUC1 =</span> <span class="fu">if_else</span>(lag1_HIGHAUC <span class="sc">==</span> <span class="dv">1</span>, <span class="st">"high"</span>, <span class="st">"low"</span>),</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">P_LOWNEUT_model =</span> <span class="fu">predict</span>(gf_fit<span class="sc">$</span>fits<span class="sc">$</span>LOWNEUT, <span class="at">newdata =</span> <span class="fu">pick</span>(lag1_HIGHAUC),</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>                              <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(p_L <span class="sc">|&gt;</span> <span class="fu">filter</span>(LOWNEUT <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(AUC1, <span class="at">P_LOWNEUT_hand =</span> P_L),</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">by =</span> <span class="st">"AUC1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+  lag1_HIGHAUC AUC1  P_LOWNEUT_model P_LOWNEUT_hand
+         &lt;dbl&gt; &lt;chr&gt;           &lt;dbl&gt;          &lt;dbl&gt;
+1            1 high            0.750           0.75
+2            0 low             0.500           0.5 </code></pre>
+</div>
+</div>
+<p>And for <span class="math inline">\(Y\)</span>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>m_Y <span class="sc">|&gt;</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">lag1_HIGHAUC =</span> <span class="fu">as.integer</span>(AUC1 <span class="sc">==</span> <span class="st">"high"</span>),</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">HIGHAUC =</span> <span class="fu">as.integer</span>(AUC2 <span class="sc">==</span> <span class="st">"high"</span>),</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">E_Y_model =</span> <span class="fu">predict</span>(gf_fit<span class="sc">$</span>fits<span class="sc">$</span>RESP,</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">newdata =</span> <span class="fu">pick</span>(lag1_HIGHAUC, LOWNEUT, HIGHAUC),</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(AUC1, LOWNEUT, AUC2, <span class="at">E_Y_hand =</span> E_Y, E_Y_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 5
+  AUC1  LOWNEUT AUC2  E_Y_hand E_Y_model
+  &lt;chr&gt;   &lt;int&gt; &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+1 high        0 high      0.84     0.840
+2 high        0 low       0.84     0.840
+3 high        1 high      0.52     0.520
+4 high        1 low       0.52     0.520
+5 low         0 high      0.76     0.760
+6 low         0 low       0.76     0.760
+7 low         1 high      0.44     0.440
+8 low         1 low       0.44     0.440</code></pre>
+</div>
+</div>
+</section>
+<section id="comparing-the-results" class="level4" data-number="4.2.2.4">
+<h4 data-number="4.2.2.4" class="anchored" data-anchor-id="comparing-the-results"><span class="header-section-number">4.2.2.4</span> Comparing the results</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>gf_res <span class="ot">&lt;-</span> gf_fit<span class="sc">$</span>result</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Strategy =</span> <span class="fu">c</span>(<span class="st">"Always high"</span>, <span class="st">"Always low"</span>),</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">By hand (exact)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">sum</span>(g_high<span class="sc">$</span>CONTRIB), <span class="fu">sum</span>(g_low<span class="sc">$</span>CONTRIB)),</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">gfoRmula (Monte Carlo)</span><span class="st">`</span> <span class="ot">=</span> gf_res[[<span class="st">"g-form mean"</span>]][gf_res[[<span class="st">"Interv."</span>]] <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+  Strategy    `By hand (exact)` `gfoRmula (Monte Carlo)`
+  &lt;chr&gt;                   &lt;dbl&gt;                    &lt;dbl&gt;
+1 Always high               0.6                    0.600
+2 Always low                0.6                    0.600</code></pre>
+</div>
+</div>
+<p>The two approaches agree up to Monte Carlo error. Both recover the true null effect, and the estimated difference between “always high” and “always low” is 0.0003. Setting <code>nsamples</code> to a positive number adds bootstrap confidence intervals.</p>
+<p>The advantage of parametric g-formula is that it does not rely on cells. With continuous covariates, many time points or many covariates, cells become sparse or empty<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>, and the hand calculation is no longer feasible. Unsaturated parametric models then smooth over the sparse cells. The price is that the estimate is valid only if those models are correctly specified, in addition to the identifying assumptions.</p>
+</section>
+</section>
+<section id="example-2-dose-mediated-confounding-in-exposureresponse" class="level3" data-number="4.2.3">
+<h3 data-number="4.2.3" class="anchored" data-anchor-id="example-2-dose-mediated-confounding-in-exposureresponse"><span class="header-section-number">4.2.3</span> Example 2: Dose-mediated confounding in exposure–response</h3>
+<p>The first example used a stylized two-period table. This example applies the same ideas to a setting that is familiar to pharmacometricians: a multiple-cycle oncology trial in which exposure suppresses a safety biomarker, and the biomarker in turn drives dose interruptions. It is adapted from the dose-mediated confounding scenario in <span class="citation" data-cites="Braniff2026-causalER">Braniff (<a href="../references.html#ref-Braniff2026-causalER" role="doc-biblioref">2026</a>)</span>. To keep the focus on g-computation, two simplifications are made relative to the paper:</p>
+<ul>
+<li><strong>Exposure is known.</strong> The paper fits a population PK model and imputes each subject’s exposure from the empirical Bayes estimates. Here we use each subject’s true exposure directly.</li>
+<li><strong>The code is self-contained.</strong> The data-generating process and analysis are written out below rather than sourced from the paper’s supplementary code.</li>
+</ul>
+<section id="data-generating-process" class="level4" data-number="4.2.3.1">
+<h4 data-number="4.2.3.1" class="anchored" data-anchor-id="data-generating-process"><span class="header-section-number">4.2.3.1</span> Data-generating process</h4>
+<p>Subjects are randomized 1:1 to a low or a high dose <span class="math inline">\(A\)</span> and followed for 10 dosing intervals <span class="math inline">\(t = 1, \ldots, 10\)</span>. In each interval:</p>
+<ol type="1">
+<li><strong>Biomarker.</strong> The biomarker <span class="math inline">\(B_t\)</span> (think of it as a neutrophil count, with median baseline value 1) starts at its baseline value <span class="math inline">\(B_0\)</span> in interval 1. After that it moves toward an exposure-dependent setpoint with proportional noise: <span class="math display">\[ S_t = \frac{B_0}{1 + E_{t-1}/IE_{50}}, \qquad
+   B_t \sim N\!\left(\mu_t, (0.25\,\mu_t)^2\right), \qquad
+   \mu_t = S_t - (S_t - B_{t-1})\, e^{-k_B}. \]</span> Higher exposure in one interval lowers the biomarker in the next.</li>
+<li><strong>Dose interruption.</strong> From interval 2 onward, a low biomarker makes a dose interruption <span class="math inline">\(I_t\)</span> more likely: <span class="math display">\[ \text{logit}\, \Pr(I_t = 1) = \gamma_0 + \gamma_B\,(\tilde B - B_t), \]</span> where <span class="math inline">\(\tilde B\)</span> is the median baseline biomarker. The dose actually given is <span class="math inline">\(D_t = (1 - I_t)\, A\)</span>.</li>
+<li><strong>Exposure.</strong> A one-compartment IV bolus model converts the doses given so far into the average concentration <span class="math inline">\(E_t\)</span> over the interval.</li>
+<li><strong>Event.</strong> The discrete-time hazard of an adverse event <span class="math inline">\(R_t\)</span> increases with exposure and with biomarker suppression: <span class="math display">\[ \text{logit}\, \Pr(R_t = 1 \mid R_{t-1} = 0) =
+   \alpha_0 + \alpha_E\,(E_t - E_\text{ref}) + \alpha_B\,(\tilde B - B_t). \]</span> Follow-up stops at the first event.</li>
+</ol>
+<p>The DAG below unrolls the first two intervals. <span class="math inline">\(R\)</span> stands for the event outcome over follow-up, and the exposure-dependent dose interruption is folded into the arrow <span class="math inline">\(B_2 \rightarrow E_2\)</span>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-dose-mediated-dag" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-dose-mediated-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="g-computation_files/figure-html/fig-dose-mediated-dag-1.png" class="img-fluid figure-img" width="2100">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dose-mediated-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.4: DAG for the dose-mediated confounding example, unrolled over the first two intervals.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The structure is the same treatment–confounder feedback as in Example 1, with <span class="math inline">\(B_2\)</span> in the role of <span class="math inline">\(L_2\)</span>:</p>
+<ul>
+<li><span class="math inline">\(B_2\)</span> is a <strong>confounder</strong> of <span class="math inline">\(E_2\)</span> through the backdoor path <span class="math inline">\(E_2 \leftarrow B_2 \rightarrow R\)</span> (red). Subjects whose biomarker drops are more likely to have their dose interrupted, so they have <em>lower</em> exposure. They also have a <em>higher</em> event risk because their biomarker is low.</li>
+<li><span class="math inline">\(B_2\)</span> is also a <strong>mediator</strong> of <span class="math inline">\(E_1\)</span>: part of the effect of exposure on the event acts through biomarker suppression, <span class="math inline">\(E_1 \rightarrow B_2 \rightarrow R\)</span>.</li>
+</ul>
+<p>So an analysis that ignores <span class="math inline">\(B_t\)</span> is confounded, and an analysis that conditions on <span class="math inline">\(B_t\)</span> blocks part of the effect we want to estimate.</p>
+<p>The parameter values below are those of the paper’s dose-mediated scenario. Clearance does not depend on the biomarker in this scenario, so the biomarker affects exposure only through dose interruptions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>param <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Dose randomization</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">a.frac =</span> <span class="fl">0.5</span>, <span class="at">a.low =</span> <span class="dv">10</span>, <span class="at">a.high =</span> <span class="dv">20</span>,</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Biomarker dynamics</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">b0.lmu =</span> <span class="dv">0</span>, <span class="at">b0.lsd =</span> <span class="fl">0.25</span>, <span class="at">IE50 =</span> <span class="fl">1.5</span>, <span class="at">kB =</span> <span class="fl">0.25</span>, <span class="at">b.sd =</span> <span class="fl">0.25</span>,</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Dose interruption</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">gamma.0 =</span> <span class="sc">-</span><span class="dv">3</span>, <span class="at">gamma.B =</span> <span class="dv">4</span>,</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># PK: 1-compartment IV bolus, half-life of 1 interval, median CL of 10</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">cl0.lmu =</span> <span class="fu">log</span>(<span class="dv">10</span>), <span class="at">cl0.lsd =</span> <span class="fl">0.2</span>, <span class="at">v0.lmu =</span> <span class="fu">log</span>(<span class="dv">10</span> <span class="sc">/</span> <span class="fu">log</span>(<span class="dv">2</span>)), <span class="at">v0.lsd =</span> <span class="fl">0.1</span>,</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Event hazard</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha.0 =</span> <span class="sc">-</span><span class="fl">3.5</span>, <span class="at">alpha.B =</span> <span class="dv">3</span>, <span class="at">alpha.E =</span> <span class="fl">0.25</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>Nints  <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>B0.med <span class="ot">&lt;-</span> <span class="fu">exp</span>(param[[<span class="st">"b0.lmu"</span>]])</span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Reference exposure: population-average steady-state exposure, dose / CL</span></span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>E.ref  <span class="ot">&lt;-</span> (param[[<span class="st">"a.frac"</span>]] <span class="sc">*</span> param[[<span class="st">"a.low"</span>]] <span class="sc">+</span></span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>           (<span class="dv">1</span> <span class="sc">-</span> param[[<span class="st">"a.frac"</span>]]) <span class="sc">*</span> param[[<span class="st">"a.high"</span>]]) <span class="sc">/</span> <span class="fu">exp</span>(param[[<span class="st">"cl0.lmu"</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The simulation is written as two functions. <code>make_subjects()</code> draws each subject’s dose and individual parameters. <code>simulate_dgp()</code> steps the subjects through the intervals. When <code>E.fix</code> is <code>NA</code> it simulates the <em>natural course</em>, the trial as it actually happens. When <code>E.fix</code> is a number, it simulates the counterfactual world in which every subject’s exposure is held at that value in every interval.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>make_subjects <span class="ot">&lt;-</span> <span class="cf">function</span>(N, param) {</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  n.low <span class="ot">&lt;-</span> <span class="fu">round</span>(N <span class="sc">*</span> param[[<span class="st">"a.frac"</span>]])</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">ID =</span> <span class="fu">seq_len</span>(N),</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">A  =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="fu">rep</span>(param[[<span class="st">"a.low"</span>]], n.low),</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">rep</span>(param[[<span class="st">"a.high"</span>]], N <span class="sc">-</span> n.low))),</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">B0 =</span> <span class="fu">rlnorm</span>(N, param[[<span class="st">"b0.lmu"</span>]], param[[<span class="st">"b0.lsd"</span>]]),</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">CL =</span> <span class="fu">rlnorm</span>(N, param[[<span class="st">"cl0.lmu"</span>]], param[[<span class="st">"cl0.lsd"</span>]]),</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">V  =</span> <span class="fu">rlnorm</span>(N, param[[<span class="st">"v0.lmu"</span>]], param[[<span class="st">"v0.lsd"</span>]])</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>simulate_dgp <span class="ot">&lt;-</span> <span class="cf">function</span>(subj, param, Nints, <span class="at">E.fix =</span> <span class="cn">NA</span>) {</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>  N     <span class="ot">&lt;-</span> <span class="fu">nrow</span>(subj)</span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>  k     <span class="ot">&lt;-</span> subj<span class="sc">$</span>CL <span class="sc">/</span> subj<span class="sc">$</span>V</span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>  B     <span class="ot">&lt;-</span> subj<span class="sc">$</span>B0</span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>  C.end <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, N)</span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>  E     <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, N)</span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>  out   <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"list"</span>, Nints)</span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="fu">seq_len</span>(Nints)) {</span>
+<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (t <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
+<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Biomarker moves toward an exposure-dependent setpoint</span></span>
+<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a>      B.set <span class="ot">&lt;-</span> subj<span class="sc">$</span>B0 <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> E <span class="sc">/</span> param[[<span class="st">"IE50"</span>]])</span>
+<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a>      mu.B  <span class="ot">&lt;-</span> B.set <span class="sc">-</span> (B.set <span class="sc">-</span> B) <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>param[[<span class="st">"kB"</span>]])</span>
+<span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a>      B     <span class="ot">&lt;-</span> <span class="fu">pmax</span>(<span class="fu">rnorm</span>(N, mu.B, param[[<span class="st">"b.sd"</span>]] <span class="sc">*</span> mu.B), <span class="fl">0.001</span>)</span>
+<span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Low biomarker -&gt; dose interruption</span></span>
+<span id="cb42-27"><a href="#cb42-27" aria-hidden="true" tabindex="-1"></a>      I <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(N, <span class="dv">1</span>, <span class="fu">plogis</span>(param[[<span class="st">"gamma.0"</span>]] <span class="sc">+</span></span>
+<span id="cb42-28"><a href="#cb42-28" aria-hidden="true" tabindex="-1"></a>                                 param[[<span class="st">"gamma.B"</span>]] <span class="sc">*</span> (B0.med <span class="sc">-</span> B)))</span>
+<span id="cb42-29"><a href="#cb42-29" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb42-30"><a href="#cb42-30" aria-hidden="true" tabindex="-1"></a>      I <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>L, N)</span>
+<span id="cb42-31"><a href="#cb42-31" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb42-32"><a href="#cb42-32" aria-hidden="true" tabindex="-1"></a>    D <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> I) <span class="sc">*</span> subj<span class="sc">$</span>A</span>
+<span id="cb42-33"><a href="#cb42-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1-compartment IV bolus: exposure = average concentration over interval</span></span>
+<span id="cb42-34"><a href="#cb42-34" aria-hidden="true" tabindex="-1"></a>    C.start <span class="ot">&lt;-</span> C.end <span class="sc">+</span> D <span class="sc">/</span> subj<span class="sc">$</span>V</span>
+<span id="cb42-35"><a href="#cb42-35" aria-hidden="true" tabindex="-1"></a>    C.end   <span class="ot">&lt;-</span> C.start <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>k)</span>
+<span id="cb42-36"><a href="#cb42-36" aria-hidden="true" tabindex="-1"></a>    E <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">is.na</span>(E.fix)) C.start <span class="sc">/</span> k <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="sc">-</span>k)) <span class="cf">else</span> <span class="fu">rep</span>(E.fix, N)</span>
+<span id="cb42-37"><a href="#cb42-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Event hazard</span></span>
+<span id="cb42-38"><a href="#cb42-38" aria-hidden="true" tabindex="-1"></a>    Pr <span class="ot">&lt;-</span> <span class="fu">plogis</span>(param[[<span class="st">"alpha.0"</span>]] <span class="sc">+</span></span>
+<span id="cb42-39"><a href="#cb42-39" aria-hidden="true" tabindex="-1"></a>                   param[[<span class="st">"alpha.E"</span>]] <span class="sc">*</span> (E <span class="sc">-</span> E.ref) <span class="sc">+</span></span>
+<span id="cb42-40"><a href="#cb42-40" aria-hidden="true" tabindex="-1"></a>                   param[[<span class="st">"alpha.B"</span>]] <span class="sc">*</span> (B0.med <span class="sc">-</span> B))</span>
+<span id="cb42-41"><a href="#cb42-41" aria-hidden="true" tabindex="-1"></a>    out[[t]] <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">ID =</span> subj<span class="sc">$</span>ID, <span class="at">Ts =</span> t <span class="sc">-</span> <span class="dv">1</span>, <span class="at">A =</span> subj<span class="sc">$</span>A, <span class="at">B0 =</span> subj<span class="sc">$</span>B0,</span>
+<span id="cb42-42"><a href="#cb42-42" aria-hidden="true" tabindex="-1"></a>                       <span class="at">B =</span> B, <span class="at">I =</span> I, <span class="at">D =</span> D, <span class="at">E =</span> E, <span class="at">Pr =</span> Pr,</span>
+<span id="cb42-43"><a href="#cb42-43" aria-hidden="true" tabindex="-1"></a>                       <span class="at">R =</span> <span class="fu">rbinom</span>(N, <span class="dv">1</span>, Pr))</span>
+<span id="cb42-44"><a href="#cb42-44" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb42-45"><a href="#cb42-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(out) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(ID, Ts)</span>
+<span id="cb42-46"><a href="#cb42-46" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="estimand-and-ground-truth-1" class="level4" data-number="4.2.3.2">
+<h4 data-number="4.2.3.2" class="anchored" data-anchor-id="estimand-and-ground-truth-1"><span class="header-section-number">4.2.3.2</span> Estimand and ground truth</h4>
+<p>We have adopted the perspective in which the mathematical estimand is the <em>causal exposure–response curve</em>: the risk of an event by the end of interval 10 if every subject’s exposure were held at <span class="math inline">\(e\)</span> in every interval, <span class="math display">\[ \Pr\left[R(\bar e) = 1\right], \qquad \bar e = (e, e, \ldots, e), \]</span> for <span class="math inline">\(e\)</span> between 0.5 and 2.5. Exposures of 1 and 2 are the typical steady-state exposures under the low and high dose.</p>
+<p>Because we control the data-generating process, we can compute the true curve by simulating a large population under each static intervention. For each subject, the risk by interval 10 is <span class="math inline">\(1 - \prod_t (1 - \Pr(R_t = 1))\)</span>, and the population risk is the average over subjects.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>exposure.levels <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.5</span>, <span class="fl">2.5</span>, <span class="at">by =</span> <span class="fl">0.5</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>ref.subj <span class="ot">&lt;-</span> <span class="fu">make_subjects</span>(<span class="dv">25000</span>, param)</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>truth <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(<span class="fu">lapply</span>(exposure.levels, <span class="cf">function</span>(e) {</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">simulate_dgp</span>(ref.subj, param, Nints, <span class="at">E.fix =</span> e) <span class="sc">|&gt;</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(ID) <span class="sc">|&gt;</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">Risk =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">prod</span>(<span class="dv">1</span> <span class="sc">-</span> Pr)) <span class="sc">|&gt;</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">Risk =</span> <span class="fu">mean</span>(Risk)) <span class="sc">|&gt;</span></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">E =</span> e)</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>truth</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 2
+   Risk     E
+  &lt;dbl&gt; &lt;dbl&gt;
+1 0.381   0.5
+2 0.480   1  
+3 0.568   1.5
+4 0.644   2  
+5 0.709   2.5</code></pre>
+</div>
+</div>
+</section>
+<section id="the-observed-trial" class="level4" data-number="4.2.3.3">
+<h4 data-number="4.2.3.3" class="anchored" data-anchor-id="the-observed-trial"><span class="header-section-number">4.2.3.3</span> The observed trial</h4>
+<p>The observed data come from a single trial of 1,000 subjects under the natural course, with each subject’s follow-up ending at their first event.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>trial.subj <span class="ot">&lt;-</span> <span class="fu">make_subjects</span>(<span class="dv">1000</span>, param)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>obs <span class="ot">&lt;-</span> <span class="fu">simulate_dgp</span>(trial.subj, param, Nints) <span class="sc">|&gt;</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ID) <span class="sc">|&gt;</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">cumsum</span>(<span class="fu">lag</span>(R, <span class="at">default =</span> <span class="dv">0</span>)) <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>obs <span class="sc">|&gt;</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ID) <span class="sc">|&gt;</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">R =</span> <span class="fu">max</span>(R)) <span class="sc">|&gt;</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">N =</span> <span class="fu">n</span>(), <span class="at">Events =</span> <span class="fu">sum</span>(R), <span class="at">Risk =</span> <span class="fu">mean</span>(R))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+      N Events  Risk
+  &lt;int&gt;  &lt;int&gt; &lt;dbl&gt;
+1  1000    512 0.512</code></pre>
+</div>
+</div>
+<p>The figure shows the feedback loop at work. Subjects on the high dose have higher early exposure (red curve), which suppresses their biomarker. This leads to more dose interruptions, which pull their exposure back down.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>arm_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Low dose"</span> <span class="ot">=</span> <span class="st">"#2a78d6"</span>, <span class="st">"High dose"</span> <span class="ot">=</span> <span class="st">"#eb6834"</span>)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>obs <span class="sc">|&gt;</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Arm =</span> <span class="fu">factor</span>(<span class="fu">if_else</span>(A <span class="sc">==</span> param[[<span class="st">"a.low"</span>]], <span class="st">"Low dose"</span>, <span class="st">"High dose"</span>),</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">levels =</span> <span class="fu">names</span>(arm_cols)),</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">Interval =</span> Ts <span class="sc">+</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Arm, Interval) <span class="sc">|&gt;</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="st">`</span><span class="at">Exposure, E</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">mean</span>(E),</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Biomarker, B</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">mean</span>(B),</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Dose interruptions (fraction)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">mean</span>(I),</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span><span class="fu">c</span>(Arm, Interval), <span class="at">names_to =</span> <span class="st">"Quantity"</span>, <span class="at">values_to =</span> <span class="st">"Mean"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Quantity =</span> <span class="fu">factor</span>(Quantity, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Exposure, E"</span>, <span class="st">"Biomarker, B"</span>,</span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"Dose interruptions (fraction)"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(Interval, Mean, <span class="at">color =</span> Arm)) <span class="sc">+</span></span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Quantity, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> arm_cols) <span class="sc">+</span></span>
+<span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="dv">1</span><span class="sc">:</span>Nints) <span class="sc">+</span></span>
+<span id="cb47-21"><a href="#cb47-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Interval"</span>, <span class="at">y =</span> <span class="st">"Mean among subjects at risk"</span>, <span class="at">color =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb47-22"><a href="#cb47-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb47-23"><a href="#cb47-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>, <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-feedback" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-feedback-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="g-computation_files/figure-html/fig-feedback-1.png" class="img-fluid figure-img" width="864">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-feedback-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.5: Mean exposure, biomarker and fraction of dose interruptions by interval and dose arm, among subjects still at risk.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="naive-analyses" class="level3" data-number="4.2.4">
+<h3 data-number="4.2.4" class="anchored" data-anchor-id="naive-analyses"><span class="header-section-number">4.2.4</span> Naive analyses</h3>
+<p>A common approach is pooled logistic regression of the per-interval event indicator on the time-varying exposure, with a separate intercept for each interval. The fitted hazards are converted to a risk by interval 10 for each exposure level. We fit two versions, mirroring the two naive analyses in Example 1:</p>
+<ul>
+<li><strong>Unadjusted:</strong> <code>R ~ E + factor(Ts)</code>.</li>
+<li><strong>Adjusted for the biomarker:</strong> <code>R ~ E + B + factor(Ts)</code>, with predictions made at the median baseline biomarker value.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>risk_from_hazard <span class="ot">&lt;-</span> <span class="cf">function</span>(fit, newdata) {</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  newdata <span class="sc">|&gt;</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Haz =</span> <span class="fu">predict</span>(fit, <span class="at">newdata =</span> newdata, <span class="at">type =</span> <span class="st">"response"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(E) <span class="sc">|&gt;</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">Risk =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">prod</span>(<span class="dv">1</span> <span class="sc">-</span> Haz))</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>pred.grid <span class="ot">&lt;-</span> tidyr<span class="sc">::</span><span class="fu">expand_grid</span>(<span class="at">E =</span> exposure.levels, <span class="at">Ts =</span> <span class="dv">0</span><span class="sc">:</span>(Nints <span class="sc">-</span> <span class="dv">1</span>))</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>fit.unadj <span class="ot">&lt;-</span> <span class="fu">glm</span>(R <span class="sc">~</span> E <span class="sc">+</span> <span class="fu">factor</span>(Ts), <span class="at">family =</span> binomial, <span class="at">data =</span> obs)</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>fit.adjB  <span class="ot">&lt;-</span> <span class="fu">glm</span>(R <span class="sc">~</span> E <span class="sc">+</span> B <span class="sc">+</span> <span class="fu">factor</span>(Ts), <span class="at">family =</span> binomial, <span class="at">data =</span> obs)</span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>naive <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">risk_from_hazard</span>(fit.unadj, pred.grid) <span class="sc">|&gt;</span></span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Method =</span> <span class="st">"Unadjusted"</span>),</span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">risk_from_hazard</span>(fit.adjB, pred.grid <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">B =</span> B0.med)) <span class="sc">|&gt;</span></span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Method =</span> <span class="st">"Adjusted for B"</span>)</span>
+<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a>naive</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 3
+       E  Risk Method        
+   &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;         
+ 1   0.5 0.528 Unadjusted    
+ 2   1   0.516 Unadjusted    
+ 3   1.5 0.504 Unadjusted    
+ 4   2   0.493 Unadjusted    
+ 5   2.5 0.482 Unadjusted    
+ 6   0.5 0.229 Adjusted for B
+ 7   1   0.242 Adjusted for B
+ 8   1.5 0.257 Adjusted for B
+ 9   2   0.272 Adjusted for B
+10   2.5 0.288 Adjusted for B</code></pre>
+</div>
+</div>
+<p>The unadjusted analysis gets the <em>direction</em> of the effect wrong. Risk appears to fall as exposure rises, because subjects with a suppressed biomarker are both the ones who have their dose interrupted and the ones at higher risk. Adjusting for <span class="math inline">\(B_t\)</span> removes this confounding, but it holds the biomarker fixed. This blocks the path <span class="math inline">\(E \rightarrow B \rightarrow R\)</span>, so the curve is far too flat. It also answers a different, conditional question: the risk for a subject whose biomarker somehow stays at its median value.</p>
+<section id="parametric-g-formula" class="level4" data-number="4.2.4.1">
+<h4 data-number="4.2.4.1" class="anchored" data-anchor-id="parametric-g-formula"><span class="header-section-number">4.2.4.1</span> Parametric g-formula</h4>
+<p>The g-formula for this setting extends the two-period formula of Example 1 to 10 intervals, with a continuous confounder and a survival outcome. Plug-in estimation by hand over cells is no longer possible, but the recipe is the same. We need:</p>
+<ol type="1">
+<li><strong>A model for the time-varying confounder given the past.</strong> Here this is the biomarker model. It has the same functional form as the data-generating process, with <span class="math inline">\(k_B\)</span> and <span class="math inline">\(IE_{50}\)</span> estimated by generalized nonlinear least squares (<code>nlme::gnls</code>): <span class="math display">\[ E[B_t \mid B_{t-1}, E_{t-1}, B_0] =
+   \left(1 - e^{-k_B}\right) \frac{B_0}{1 + E_{t-1}/IE_{50}} + e^{-k_B} B_{t-1}, \]</span> with variance proportional to the square of the mean.</li>
+<li><strong>A model for the outcome given the past.</strong> Here this is a pooled logistic regression for the per-interval hazard, <code>R ~ E + B</code>.</li>
+<li><strong>Monte Carlo simulation</strong> of a large cohort under each static exposure intervention. Each subject keeps their observed <span class="math inline">\(B_0\)</span>, exposure is set to <span class="math inline">\(e\)</span>, <span class="math inline">\(B_t\)</span> is drawn from the fitted biomarker model, and the event hazard comes from the fitted outcome model.</li>
+</ol>
+<p>No model is needed for exposure itself, because the intervention sets it. <code>gformula()</code> still requires a model statement for every covariate, so we give exposure a dummy model <code>E ~ 1</code>. As a consequence, the natural-course estimate in the output is not meaningful and is ignored.</p>
+<p>The biomarker model is not one of the covariate types built into <code>gfoRmula</code>, so we supply custom fitting and prediction functions. The prediction function draws a new biomarker value with the fitted proportional error, mirroring the data-generating process. Its <code>...</code> argument is required, because <code>gformula()</code> passes the intervention arguments on to custom prediction functions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>bm_fit <span class="ot">&lt;-</span> <span class="cf">function</span>(covparams, covname, obs_data, j) {</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  nlme<span class="sc">::</span><span class="fu">gnls</span>(</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    B <span class="sc">~</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="fu">exp</span>(lkB))) <span class="sc">*</span> B0 <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> lag1_E <span class="sc">/</span> <span class="fu">exp</span>(lIE50)) <span class="sc">+</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">exp</span>(<span class="sc">-</span><span class="fu">exp</span>(lkB)) <span class="sc">*</span> lag1_B,</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">data    =</span> obs_data,</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">params  =</span> lkB <span class="sc">+</span> lIE50 <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">start   =</span> <span class="fu">list</span>(<span class="at">lkB =</span> <span class="fu">log</span>(<span class="fl">0.25</span>), <span class="at">lIE50 =</span> <span class="fu">log</span>(<span class="fl">1.5</span>)),</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">weights =</span> nlme<span class="sc">::</span><span class="fu">varPower</span>(<span class="at">value =</span> <span class="dv">1</span>, <span class="at">fixed =</span> <span class="dv">1</span>)</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>bm_pred <span class="ot">&lt;-</span> <span class="cf">function</span>(obs_data, newdf, fitcov, time_name, t, condition,</span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a>                    covname, ...) {</span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>  mu <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">predict</span>(fitcov, <span class="at">newdata =</span> newdf))</span>
+<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pmax</span>(<span class="fu">rnorm</span>(<span class="fu">length</span>(mu), mu, fitcov<span class="sc">$</span>sigma <span class="sc">*</span> <span class="fu">abs</span>(mu)), <span class="fl">0.001</span>)</span>
+<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>One static intervention is defined for each exposure level. They are built as a named list (<code>intervention1.E</code>, <code>intervention2.E</code>, …) and passed to <code>gformula()</code> with <code>do.call()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>interventions <span class="ot">&lt;-</span> <span class="fu">setNames</span>(</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lapply</span>(exposure.levels, <span class="cf">function</span>(e) <span class="fu">list</span>(static, <span class="fu">rep</span>(e, Nints))),</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">"intervention"</span>, <span class="fu">seq_along</span>(exposure.levels), <span class="st">".E"</span>)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>gf_args <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">obs_data          =</span> <span class="fu">as.data.table</span>(obs <span class="sc">|&gt;</span> <span class="fu">select</span>(ID, Ts, B0, B, E, R)),</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">id                =</span> <span class="st">"ID"</span>,</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">time_name         =</span> <span class="st">"Ts"</span>,</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">time_points       =</span> Nints,</span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">covnames          =</span> <span class="fu">c</span>(<span class="st">"E"</span>, <span class="st">"B"</span>),</span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">covtypes          =</span> <span class="fu">c</span>(<span class="st">"normal"</span>, <span class="st">"custom"</span>),</span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Dummy model statements: E is set by the intervention, and B uses bm_fit.</span></span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># The B statement must mention the lagged terms so gformula() creates them.</span></span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">covparams         =</span> <span class="fu">list</span>(<span class="at">covmodels =</span> <span class="fu">c</span>(E <span class="sc">~</span> <span class="dv">1</span>, B <span class="sc">~</span> lag1_E <span class="sc">+</span> lag1_B <span class="sc">+</span> B0)),</span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">covfits_custom    =</span> <span class="fu">c</span>(<span class="cn">NA</span>, bm_fit),</span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">covpredict_custom =</span> <span class="fu">c</span>(<span class="cn">NA</span>, bm_pred),</span>
+<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">histories         =</span> <span class="fu">c</span>(lagged),</span>
+<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">histvars          =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"E"</span>, <span class="st">"B"</span>)),</span>
+<span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">basecovs          =</span> <span class="st">"B0"</span>,</span>
+<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_name      =</span> <span class="st">"R"</span>,</span>
+<span id="cb51-22"><a href="#cb51-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_type      =</span> <span class="st">"survival"</span>,</span>
+<span id="cb51-23"><a href="#cb51-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">ymodel            =</span> R <span class="sc">~</span> E <span class="sc">+</span> B,</span>
+<span id="cb51-24"><a href="#cb51-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">int_descript      =</span> <span class="fu">paste</span>(<span class="st">"E ="</span>, exposure.levels),</span>
+<span id="cb51-25"><a href="#cb51-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">nsimul            =</span> <span class="dv">10000</span>,</span>
+<span id="cb51-26"><a href="#cb51-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed              =</span> <span class="dv">2026</span>,</span>
+<span id="cb51-27"><a href="#cb51-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_fits        =</span> <span class="cn">TRUE</span></span>
+<span id="cb51-28"><a href="#cb51-28" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-29"><a href="#cb51-29" aria-hidden="true" tabindex="-1"></a>gf_fit2 <span class="ot">&lt;-</span> <span class="fu">do.call</span>(gformula, <span class="fu">c</span>(gf_args, interventions))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The fitted models recover the data-generating parameters reasonably well. The true values are <span class="math inline">\(\log k_B = -1.386\)</span>, <span class="math inline">\(\log IE_{50} = 0.405\)</span>, <span class="math inline">\(\alpha_E = 0.25\)</span> and <span class="math inline">\(\alpha_B = 3\)</span>. The outcome model’s coefficient for <span class="math inline">\(B\)</span> estimates <span class="math inline">\(-\alpha_B\)</span>, because the data-generating process uses <span class="math inline">\(\tilde B - B_t\)</span>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(gf_fit2<span class="sc">$</span>fits<span class="sc">$</span>B)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      lkB     lIE50 
+-1.417320  0.468671 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(gf_fit2<span class="sc">$</span>fits<span class="sc">$</span>R)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)           E           B 
+ -0.6227833   0.1271699  -3.0744044 </code></pre>
+</div>
+</div>
+<p>The risk by the end of follow-up under each intervention is in the last time point of the results:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>gform <span class="ot">&lt;-</span> gf_fit2<span class="sc">$</span>result <span class="sc">|&gt;</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(k <span class="sc">==</span> Nints <span class="sc">-</span> <span class="dv">1</span>, Interv. <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">E =</span> exposure.levels[Interv.], <span class="at">Risk =</span> <span class="st">`</span><span class="at">g-form risk</span><span class="st">`</span>,</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">Method =</span> <span class="st">"G-formula"</span>)</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>gform</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 3
+      E  Risk Method   
+  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    
+1   0.5 0.417 G-formula
+2   1   0.500 G-formula
+3   1.5 0.568 G-formula
+4   2   0.625 G-formula
+5   2.5 0.674 G-formula</code></pre>
+</div>
+</div>
+</section>
+<section id="comparing-the-estimates-1" class="level4" data-number="4.2.4.2">
+<h4 data-number="4.2.4.2" class="anchored" data-anchor-id="comparing-the-estimates-1"><span class="header-section-number">4.2.4.2</span> Comparing the estimates</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>er_all <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  truth <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">Method =</span> <span class="st">"Truth"</span>),</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  gform,</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>  naive</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Method =</span> <span class="fu">factor</span>(Method, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Truth"</span>, <span class="st">"G-formula"</span>,</span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">"Unadjusted"</span>, <span class="st">"Adjusted for B"</span>)))</span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>er_all <span class="sc">|&gt;</span></span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Method, E, Risk) <span class="sc">|&gt;</span></span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Method, <span class="at">values_from =</span> Risk)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 5
+      E Truth `G-formula` Unadjusted `Adjusted for B`
+  &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;            &lt;dbl&gt;
+1   0.5 0.381       0.417      0.528            0.229
+2   1   0.480       0.500      0.516            0.242
+3   1.5 0.568       0.568      0.504            0.257
+4   2   0.644       0.625      0.493            0.272
+5   2.5 0.709       0.674      0.482            0.288</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>method_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Truth"</span> <span class="ot">=</span> <span class="st">"#0b0b0b"</span>, <span class="st">"G-formula"</span> <span class="ot">=</span> <span class="st">"#2a78d6"</span>,</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"Unadjusted"</span> <span class="ot">=</span> <span class="st">"#eb6834"</span>, <span class="st">"Adjusted for B"</span> <span class="ot">=</span> <span class="st">"#1baf7a"</span>)</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(er_all, <span class="fu">aes</span>(E, Risk, <span class="at">color =</span> Method, <span class="at">linetype =</span> Method)) <span class="sc">+</span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> er_all <span class="sc">|&gt;</span> <span class="fu">filter</span>(E <span class="sc">==</span> <span class="fu">max</span>(E)),</span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">label =</span> Method), <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.15</span>, <span class="at">size =</span> <span class="fl">3.5</span>,</span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"#52514e"</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> method_cols) <span class="sc">+</span></span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_linetype_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Truth"</span> <span class="ot">=</span> <span class="st">"solid"</span>, <span class="st">"G-formula"</span> <span class="ot">=</span> <span class="st">"solid"</span>,</span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">"Unadjusted"</span> <span class="ot">=</span> <span class="st">"dashed"</span>,</span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">"Adjusted for B"</span> <span class="ot">=</span> <span class="st">"dashed"</span>)) <span class="sc">+</span></span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> exposure.levels,</span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>                     <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.35</span>))) <span class="sc">+</span></span>
+<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">NA</span>)) <span class="sc">+</span></span>
+<span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Exposure held fixed in every interval, e"</span>,</span>
+<span id="cb60-18"><a href="#cb60-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Risk of event by interval 10"</span>,</span>
+<span id="cb60-19"><a href="#cb60-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="cn">NULL</span>, <span class="at">linetype =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb60-20"><a href="#cb60-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb60-21"><a href="#cb60-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>, <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-er-comparison" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-er-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="g-computation_files/figure-html/fig-er-comparison-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-er-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.6: Risk of an event by interval 10 as a function of exposure held fixed in every interval: truth, g-formula and two naive analyses.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The g-formula curve follows the true exposure–response curve, while both naive analyses are badly biased: one has the wrong sign and the other is far too flat. The g-formula estimate comes from a single trial of 1,000 subjects, so it differs from the truth by sampling error. That error is visible in the fitted exposure coefficient above. Setting <code>nsamples</code> in <code>gformula()</code> gives bootstrap confidence intervals, at the cost of refitting the models in every bootstrap sample.</p>
+<p>The g-formula works here because the conditions from Example 1 carry over:</p>
+<ul>
+<li>The confounder model and the outcome model are both <strong>correctly specified</strong>. They have the same form as the data-generating process.</li>
+<li><strong>Sequential exchangeability holds.</strong> The biomarker <span class="math inline">\(B_t\)</span> captures everything that drives both the dose interruptions and the event hazard.</li>
+<li><strong>Positivity holds.</strong> The randomized dose and the variation in interruptions produce a range of exposures at every biomarker level.</li>
+</ul>
+<p>In real data, none of these can be guaranteed. The paper examines what happens when they fail, for example when exposure must be imputed from a fitted PK model.</p>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-Braniff2026-causalER" class="csl-entry" role="listitem">
+Braniff, N. 2026. <span>“Causal Exposure Response Analysis: Estimands, Time-Varying Confounding, and the Parametric g-Formula.”</span>
+</div>
+<div id="ref-Hernan2024-whatif" class="csl-entry" role="listitem">
+Hernán, Miguel A, and James M Robins. 2024. <em>Causal Inference: What If</em>. Boca Raton: Chapman &amp; Hall/CRC.
+</div>
+<div id="ref-McGrath2020-gformula" class="csl-entry" role="listitem">
+McGrath, Sean, Victoria Lin, Zilu Zhang, Lucia C Petito, Roger W Logan, Miguel A Hernán, and Jessica G Young. 2020. <span>“<span class="nocase">gfoRmula</span>: An <span>R</span> Package for Estimating the Effects of Sustained Treatment Strategies via the Parametric g-Formula.”</span> <em>Patterns</em> 1 (3): 100008. <a href="https://doi.org/10.1016/j.patter.2020.100008">https://doi.org/10.1016/j.patter.2020.100008</a>.
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Some authors make a distinction between g-formula and g-computation, but it is a subtle distinction and it usually isn’t carefully maintained. In the material that follows, we will use the two terms interchangeably.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>The original example is based on a hypothetical trial with sequential randomization. In our application, we won’t need to assume such a design, and we won’t. Our hypothetical example involves the same essential causal structure, but arising from dose changes that occur at the discretion of clinicians, rather than through stratified randomization.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>The occurrence of “empty cells” is referred to in the causal inference literature as a violation of “positivity”. To properly address this topic it would be necessary to distinguish several different types of positivity violations. For present purposes we avoid these nuances simply rest with the obvious point that, depending on the available data, parametric assumptions may need to be made in order to estimate all quantities of interest.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../Chapter2/estimands.html" class="pagination-link" aria-label="Estimands">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Estimands</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../references.html" class="pagination-link" aria-label="References">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
